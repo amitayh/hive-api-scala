@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.wix.hive.commands.contacts.GetContacts
 import com.wix.hive.model.Contact
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.log4j.BasicConfigurator
@@ -36,6 +37,7 @@ trait HubSimplicator extends HiveApiDrivers {
   def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url")
 
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
+    println(new GetContacts())
     val contactJson = mapper.writeValueAsString(respondsWith)
     val base64Regex = "[A-Za-z0-9+/_-]*"
 

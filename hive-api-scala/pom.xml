@@ -9,6 +9,7 @@
     <name>Hive Scala API</name>
 
     <properties>
+        <scala.version>2.10.4</scala.version>
         <scala.dependencies.version>2.10</scala.dependencies.version>
         <dispatch.version>0.11.2</dispatch.version>
         <wiremock.version>1.50</wiremock.version>
@@ -19,7 +20,28 @@
         <scalaz.stream.version>0.1</scalaz.stream.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>scala-tools.org</id>
+            <name>Scala-tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>scala-tools.org</id>
+            <name>Scala-tools Maven2 Repository</name>
+            <url>http://scala-tools.org/repo-releases</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.databinder.dispatch</groupId>
@@ -94,19 +116,44 @@
             <artifactId>scalaz-stream_${scala.dependencies.version}</artifactId>
             <version>${scalaz.stream.version}</version>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <argLine>-Xms1536m -Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024m</argLine>
+                    <sourceDir>src/main/scala</sourceDir>
+                    <jvmArgs>
+                        <jvmArg>-Xms64m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <configuration>
+                    <args>
+                        <arg>-unchecked</arg>
+                        <arg>-deprecation</arg>
+                    </args>
+                    <addJavacArgs>-deprecation</addJavacArgs>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
