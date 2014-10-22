@@ -21,11 +21,9 @@ class DispatchHttpClient() extends AsyncHttpClient {
     import dispatch.Defaults._
     import dispatch._
 
-
     val postDataAsString: String = data.bodyAsString
 
     val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
-
 
     Http(req > handle[T] _)
   }

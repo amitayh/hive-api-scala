@@ -5,17 +5,17 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.model.WixAPIErrorException
-import com.wixpress.framework.test.itRunner.specs2.SequentialSpecification
-import dispatch.Future
-import org.specs2.matcher.{Expectable, MatchResult, Matcher}
-import org.specs2.mutable.Before
+import org.specs2.matcher.{MatchResult, Expectable, Matcher}
+import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.time.NoTimeConversions
+import dispatch.Future
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 
-class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversions {
+class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions {
+  sequential
 
   val wireMockServer = new WireMockServer(new WireMockConfiguration().port(8089))
 
