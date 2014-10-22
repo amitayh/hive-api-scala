@@ -5,7 +5,7 @@ import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.client.http.http.NamedParameters
 
 
-trait HiveBaseCommand[T <: HiveBaseCommandResponse]{
+trait HiveBaseCommand[T]{
   //def validate : accord.Result
   def url : String
   def method : HttpMethod

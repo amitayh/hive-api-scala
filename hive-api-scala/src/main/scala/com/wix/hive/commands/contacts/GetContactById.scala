@@ -2,14 +2,13 @@ package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod.HttpMethod
-import com.wix.hive.commands.HiveBaseCommandResponse
+import com.wix.hive.model.Contact
 
-case class GetContactById(id: String) extends ContactsCommand[GetContactByIdResponse] {
+
+case class GetContactById(id: String) extends ContactsCommand[Contact] {
   override def method: HttpMethod = HttpMethod.GET
 
-  override def urlParams = s"/${id}"
-
-  //override def createHttpRequestData: HttpRequestData = HttpRequestData(method ,this.url + "/" + id)
+  override def urlParams = s"/$id"
 }
 
-case class GetContactByIdResponse(id: String) extends HiveBaseCommandResponse
+case class GetContactByIdResponse()

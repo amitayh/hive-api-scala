@@ -1,32 +1,56 @@
 package com.wix.hive.client
 
-import com.wix.hive.commands.contacts.GetContacts
+import java.util.UUID
+
+import com.wix.hive.commands.contacts.GetContactById
+import com.wix.hive.model.Contact
+import org.joda.time.DateTime
+import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-abstract class BaseHiveClientIT extends SpecificationWithJUnit with HiveApiDrivers {
+
+abstract class BaseHiveClientIT extends SpecificationWithJUnit { this: HiveApiDrivers =>
+
+  def initEnv(): Unit
+  def shutdownEnv(): Unit
+
+  val baseUrl: String
+
+  step(initEnv())
+
+  trait Context extends Scope {
+    val me = AppDef.random
+
+    val client = new HiveClient(me.appId, me.secret, me.instanceId, baseUrl = baseUrl)
+
+    def beAContactWith(id: String): Matcher[Contact] = (r: Contact) => r.id == id
+  }
+
   "Hive client" should {
 
-    "get all contacts" in new Context {
+    "get contact by ID" in new Context {
 
-      val command = GetContacts()
+      val userId = randomId
+      givenContactFetchById(myself = me, respondsWith = Contact(id = userId, createdAt = new DateTime()))
 
-      client.execute(command)
+      val command = GetContactById(userId)
 
-      failure("not implemented")
+      client.execute(command) must beAContactWith(id = userId).await
     }
   }
 
-  class Context extends Scope {
-    val client = new HiveClient("id", "key", "inst")
-  }
+  step(shutdownEnv())
 }
 
 trait HiveApiDrivers {
 
-  def givenContactExists: Unit
+  def randomId: String = UUID.randomUUID().toString
+
+  def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit
+
+  case class AppDef(appId: String, instanceId: String, secret: String)
+  object AppDef {
+    def random: AppDef = AppDef(randomId, randomId, randomId)
+  }
 }
-
-
-
-

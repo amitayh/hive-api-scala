@@ -1,7 +1,6 @@
 package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands.HiveBaseCommandResponse
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
 import com.wix.hive.model.PagingContactsResult
 
@@ -23,9 +22,7 @@ case class GetContacts(tag: Seq[String] = Nil, email: Option[String] = None, pho
   }
 }
 
-case class GetContactsResponse(results: PagingContactsResult) extends HiveBaseCommandResponse{
-
-}
+case class GetContactsResponse(results: PagingContactsResult)
 
 
 object PageSizes extends Enumeration {

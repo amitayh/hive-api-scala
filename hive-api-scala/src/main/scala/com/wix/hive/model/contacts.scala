@@ -35,13 +35,8 @@ case class CustomField(id: Option[Int] = None, field: String, value: String)
 
 case class StateLink(href: String, rel: String)
 
-//case class ContactData(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
-//                       tags: Seq[String] = Nil, emails: Seq[ContactEmail] = Nil, phone: Seq[ContactPhone] = Nil,
-//                       addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil,
-//                       notes: Seq[Note] = Nil, custom: Seq[CustomField] = Nil)
-
 case class Contact(id: String, name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
-                   tags: Seq[String] = Nil, emails: Seq[ContactEmail] = Nil, phone: Seq[ContactPhone] = Nil,
+                   tags: Seq[String] = Nil, emails: Seq[ContactEmail] = Nil, phones: Seq[ContactPhone] = Nil,
                    addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil,
                    notes: Seq[Note] = Nil, custom: Seq[CustomField] = Nil, createdAt: DateTime, links: Seq[StateLink] = Nil,
                    modifiedAt: Option[Date] = None)

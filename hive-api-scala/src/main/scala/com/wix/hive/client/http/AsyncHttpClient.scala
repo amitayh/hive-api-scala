@@ -1,6 +1,7 @@
 package com.wix.hive.client.http
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.ning.http.client.Response
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -14,16 +15,16 @@ trait AsyncHttpClient {
   def request[T: ClassTag](data: HttpRequestData): Future[T]
 }
 
-class DispatchHttpClient(baseUrl: String) extends AsyncHttpClient {
+class DispatchHttpClient() extends AsyncHttpClient {
   override def request[T: ClassTag](data: HttpRequestData): Future[T] = {
+    import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
     import dispatch.Defaults._
     import dispatch._
-    import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
 
 
     val postDataAsString: String = data.bodyAsString
 
-    val req = (url(baseUrl + data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
+    val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
 
 
     Http(req > handle[T] _)
@@ -54,7 +55,7 @@ class DispatchHttpClient(baseUrl: String) extends AsyncHttpClient {
 
 object DispatchHttpClient {
   val mapper = new ObjectMapper()
-  mapper.registerModule(DefaultScalaModule)
+  mapper.registerModules(DefaultScalaModule, new JodaModule)
 }
 
 

@@ -26,15 +26,13 @@ object HiveSigner {
     import data._
 
     val sortedQuery = toSortedSeq(queryString)
-    val sortedWixHeaders = toSortedSeq(headers.filterKeys(_.startsWith("X-Wix-")))
+    val sortedWixHeaders = toSortedSeq(headers.filterKeys(_.toLowerCase.startsWith("x-wix-")))
     val sortedParams =  (sortedQuery ++ sortedWixHeaders).mkString("\n")
     val post = data.bodyAsString
     val postSeparator = if (post.nonEmpty) "\n" else ""
 
 
-    s"""${method}
-      |${url}
-      |${sortedParams}${postSeparator}${post}""".stripMargin
+    s"""$method\n$url\n$sortedParams$postSeparator$post"""
   }
 
   def toSortedSeq(params: NamedParameters) = params.toSeq.sortBy(_._1).map(_._2)

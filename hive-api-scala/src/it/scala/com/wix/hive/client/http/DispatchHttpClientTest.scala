@@ -1,14 +1,14 @@
 package com.wix.hive.client.http
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.{ResponseDefinitionBuilder, WireMock}
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.model.WixAPIErrorException
 import com.wixpress.framework.test.itRunner.specs2.SequentialSpecification
 import dispatch.Future
-import org.specs2.matcher.{MatchResult, Expectable, Matcher}
-import org.specs2.mutable.{Before, SpecificationWithJUnit}
+import org.specs2.matcher.{Expectable, MatchResult, Matcher}
+import org.specs2.mutable.Before
 import org.specs2.time.NoTimeConversions
 
 import scala.concurrent.Await
@@ -27,13 +27,17 @@ class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversi
   trait ctx extends Before {
     def before = WireMock.reset()
 
-    val client = new DispatchHttpClient("http://localhost:8089")
+    val client = new DispatchHttpClient()
+
+    val baseUrl = "http://localhost:8089"
 
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)) match {
       case Success(c) => true
       case _ => false
     }
-    
+
+    def haveDataForDymmy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
+
     def isWixApiErrorException(errorCode: Matcher[Int], message: Matcher[Option[String]], wixErrorCode: Matcher[Option[Int]]): Matcher[WixAPIErrorException] = {
       errorCode ^^ { (_: WixAPIErrorException).errorCode aka "errorCode" } and
       message ^^ { (_: WixAPIErrorException).message aka "message" } and
@@ -60,14 +64,14 @@ class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversi
       givenThat(get(urlMatching("/test"))
         .willReturn(aResponse().withBody( """{"data":"some info"}""")))
 
-      client.request[Dummy](HttpRequestData(HttpMethod.GET, "/test")) must be_===(Dummy("some info")).await(timeout = 1.second)
+      client.request[Dummy](HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must be_===(Dummy("some info")).await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
       givenThat(get(urlMatching("/test?.*"))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.GET, "/test", queryString = Map("a" -> "b"))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test", queryString = Map("a" -> "b"))) must beSuccess
 
       verify(getRequestedFor(urlEqualTo("/test?a=b")))
     }
@@ -76,7 +80,7 @@ class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversi
       givenThat(get(urlMatching("/test"))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.GET, "/test", headers = Map("c" -> "d"))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test", headers = Map("c" -> "d"))) must beSuccess
 
       verify(getRequestedFor(urlEqualTo("/test")).withHeader("c", WireMock.equalTo("d")))
     }
@@ -85,16 +89,19 @@ class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversi
       givenThat(post(urlMatching("/test"))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.POST, "/test", body = Some(Dummy("body text")))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.POST, s"$baseUrl/test", body = Some(Dummy("body text")))) must beSuccess
 
       verify(postRequestedFor(urlEqualTo("/test")).withRequestBody(equalToJson( """{"data":"body text"}""")))
     }
 
     "work with all method types" in new ctx {
-      givenThat(any(urlEqualTo("/test")).willReturn(aResponse()))
+      givenThat(get(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"GET"}""")))
+      givenThat(post(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"POST"}""")))
+      givenThat(put(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"PUT"}""")))
+      givenThat(delete(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
 
       HttpMethod.values.foreach(method => {
-        client.request(HttpRequestData(method, "/test")) must beSuccess aka s"Failed for method ${method}"
+        client.request[Dummy](HttpRequestData(method, s"$baseUrl/test")) must haveDataForDymmy(method.toString).await //beSuccess.updateMessage(msg => s"Failed for method $method - $msg")
       })
     }
 
@@ -103,11 +110,11 @@ class DispatchHttpClientTest extends SequentialSpecification with NoTimeConversi
                                                     withStatus(400).
                                                     withBody("""{"errorCode":400,"message":"some msg","wixErrorCode":-23001}""")))
 
-      val res = client.request(HttpRequestData(HttpMethod.GET, "/test")) must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
+      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
     }
 
     "handle failure - no server listening" in new ctx {
-      val res = client.request(HttpRequestData(HttpMethod.GET, "/test")) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
+      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
     }
   }
 

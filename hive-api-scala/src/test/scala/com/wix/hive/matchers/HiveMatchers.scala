@@ -26,9 +26,9 @@ trait HiveMatchers extends Matchers {
 
   def headersFor(commandHeaders: NamedParameters, client: HiveClient) : Matcher[NamedParameters] = {
     havePairs(commandHeaders.toSeq :_*) and
-    havePairs("X-Wix-Instance-Id" -> client.instanceId, "X-Wix-Application-Id" -> client.appId) and
+    havePairs("x-wix-instance-id" -> client.instanceId, "x-wix-application-id" -> client.appId) and
     startWith("Hive Scala v") ^^ {(_: NamedParameters)("User-Agent") aka "User-Agent"} and
-    almostNow ^^ {(_: NamedParameters)("X-Wix-Timestamp") aka "X-Wix-Timestamp"}
+    almostNow ^^ {(_: NamedParameters)("x-wix-timestamp") aka "x-wix-timestamp"}
   }
 
   def almostNow : Matcher[String] = (x:String) => {
