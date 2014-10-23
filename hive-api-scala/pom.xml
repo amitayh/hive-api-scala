@@ -18,22 +18,8 @@
         <jackson.version>2.4.3</jackson.version>
         <specs2.version>2.4.6</specs2.version>
         <scalaz.stream.version>0.1</scalaz.stream.version>
+        <joda.convert.version>1.2</joda.convert.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>http://scala-tools.org/repo-releases</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>scala-tools.org</id>
-            <name>Scala-tools Maven2 Repository</name>
-            <url>http://scala-tools.org/repo-releases</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
 
@@ -115,6 +101,12 @@
             <groupId>org.scalaz.stream</groupId>
             <artifactId>scalaz-stream_${scala.dependencies.version}</artifactId>
             <version>${scalaz.stream.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>${joda.convert.version}</version>
         </dependency>
     </dependencies>
 
