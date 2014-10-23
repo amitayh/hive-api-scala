@@ -2,8 +2,7 @@ package com.wix.hive.matchers
 
 import com.wix.hive.client.HiveClient
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.client.http.http.NamedParameters
+import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
 import org.joda.time.{Seconds, DateTime}
 import org.specs2.matcher.{Matchers, Matcher, AlwaysMatcher}
 

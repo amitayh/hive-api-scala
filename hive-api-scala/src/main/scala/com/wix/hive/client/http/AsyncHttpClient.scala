@@ -5,7 +5,6 @@ import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.ning.http.client.Response
 import com.wix.hive.client.http.HttpMethod.HttpMethod
-import com.wix.hive.client.http.http.NamedParameters
 import com.wix.hive.model.WixAPIErrorException
 
 import scala.concurrent.Future
@@ -57,14 +56,11 @@ object DispatchHttpClient {
 }
 
 
-package object http {
-  type NamedParameters = Map[String, String]
-}
 
 case class HttpRequestData(method: HttpMethod, url: String, queryString: NamedParameters = Map.empty, headers: NamedParameters = Map.empty,
                            body: Option[AnyRef] = None)
 
-package object HttpRequestDataImplicits{
+object HttpRequestDataImplicits{
   implicit class HttpRequestDataStringify(val data: HttpRequestData) {
     def bodyAsString = data.body match {
       case Some(body: String) => body
