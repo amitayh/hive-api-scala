@@ -9,7 +9,6 @@ import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.specification.Scope
-import org.specs2.time.NoTimeConversions._
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -30,7 +29,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
   step(initEnv())
 
 
-  trait Context extends Scope {//Before {
+  trait Context extends Before {
     def before = beforeTest()
 
     val me = AppDef.random
