@@ -37,7 +37,7 @@ class HiveClientWithSimplicatorIT extends BaseHiveClientIT with HubSimplicator {
 trait HubSimplicator extends HiveApiDrivers {
   val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
 
-  def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url")
+  def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url.*")
 
   implicit class MappingBuilderImplicits(builder: MappingBuilder) {
     val base64Regex = "[A-Za-z0-9+/_-]*"
@@ -52,7 +52,7 @@ trait HubSimplicator extends HiveApiDrivers {
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
     val contactJson = mapper.writeValueAsString(respondsWith)
 
-    givenThat(get(versionedUrlMatcher(s"/contacts/${respondsWith.id}.*")).
+    givenThat(get(versionedUrlMatcher(s"/contacts/${respondsWith.id}")).
       withStandardHeaders(myself).
       willReturn(aResponse().withBody(contactJson)))
   }
@@ -61,16 +61,23 @@ trait HubSimplicator extends HiveApiDrivers {
   override def givenAppWithActivities(myself: AppDef, activities: Activity*): Unit = {
     case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityType: String, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo)
 
-
     activities foreach {
       case activity: Activity => {
         import activity._
         val activityJson = mapper.writeValueAsString(ActivityAsInHubServer(id, createdAt, activityInfo.name.toString, activityLocationUrl, activityDetails, activityInfo))
 
-        givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}.*")).
+        givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}")).
           withStandardHeaders(myself).
           willReturn(aResponse().withBody(activityJson)))
       }
     }
+  }
+
+  override def givenAppActivityTypes(app: AppDef, types: String*): Unit = {
+    val typesJson = mapper.writeValueAsString(types)
+
+    givenThat(get(versionedUrlMatcher("/activities")).
+    withStandardHeaders(app).
+    willReturn(aResponse().withBody(typesJson)))
   }
 }
