@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.commands.contacts.GetContacts
-import com.wix.hive.model.{ActivityInfo, ActivityDetails, Activity, Contact}
+import com.wix.hive.model._
 import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
@@ -74,9 +74,9 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def givenAppActivityTypes(app: AppDef, types: String*): Unit = {
-    val typesJson = mapper.writeValueAsString(types)
+    val typesJson = mapper.writeValueAsString(ActivityTypes(types))
 
-    givenThat(get(versionedUrlMatcher("/activities")).
+    givenThat(get(versionedUrlMatcher("/activities/types")).
     withStandardHeaders(app).
     willReturn(aResponse().withBody(typesJson)))
   }

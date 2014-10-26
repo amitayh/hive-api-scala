@@ -130,3 +130,5 @@ case class MusicTrackShare() extends ActivityInfo {
 case class MusicTrackSkip() extends ActivityInfo {
   override val name = `music/track-skip`
 }
+
+case class ActivityTypes(types:Seq[String])

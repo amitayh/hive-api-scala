@@ -4,13 +4,14 @@ import java.util.UUID
 
 import com.wix.hive.commands.{GetActivityTypes, GetActivityById}
 import com.wix.hive.commands.contacts.{GetContactById, GetContacts}
-import com.wix.hive.model.{AuthRegister, Activity, Contact}
+import com.wix.hive.model.{ActivityTypes, AuthRegister, Activity, Contact}
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.specification.Scope
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 
 abstract class BaseHiveClientIT extends SpecificationWithJUnit {
@@ -42,6 +43,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     def beAContactWith(id: String): Matcher[Contact] = (contact: Contact) => contact.id == id
 
     def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
+
+    def haveTypes(types: Seq[String]): Matcher[ActivityTypes] = (_:ActivityTypes).types == types
   }
 
   "Hive client" should {
@@ -61,12 +64,11 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
       client.execute(GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
     }
 
-    "get list of all activity types" in new Context{
+    "get list of all activity types" in new Context {
       val types = Seq("type1/some", "another/type_2")
-      givenAppActivityTypes(me, types :_*)
+      givenAppActivityTypes(me, types: _*)
 
-      client.execute(GetActivityTypes())
-      //must contain(exactly(types)).await
+      client.execute(GetActivityTypes()) must haveTypes(types).await
     }
   }
 
