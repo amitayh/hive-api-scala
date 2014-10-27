@@ -2,7 +2,7 @@ package com.wix.hive.client
 
 import java.util.UUID
 
-import com.wix.hive.commands.{PostActivity, GetActivityTypes, GetActivityById}
+import com.wix.hive.commands._
 import com.wix.hive.commands.contacts.{GetContactById, GetContacts}
 import com.wix.hive.model._
 import org.joda.time.DateTime
@@ -46,7 +46,11 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def haveTypes(types: Seq[String]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
 
-    def haveActivityResult(): Matcher[ActivityCreatedResult] = (res:ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
+    def haveActivityResult: Matcher[ActivityCreatedResult] = (res:ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
+
+    def beActivityResultWith(activity: Activity): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => {
+      res.results.head.id == activity.id
+    }
   }
 
   "Hive client" should {
@@ -61,7 +65,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     "get activity by ID" in new Context {
       val activityId = randomId
 
-      givenAppWithActivities(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      givenAppWithActivitiesById(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
 
       client.execute(GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
     }
@@ -79,9 +83,18 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
       val command = PostActivity(userSessionToken, CreateActivity(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
 
-      client.execute(command) must haveActivityResult().await
+      client.execute(command) must haveActivityResult.await
 
       verifyActivityCreated(me)
+    }
+
+    "get all activities" in new Context {
+      val activityId = randomId
+      val activity = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"));
+
+      givenAppWithActivitiesBulk(me, activity)
+
+      client.execute(GetActivities()) must beActivityResultWith(activity).await(timeout= FiniteDuration(100, "seconds"))
     }
   }
 
@@ -94,7 +107,9 @@ trait HiveApiDrivers {
 
   def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit
 
-  def givenAppWithActivities(myself: AppDef, activities: Activity*): Unit
+  def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
+
+  def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit
 
   def givenAppActivityTypes(app: AppDef, types: String*): Unit
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.wix.hive.commands.PagingActivitiesResult
 import com.wix.hive.commands.contacts.GetContacts
 import com.wix.hive.model._
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -58,13 +59,16 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
 
-  override def givenAppWithActivities(myself: AppDef, activities: Activity*): Unit = {
-    case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityType: String, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo)
+  case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
+    def this(a: Activity) = this(a.id, a.createdAt, a.activityLocationUrl, a.activityDetails, a.activityInfo)
+    val activityType = activityInfo.activityType.toString
+  }
 
+  override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {
       case activity: Activity => {
         import activity._
-        val activityJson = mapper.writeValueAsString(ActivityAsInHubServer(id, createdAt, activityInfo.activityType.toString, activityLocationUrl, activityDetails, activityInfo))
+        val activityJson = mapper.writeValueAsString(new ActivityAsInHubServer(id, createdAt, activityLocationUrl, activityDetails, activityInfo))
 
         givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}")).
           withStandardHeaders(myself).
@@ -72,6 +76,17 @@ trait HubSimplicator extends HiveApiDrivers {
       }
     }
   }
+
+  override def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit = {
+    case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
+
+    val resp = mapper.writeValueAsString(PagingActivitiesResultAsInHubServer(1, None, None, activities.map(new ActivityAsInHubServer(_))))
+
+    givenThat(get(versionedUrlMatcher("/activities.*")).
+      withStandardHeaders(myself).
+      willReturn(aResponse().withBody(resp)))
+  }
+
 
   override def getValidUserSessionToken: String = "user_tkn"
 
@@ -92,4 +107,5 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def verifyActivityCreated(appDef: AppDef): Unit = ()
+
 }

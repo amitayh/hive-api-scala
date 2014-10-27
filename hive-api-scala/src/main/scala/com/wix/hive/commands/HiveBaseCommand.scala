@@ -9,9 +9,9 @@ trait HiveBaseCommand[T]{
   def method : HttpMethod
 
   def urlParams: String = ""
-  def query : NamedParameters = Map() //TODO: -> Map.empty
-  def headers: NamedParameters = Map()
+  def query : NamedParameters = Map.empty
+  def headers: NamedParameters = Map.empty
   def body: Option[AnyRef] = None
 
-  def createHttpRequestData : HttpRequestData = HttpRequestData(method ,url + urlParams, query, headers, body)
+  final def createHttpRequestData : HttpRequestData = HttpRequestData(method ,url + urlParams, query, headers, body)
 }

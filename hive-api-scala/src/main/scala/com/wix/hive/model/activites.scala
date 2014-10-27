@@ -1,12 +1,12 @@
 package com.wix.hive.model
 
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonCreator}
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
 
 import scala.annotation.switch
 import scala.util.Try
-
 
 case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option[String] = None,
                     activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
@@ -133,6 +133,6 @@ case class MusicTrackSkip() extends ActivityInfo {
   override val activityType = `music/track-skip`
 }
 
-case class ActivityTypes(types:Seq[String])
+case class ActivityTypes(types: Seq[String])
 
 case class ActivityCreatedResult(activityId: String, contactId: String)

@@ -8,8 +8,6 @@ case class CreateContact(name: Option[ContactName] = None, picture: Option[Strin
                          addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil,
                          notes: Seq[Note] = Nil, custom: Seq[CustomField] = Nil) extends ContactsCommand[CreateContactResponse] {
   override val method = HttpMethod.POST
-
-  override def createHttpRequestData: HttpRequestData = ???
 }
 
 case class CreateContactResponse(id: String)

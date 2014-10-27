@@ -7,7 +7,7 @@ import org.specs2.mutable.{SpecificationWithJUnit}
 import org.specs2.specification.Scope
 
 class CreateContactTest extends SpecificationWithJUnit {
-
+  skipAll
   "createHttpRequestData" should {
     "work with parameters" in new Context {
       val httpData = command.createHttpRequestData

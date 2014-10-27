@@ -1,7 +1,7 @@
 package com.wix.hive.client
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
-import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, HttpRequestData}
+import com.wix.hive.client.http.{NamedParameters, AsyncHttpClient, HttpMethod, HttpRequestData}
 import com.wix.hive.commands.HiveBaseCommand
 import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mock.Mockito
@@ -29,7 +29,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
       there was one(httpClient).request(httpRequestDataWith(
         method = be_==(HttpMethod.GET),
-        url = be_==(client.baseUrl + client.versionForUrl + commandUrl),
+        url = be_==(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
         query = havePairs(commandQuery.toSeq :_*),
         headers = headersFor(commandHeaders, client),
         body = be_==(commandBody)))(any)
@@ -39,6 +39,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
 
   val commandUrl = "/tst"
+  val commandParams = "/param"
   val commandQuery = Map("q" -> "query")
   val commandHeaders = Map("h" -> "header")
   val commandBody = Some(AnyRef)
@@ -46,7 +47,13 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
   case class TestCommand() extends HiveBaseCommand[TestCommandResponse] {
     override def url: String = commandUrl
 
-    override def createHttpRequestData: HttpRequestData = HttpRequestData(method, url, commandQuery, commandHeaders, commandBody)
+    override def urlParams: String = commandParams
+
+    override def query: NamedParameters = commandQuery
+
+    override def headers: NamedParameters = commandHeaders
+
+    override def body: Option[AnyRef] = commandBody
 
     override def method: HttpMethod = HttpMethod.GET
   }
