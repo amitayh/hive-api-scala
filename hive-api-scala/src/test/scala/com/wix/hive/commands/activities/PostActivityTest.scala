@@ -13,7 +13,7 @@ class PostActivityTest extends SpecificationWithJUnit {
     "create HttpRequestData with all parameters" in new Context {
       val activityLocationUrl = "urrrrrrl"
       val activityDetails = ActivityDetails("additional://InfoUrl.com", "summary_")
-      val contact = Contact("id", createdAt = userCreatedAt)
+      val contact = ContactActivity()
       val createActivity = CreateActivity(activityCreatedAt, activityLocationUrl = Some(activityLocationUrl),
         Some(activityDetails), activityInfo, Some(contact))
       val command = PostActivity(userToken, createActivity)

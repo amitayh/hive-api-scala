@@ -12,9 +12,13 @@ case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option
                     activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
 
 case class CreateActivity(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
-                          activityInfo: ActivityInfo, contactUpdate: Option[Contact] = None) {
+                          activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
   val activityType = activityInfo.activityType.toString
 }
+
+case class ContactActivity(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
+                           emails: Seq[ContactEmail] = Nil, phones: Seq[ContactPhone] = Nil,
+                           addresses: Seq[Address] = Nil, dates: Seq[ImportantDate] = Nil, urls: Seq[ContactUrl] = Nil)
 
 object Activity {
 
@@ -96,11 +100,35 @@ case class AuthStatusChange() extends ActivityInfo {
   override val activityType = `auth/status-change`
 }
 
-case class ContactContactForm() extends ActivityInfo {
+case class NameValuePair(name: String, value: String)
+
+case class ContactContactForm(items: Seq[NameValuePair]) extends ActivityInfo {
   override val activityType = `contact/contact-form`
 }
 
-case class ECommercePurchase() extends ActivityInfo {
+case class Media(thumbnail: String)
+
+case class Variant(title: String, value: Option[String])
+
+case class Coupon(total: BigDecimal, formattedTotal: Option[String], title: String)
+
+case class Tax(total: BigDecimal, formattedTotal: Option[String])
+
+case class Shipping(total: BigDecimal, formattedTotal: Option[String])
+
+case class Payment(total: BigDecimal, subtotal: BigDecimal, formattedTotal: Option[String], formattedSubtotal: Option[String],
+                   currency: String, coupon: Option[Coupon], tax: Option[Tax], shipping: Shipping)
+
+case class CartAddress(firstName: String, lastName: String, email: String, phone: String, country: String, countryCode: String,
+                       region: String, regionCode: String, city: String, address1: String, address2: String, zip: String, company: String)
+
+case class CartItem(id: String, sku: Option[String], title: String, quantity: Int, price: BigDecimal, formattedPrice: Option[String],
+                    currency: String, productLink: Option[String], weight: BigDecimal, formattedWeight: Option[String],
+                    media: Media, variants: Seq[Variant], payment: Payment, shippingAddress: Option[CartAddress],
+                    billingAddress: Option[CartAddress], paymentGateway: Option[String], note: Option[String],
+                    buyerAcceptsMarketing: Option[Boolean])
+
+case class ECommercePurchase(cartId: String, storeId: String, orderId: Option[String], items: Seq[CartItem]) extends ActivityInfo {
   override val activityType = `e_commerce/purchase`
 }
 
