@@ -64,7 +64,7 @@ trait HubSimplicator extends HiveApiDrivers {
     activities foreach {
       case activity: Activity => {
         import activity._
-        val activityJson = mapper.writeValueAsString(ActivityAsInHubServer(id, createdAt, activityInfo.name.toString, activityLocationUrl, activityDetails, activityInfo))
+        val activityJson = mapper.writeValueAsString(ActivityAsInHubServer(id, createdAt, activityInfo.activityType.toString, activityLocationUrl, activityDetails, activityInfo))
 
         givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}")).
           withStandardHeaders(myself).
@@ -73,11 +73,23 @@ trait HubSimplicator extends HiveApiDrivers {
     }
   }
 
+  override def getValidUserSessionToken: String = "user_tkn"
+
   override def givenAppActivityTypes(app: AppDef, types: String*): Unit = {
     val typesJson = mapper.writeValueAsString(ActivityTypes(types))
 
     givenThat(get(versionedUrlMatcher("/activities/types")).
-    withStandardHeaders(app).
-    willReturn(aResponse().withBody(typesJson)))
+      withStandardHeaders(app).
+      willReturn(aResponse().withBody(typesJson)))
   }
+
+  override def givenAppWithContactExist(app: AppDef, contactId: String): Unit = {
+    val responseJson = mapper.writeValueAsString(ActivityCreatedResult("activityId", "contactId"))
+
+    givenThat(post(versionedUrlMatcher(s"/activities.*userSessionToken=$getValidUserSessionToken.*"))
+      .withStandardHeaders(app).
+      willReturn(aResponse().withBody(responseJson)))
+  }
+
+  override def verifyActivityCreated(appDef: AppDef): Unit = ()
 }

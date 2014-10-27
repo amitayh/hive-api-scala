@@ -1,7 +1,5 @@
 package com.wix.hive.model
 
-import javax.naming.InvalidNameException
-
 import com.fasterxml.jackson.annotation.{JsonIgnore, JsonCreator}
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
@@ -13,6 +11,10 @@ import scala.util.Try
 case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option[String] = None,
                     activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
 
+case class CreateActivity(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
+                          activityInfo: ActivityInfo, contactUpdate: Option[Contact] = None) {
+  val activityType = activityInfo.activityType.toString
+}
 
 object Activity {
 
@@ -79,56 +81,58 @@ import ActivityType._
 
 abstract class ActivityInfo {
   @JsonIgnore
-  def name: ActivityType
+  def activityType: ActivityType
 }
 
 case class AuthLogin() extends ActivityInfo {
-  override val name = `auth/login`
+  override val activityType = `auth/login`
 }
 
 case class AuthRegister(initiator: String, previousActivityStreamId: String, status: String) extends ActivityInfo {
-  override val name = `auth/register`
+  override val activityType = `auth/register`
 }
 
 case class AuthStatusChange() extends ActivityInfo {
-  override val name = `auth/status-change`
+  override val activityType = `auth/status-change`
 }
 
 case class ContactContactForm() extends ActivityInfo {
-  override val name = `contact/contact-form`
+  override val activityType = `contact/contact-form`
 }
 
 case class ECommercePurchase() extends ActivityInfo {
-  override val name = `e_commerce/purchase`
+  override val activityType = `e_commerce/purchase`
 }
 
 case class MusicAlbumFan() extends ActivityInfo {
-  override val name = `music/album-fan`
+  override val activityType = `music/album-fan`
 }
 
 case class MusicAlbumShare() extends ActivityInfo {
-  override val name = `music/album-share`
+  override val activityType = `music/album-share`
 }
 
 case class MusicTrackLyrics() extends ActivityInfo {
-  override val name = `music/track-lyrics`
+  override val activityType = `music/track-lyrics`
 }
 
 case class MusicTrackPlay() extends ActivityInfo {
-  override val name = `music/track-play`
+  override val activityType = `music/track-play`
 }
 
 case class MusicTrackPlayed() extends ActivityInfo {
-  override val name = `music/track-played`
+  override val activityType = `music/track-played`
 
 }
 
 case class MusicTrackShare() extends ActivityInfo {
-  override val name = `music/track-share`
+  override val activityType = `music/track-share`
 }
 
 case class MusicTrackSkip() extends ActivityInfo {
-  override val name = `music/track-skip`
+  override val activityType = `music/track-skip`
 }
 
 case class ActivityTypes(types:Seq[String])
+
+case class ActivityCreatedResult(activityId: String, contactId: String)
