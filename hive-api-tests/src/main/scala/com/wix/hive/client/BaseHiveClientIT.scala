@@ -3,7 +3,7 @@ package com.wix.hive.client
 import java.util.UUID
 
 import com.wix.hive.commands._
-import com.wix.hive.commands.contacts.{GetContactById, GetContacts}
+import com.wix.hive.commands.contacts.{PageSizes, GetContactById, GetContacts}
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
@@ -48,9 +48,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def haveActivityResult: Matcher[ActivityCreatedResult] = (res:ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
 
-    def beActivityResultWith(activity: Activity): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => {
-      res.results.head.id == activity.id
-    }
+    //def beActivityResultWith(activity: Activity): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.head.id == activity.id
+    def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
   }
 
   "Hive client" should {
@@ -90,12 +89,28 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     "get all activities" in new Context {
       val activityId = randomId
-      val activity = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"));
+      val activity = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
 
       givenAppWithActivitiesBulk(me, activity)
 
-      client.execute(GetActivities()) must beActivityResultWith(activity).await(timeout= FiniteDuration(100, "seconds"))
+      client.execute(GetActivities()) must haveSameIds(activity).await
     }
+
+    "get all activities with paging" in new Context {
+      val activityId = randomId
+
+      val firstPage = Seq.range(0,25).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      val secondPage = Seq.range(25,40).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      val allActivities = firstPage ++ secondPage
+
+      givenAppWithActivitiesBulk(me, allActivities :_*)
+
+
+      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
+      firstPageResult must haveSameIds(firstPage :_*)
+
+      client.execute(firstPageResult.nextPageCommand.get) must haveSameIds(secondPage :_*).await()
+    }.pendingUntilFixed("PageSize is not implemented in the server")
   }
 
   step(shutdownEnv())

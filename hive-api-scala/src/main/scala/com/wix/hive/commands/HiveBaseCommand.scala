@@ -1,7 +1,7 @@
 package com.wix.hive.commands
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
-import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
+import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 
 
 trait HiveBaseCommand[T]{

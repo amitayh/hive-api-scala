@@ -5,13 +5,10 @@ import com.wix.hive.client.http.NamedParameters
 import com.wix.hive.commands.ActivityScope.ActivityScope
 import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes
-import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
-import com.wix.hive.model.{CreateActivity, ActivityCreatedResult, ActivityTypes, Activity}
+import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityTypes, CreateActivity}
 import org.joda.time.DateTime
-
-import scalaz.Alpha.Q
 
 abstract class ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {
   override def url: String = "/activities"
@@ -54,13 +51,19 @@ case class GetActivities(activityTypes: Seq[String] = Nil, until: Option[DateTim
   }
 
   override def query: NamedParameters = {
-    Map(QueryKeys.activityTypes -> activityTypes.mkString(","),
-      QueryKeys.until -> (if (until.isDefined) until.get.toString else ""),
-      QueryKeys.from -> (if (from.isDefined) from.get.toString else ""),
-      QueryKeys.scope -> scope.toString,
-      QueryKeys.cursor -> (if (cursor.isDefined) cursor.get.toString else ""),
-      QueryKeys.pageSize -> pageSize.toString).
-      filter { case (k, v) => v.nonEmpty}
+    val requiredParams = Map(QueryKeys.scope -> scope.toString,
+      QueryKeys.pageSize -> pageSize.toString)
+
+    val optionalParams = Map(QueryKeys.activityTypes -> activityTypes,
+      QueryKeys.until -> until,
+      QueryKeys.from -> from,
+      QueryKeys.cursor -> cursor)
+      .collect {
+      case (k, v: Some[_]) => k -> v.get.toString
+      case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
+    }
+
+    (requiredParams ++ optionalParams).toMap
   }
 }
 
@@ -69,4 +72,8 @@ object ActivityScope extends Enumeration {
   val site, app = Value
 }
 
-case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity])
+case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) {
+  def previousPageCommand = nextCursor.map(c => GetActivities(cursor = this.previousCursor))
+
+  def nextPageCommand = nextCursor.map(c => GetActivities(cursor = this.nextCursor))
+}

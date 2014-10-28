@@ -2,7 +2,7 @@ package com.wix.hive.client.http
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.fasterxml.jackson.module.scala.{EnumerationModule, DefaultScalaModule}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.ning.http.client.Response
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.model.WixAPIErrorException

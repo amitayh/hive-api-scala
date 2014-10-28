@@ -1,11 +1,9 @@
 package com.wix.hive.model
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonCreator}
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore}
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
 
-import scala.annotation.switch
 import scala.util.Try
 
 case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option[String] = None,
@@ -22,7 +20,7 @@ case class ContactActivity(name: Option[ContactName] = None, picture: Option[Str
 
 object Activity {
 
-  import ActivityType._
+  import com.wix.hive.model.ActivityType._
 
   val activityTypeToClass = Map(
     `auth/login` -> classOf[AuthLogin],
@@ -81,7 +79,7 @@ object ActivityType extends Enumeration {
 
 case class ActivityDetails(additionalInfoUrl: String, summary: String)
 
-import ActivityType._
+import com.wix.hive.model.ActivityType._
 
 abstract class ActivityInfo {
   @JsonIgnore

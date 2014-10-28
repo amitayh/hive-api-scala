@@ -4,12 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.wix.hive.commands.PagingActivitiesResult
-import com.wix.hive.commands.contacts.GetContacts
 import com.wix.hive.model._
-import com.github.tomakehurst.wiremock.client.WireMock._
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
 
@@ -32,7 +30,10 @@ class HiveClientWithSimplicatorIT extends BaseHiveClientIT with HubSimplicator {
 
   override def shutdownEnv() = wireMockServer.shutdown()
 
-  override def beforeTest(): Unit = WireMock.reset()
+  override def beforeTest(): Unit = {
+    WireMock.reset()
+    WireMock.resetAllScenarios()
+  }
 }
 
 trait HubSimplicator extends HiveApiDrivers {
@@ -66,14 +67,13 @@ trait HubSimplicator extends HiveApiDrivers {
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {
-      case activity: Activity => {
+      case activity: Activity =>
         import activity._
         val activityJson = mapper.writeValueAsString(new ActivityAsInHubServer(id, createdAt, activityLocationUrl, activityDetails, activityInfo))
 
         givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}")).
           withStandardHeaders(myself).
           willReturn(aResponse().withBody(activityJson)))
-      }
     }
   }
 
