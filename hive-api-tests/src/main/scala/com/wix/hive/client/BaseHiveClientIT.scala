@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.wix.hive.commands._
 import com.wix.hive.commands.contacts.{PageSizes, GetContactById, GetContacts}
+import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
@@ -109,7 +110,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
       val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
       firstPageResult must haveSameIds(firstPage :_*)
 
-      client.execute(firstPageResult.nextPageCommand.get) must haveSameIds(secondPage :_*).await()
+      firstPageResult.nextPageCommand match {
+        case Some(cmd) => client.execute(cmd) must haveSameIds(secondPage :_*).await()
+        case None => failure("Didn't get the second page")
+      }
     }.pendingUntilFixed("PageSize is not implemented in the server")
   }
 

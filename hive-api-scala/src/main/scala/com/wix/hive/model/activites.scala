@@ -1,6 +1,7 @@
 package com.wix.hive.model
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore}
+import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
 
@@ -8,15 +9,6 @@ import scala.util.Try
 
 case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option[String] = None,
                     activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
-
-case class CreateActivity(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
-                          activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
-  val activityType = activityInfo.activityType.toString
-}
-
-case class ContactActivity(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
-                           emails: Seq[ContactEmail] = Nil, phones: Seq[ContactPhone] = Nil,
-                           addresses: Seq[Address] = Nil, dates: Seq[ImportantDate] = Nil, urls: Seq[ContactUrl] = Nil)
 
 object Activity {
 
@@ -37,13 +29,14 @@ object Activity {
     `music/track-skip` -> classOf[MusicTrackSkip])
 
 
+  //TODO : see if possible to extract it out
   @JsonCreator
   def factory(props: Map[String, Object]): Activity = {
     val id = props("id").asInstanceOf[String]
 
-    val createdAt = mapper.convertValue(props("createdAt"), classOf[DateTime]) //new DateTime(props("createdAt").asInstanceOf[String])
+    val createdAt = mapper.convertValue(props("createdAt"), classOf[DateTime])
 
-    val activityLocationUrl = Try(mapper.convertValue(props("activityLocationUrl"), classOf[String])).toOption // Some(props.getOrElse("activityLocationUrl", "").asInstanceOf[String]).filter(_.nonEmpty)
+    val activityLocationUrl = Try(mapper.convertValue(props("activityLocationUrl"), classOf[String])).toOption
 
     val activityDetails = Try(mapper.convertValue(props("activityDetails"), classOf[ActivityDetails])).toOption
 
@@ -59,6 +52,16 @@ object Activity {
       activityInfo)
   }
 }
+
+case class CreateActivity(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
+                          activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
+  val activityType = activityInfo.activityType.toString
+}
+
+case class ContactActivity(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
+                           emails: Seq[ContactEmail] = Nil, phones: Seq[ContactPhone] = Nil,
+                           addresses: Seq[Address] = Nil, dates: Seq[ImportantDate] = Nil, urls: Seq[ContactUrl] = Nil)
+
 
 object ActivityType extends Enumeration {
   type ActivityType = Value

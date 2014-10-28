@@ -11,8 +11,8 @@ case class GetContacts(tag: Seq[String] = Nil, email: Option[String] = None, pho
 
   override val query = {
     val tagsParam = if (tag.nonEmpty) Map("tag" -> tag.mkString(",")) else Map[String, String]()
-    val emailParam = email.map(("email" -> _)).toMap
-    val phoneParam = phone.map(("phone" -> _)).toMap
+    val emailParam = email.map("email" -> _).toMap
+    val phoneParam = phone.map("phone" -> _).toMap
     val firstNameParam = firstName.map("firstName" -> _).toMap
     val lastNameParam = lastName.map("lastName" -> _).toMap
     val cursorParam = cursor.map("cursor" -> _).toMap
