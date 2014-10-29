@@ -7,7 +7,7 @@ import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
-import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityTypes, CreateActivity}
+import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityTypes, ActivityCreationData}
 import org.joda.time.DateTime
 
 abstract class ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {
@@ -26,7 +26,7 @@ case class GetActivityTypes() extends ActivityCommand[ActivityTypes] {
   override def method: HttpMethod = GET
 }
 
-case class PostActivity(userSessionToken: String, activity: CreateActivity) extends ActivityCommand[ActivityCreatedResult] {
+case class CreateActivity(userSessionToken: String, activity: ActivityCreationData) extends ActivityCommand[ActivityCreatedResult] {
   private val userSessionTokenKey: String = "userSessionToken"
 
   override def method: HttpMethod = POST
@@ -37,7 +37,7 @@ case class PostActivity(userSessionToken: String, activity: CreateActivity) exte
 }
 
 case class GetActivities(activityTypes: Seq[String] = Nil, until: Option[DateTime] = None, from: Option[DateTime] = None,
-                         scope: ActivityScope = ActivityScope.site, cursor: Option[String] = None, pageSize: PageSizes = PageSizes.`25`)
+                         scope: ActivityScope = ActivityScope.default, cursor: Option[String] = None, pageSize: PageSizes = PageSizes.default)
   extends ActivityCommand[PagingActivitiesResult] {
   override def method: HttpMethod = GET
 
@@ -70,6 +70,8 @@ case class GetActivities(activityTypes: Seq[String] = Nil, until: Option[DateTim
 object ActivityScope extends Enumeration {
   type ActivityScope = Value
   val site, app = Value
+
+  val default = site
 }
 
 case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) {

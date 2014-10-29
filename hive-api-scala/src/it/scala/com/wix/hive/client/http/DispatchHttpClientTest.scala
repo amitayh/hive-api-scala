@@ -31,10 +31,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     val baseUrl = "http://localhost:8089"
 
-    def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)) match {
-      case Success(c) => true
-      case _ => false
-    }
+    def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
     def haveDataForDymmy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
 

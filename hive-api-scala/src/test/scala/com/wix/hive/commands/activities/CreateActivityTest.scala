@@ -1,12 +1,12 @@
 package com.wix.hive.commands.activities
 
-import com.wix.hive.commands.{PostActivity, GetActivityById}
+import com.wix.hive.commands.{CreateActivity, GetActivityById}
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-class PostActivityTest extends SpecificationWithJUnit {
+class CreateActivityTest extends SpecificationWithJUnit {
 
   "createHttpRequestData" should {
 
@@ -14,9 +14,9 @@ class PostActivityTest extends SpecificationWithJUnit {
       val activityLocationUrl = "urrrrrrl"
       val activityDetails = ActivityDetails("additional://InfoUrl.com", "summary_")
       val contact = ContactActivity()
-      val createActivity = CreateActivity(activityCreatedAt, activityLocationUrl = Some(activityLocationUrl),
+      val createActivity = ActivityCreationData(activityCreatedAt, activityLocationUrl = Some(activityLocationUrl),
         Some(activityDetails), activityInfo, Some(contact))
-      val command = PostActivity(userToken, createActivity)
+      val command = CreateActivity(userToken, createActivity)
 
       val httpData = command.createHttpRequestData
 
@@ -25,8 +25,8 @@ class PostActivityTest extends SpecificationWithJUnit {
     }
 
     "create HttpRequestData with all defaults" in new Context {
-      val createActivity = CreateActivity(activityCreatedAt, activityInfo = activityInfo)
-      val command = PostActivity(userToken, createActivity)
+      val createActivity = ActivityCreationData(activityCreatedAt, activityInfo = activityInfo)
+      val command = CreateActivity(userToken, createActivity)
 
       val httpData = command.createHttpRequestData
 

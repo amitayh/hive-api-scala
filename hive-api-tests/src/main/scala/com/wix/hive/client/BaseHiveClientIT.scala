@@ -47,10 +47,11 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def haveTypes(types: Seq[String]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
 
-    def haveActivityResult: Matcher[ActivityCreatedResult] = (res:ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
+    def haveActivityResult: Matcher[ActivityCreatedResult] = (res: ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
 
-    //def beActivityResultWith(activity: Activity): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.head.id == activity.id
     def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
+
+    def haveSiteUrl(url: String): Matcher[SiteData] = ((_:SiteData).url) ^^ be_==(url)
   }
 
   "Hive client" should {
@@ -81,7 +82,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
       givenAppWithContactExist(me, randomId)
       val userSessionToken = getValidUserSessionToken
 
-      val command = PostActivity(userSessionToken, CreateActivity(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
+      val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
 
       client.execute(command) must haveActivityResult.await
 
@@ -100,21 +101,28 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     "get all activities with paging" in new Context {
       val activityId = randomId
 
-      val firstPage = Seq.range(0,25).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
-      val secondPage = Seq.range(25,40).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      val firstPage = Seq.range(0, 25).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      val secondPage = Seq.range(25, 40).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
       val allActivities = firstPage ++ secondPage
 
-      givenAppWithActivitiesBulk(me, allActivities :_*)
+      givenAppWithActivitiesBulk(me, allActivities: _*)
 
 
       val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
-      firstPageResult must haveSameIds(firstPage :_*)
+      firstPageResult must haveSameIds(firstPage: _*)
 
       firstPageResult.nextPageCommand match {
-        case Some(cmd) => client.execute(cmd) must haveSameIds(secondPage :_*).await()
+        case Some(cmd) => client.execute(cmd) must haveSameIds(secondPage: _*).await()
         case None => failure("Didn't get the second page")
       }
     }.pendingUntilFixed("PageSize is not implemented in the server")
+
+    "get site's URL" in new Context {
+      val url = "http://somesite.com/wix"
+      givenAppWithSite(me, url)
+
+      client.execute(Site()) must haveSiteUrl(url).await
+    }
   }
 
   step(shutdownEnv())
@@ -133,9 +141,13 @@ trait HiveApiDrivers {
   def givenAppActivityTypes(app: AppDef, types: String*): Unit
 
   def givenAppWithContactExist(app: AppDef, contactId: String): Unit
+
   def getValidUserSessionToken: String
 
   def verifyActivityCreated(appDef: AppDef): Unit
+
+  def givenAppWithSite(appDef: AppDef, url: String): Unit
+
 
   case class AppDef(appId: String, instanceId: String, secret: String)
 

@@ -62,6 +62,7 @@ trait HubSimplicator extends HiveApiDrivers {
 
   case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
     def this(a: Activity) = this(a.id, a.createdAt, a.activityLocationUrl, a.activityDetails, a.activityInfo)
+
     val activityType = activityInfo.activityType.toString
   }
 
@@ -101,11 +102,18 @@ trait HubSimplicator extends HiveApiDrivers {
   override def givenAppWithContactExist(app: AppDef, contactId: String): Unit = {
     val responseJson = mapper.writeValueAsString(ActivityCreatedResult("activityId", "contactId"))
 
-    givenThat(post(versionedUrlMatcher(s"/activities.*userSessionToken=$getValidUserSessionToken.*"))
+    givenThat(post(versionedUrlMatcher(s"/activities.*userSessionToken=$getValidUserSessionToken"))
       .withStandardHeaders(app).
       willReturn(aResponse().withBody(responseJson)))
   }
 
   override def verifyActivityCreated(appDef: AppDef): Unit = ()
 
+  override def givenAppWithSite(app: AppDef, url: String): Unit = {
+    val responseJson = mapper.writeValueAsString(SiteData(url, SiteStatus.published))
+
+    givenThat(get(versionedUrlMatcher("/sites/site"))
+      .withStandardHeaders(app)
+      .willReturn(aResponse().withBody(responseJson)))
+  }
 }

@@ -11,7 +11,6 @@ case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option
                     activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
 
 object Activity {
-
   import com.wix.hive.model.ActivityType._
 
   val activityTypeToClass = Map(
@@ -29,7 +28,6 @@ object Activity {
     `music/track-skip` -> classOf[MusicTrackSkip])
 
 
-  //TODO : see if possible to extract it out
   @JsonCreator
   def factory(props: Map[String, Object]): Activity = {
     val id = props("id").asInstanceOf[String]
@@ -53,7 +51,7 @@ object Activity {
   }
 }
 
-case class CreateActivity(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
+case class ActivityCreationData(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
                           activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
   val activityType = activityInfo.activityType.toString
 }

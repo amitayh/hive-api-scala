@@ -10,11 +10,11 @@ trait HiveMatchers extends Matchers {
 
   def anything[T] = AlwaysMatcher[T]()
 
-  def httpRequestDataWith(method: Matcher[HttpMethod] = anything,
-                          url: Matcher[String] = anything,
-                          query: Matcher[NamedParameters] = anything,
-                          headers: Matcher[NamedParameters] = anything,
-                          body: Matcher[Option[AnyRef]] = anything
+  def httpRequestDataWith(method: Matcher[HttpMethod] = be_==(GET),
+                          url: Matcher[String] = be(empty),
+                          query: Matcher[NamedParameters] = beEmpty,
+                          headers: Matcher[NamedParameters] = beEmpty,
+                          body: Matcher[Option[AnyRef]] = beNone
                          ): Matcher[HttpRequestData] = {
       method ^^ { (_: HttpRequestData).method aka "method" } and
       url ^^ { (_: HttpRequestData).url aka "url" } and
