@@ -123,6 +123,12 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
       client.execute(Site()) must haveSiteUrl(url).await
     }
+
+    "create 'Notification' message to all users of the application" in new Context {
+      val notification = new NotificationCreationData("title", "content", NotificationType.BusinessTips)
+
+      failure("not implemented on server side")
+    }.pendingUntilFixed
   }
 
   step(shutdownEnv())
