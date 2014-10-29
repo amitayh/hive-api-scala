@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
@@ -91,7 +92,7 @@ trait HubSimplicator extends HiveApiDrivers {
 
   override def getValidUserSessionToken: String = "user_tkn"
 
-  override def givenAppActivityTypes(app: AppDef, types: String*): Unit = {
+  override def givenAppActivityTypes(app: AppDef, types: ActivityType*): Unit = {
     val typesJson = mapper.writeValueAsString(ActivityTypes(types))
 
     givenThat(get(versionedUrlMatcher("/activities/types")).

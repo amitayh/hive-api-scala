@@ -1,6 +1,7 @@
 package com.wix.hive.model
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore}
+import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
@@ -61,6 +62,7 @@ case class ContactActivity(name: Option[ContactName] = None, picture: Option[Str
                            addresses: Seq[Address] = Nil, dates: Seq[ImportantDate] = Nil, urls: Seq[ContactUrl] = Nil)
 
 
+class ActivityTypeRef extends TypeReference[ActivityType.type]
 object ActivityType extends Enumeration {
   type ActivityType = Value
   val `auth/login` = Value("auth/login")
@@ -160,6 +162,6 @@ case class MusicTrackSkip() extends ActivityInfo {
   override val activityType = `music/track-skip`
 }
 
-case class ActivityTypes(types: Seq[String])
+case class ActivityTypes(@JsonScalaEnumeration(classOf[ActivityTypeRef])types: Seq[ActivityType])
 
 case class ActivityCreatedResult(activityId: String, contactId: String)

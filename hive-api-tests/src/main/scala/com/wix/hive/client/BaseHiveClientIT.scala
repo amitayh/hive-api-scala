@@ -45,7 +45,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
 
-    def haveTypes(types: Seq[String]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
+    def haveTypes(types: Seq[ActivityType]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
 
     def haveActivityResult: Matcher[ActivityCreatedResult] = (res: ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
 
@@ -72,7 +72,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     }
 
     "get list of all activity types" in new Context {
-      val types = Seq("type1/some", "another/type_2")
+      val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
       givenAppActivityTypes(me, types: _*)
 
       client.execute(GetActivityTypes()) must haveTypes(types).await
@@ -144,7 +144,7 @@ trait HiveApiDrivers {
 
   def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit
 
-  def givenAppActivityTypes(app: AppDef, types: String*): Unit
+  def givenAppActivityTypes(app: AppDef, types: ActivityType*): Unit
 
   def givenAppWithContactExist(app: AppDef, contactId: String): Unit
 
