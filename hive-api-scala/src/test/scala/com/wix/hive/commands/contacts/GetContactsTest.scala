@@ -28,7 +28,7 @@ class GetContactsTest extends SpecificationWithJUnit {
 
       val httpData = cmd.createHttpRequestData
 
-      httpData.queryString must haveSize(0)
+      httpData.queryString must beEmpty
     }
   }
 

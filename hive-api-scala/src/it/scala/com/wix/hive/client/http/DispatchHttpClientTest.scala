@@ -33,7 +33,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
-    def haveDataForDymmy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
+    def haveDataForDummy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
 
     def isWixApiErrorException(errorCode: Matcher[Int], message: Matcher[Option[String]], wixErrorCode: Matcher[Option[Int]]): Matcher[WixAPIErrorException] = {
       errorCode ^^ { (_: WixAPIErrorException).errorCode aka "errorCode" } and
@@ -97,9 +97,9 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       givenThat(put(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"PUT"}""")))
       givenThat(delete(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
 
-      HttpMethod.values.foreach(method => {
-        client.request[Dummy](HttpRequestData(method, s"$baseUrl/test")) must haveDataForDymmy(method.toString).await //beSuccess.updateMessage(msg => s"Failed for method $method - $msg")
-      })
+      HttpMethod.values foreach { method =>
+        client.request[Dummy](HttpRequestData(method, s"$baseUrl/test")) must haveDataForDummy(method.toString).await
+      }
     }
 
     "handle error returned from the server" in new ctx {

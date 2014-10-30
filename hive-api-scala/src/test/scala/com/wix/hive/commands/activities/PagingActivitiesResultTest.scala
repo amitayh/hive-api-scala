@@ -10,17 +10,20 @@ class PagingActivitiesResultTest extends SpecificationWithJUnit {
   class Context extends Scope {
     val prevCursor = "prev"
     val nextCursor = "next"
-    val resultWithPrevNext = PagingActivitiesResult(25, Some(prevCursor), Some(nextCursor), Nil)
+    val resultWithPrev = PagingActivitiesResult(25, Some(prevCursor), None, Nil)
+    val resultWithNext = PagingActivitiesResult(25, None, Some(nextCursor), Nil)
     val resultSinglePage = PagingActivitiesResult(25, None, None, Nil)
 
-    def haveCursor(cursor: String): Matcher[GetActivities] = (command: GetActivities) => command.cursor.get == cursor
+    def beSomeWithCursor(cursor: Matcher[Option[String]]): Matcher[Option[GetActivities]] = {
+      beSome(cursor ^^ { (_: GetActivities).cursor aka "cursor" })
+    }
   }
 
 
   "previousPageCommand" should {
 
     "with previous page" in new Context {
-      resultWithPrevNext.previousPageCommand must beSome(haveCursor(prevCursor))
+      resultWithPrev.previousPageCommand must beSomeWithCursor(beSome(prevCursor))
     }
 
     "without previous page" in new Context {
@@ -31,8 +34,7 @@ class PagingActivitiesResultTest extends SpecificationWithJUnit {
   "nextPageCommand" should {
 
     "with next page" in new Context {
-      resultWithPrevNext.nextPageCommand must beSome(haveCursor(nextCursor))
-
+      resultWithNext.nextPageCommand must beSomeWithCursor(beSome(nextCursor))
     }
 
     "without next page" in new Context {

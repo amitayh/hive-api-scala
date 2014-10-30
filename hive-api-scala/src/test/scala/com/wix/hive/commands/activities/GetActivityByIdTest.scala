@@ -11,7 +11,7 @@ class GetActivityByIdTest extends SpecificationWithJUnit {
     "create HttpRequestData with id" in new Context {
       val httpData = command.createHttpRequestData
 
-      httpData.url must endWith(s"/${id}")
+      httpData.url must endWith(s"/$id")
     }
   }
 

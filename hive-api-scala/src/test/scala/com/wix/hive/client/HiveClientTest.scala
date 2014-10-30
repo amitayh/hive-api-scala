@@ -9,7 +9,7 @@ import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
 
-class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatchers{
+class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatchers {
 
   class Context extends Scope {
     val httpClient = mock[AsyncHttpClient]
@@ -28,16 +28,16 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
       client.execute(TestCommand())
 
       there was one(httpClient).request(httpRequestDataWith(
-        method = be_==(HttpMethod.GET),
+        method = be_===(HttpMethod.GET),
         url = be_==(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
         query = havePairs(commandQuery.toSeq :_*),
         headers = headersFor(commandHeaders, client),
-        body = be_==(commandBody)))(any)
+        body = be_===(commandBody)))(any)
     }
   }
 
 
-
+  // move into context
   val commandUrl = "/tst"
   val commandParams = "/param"
   val commandQuery = Map("q" -> "query")
@@ -60,3 +60,4 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
   case class TestCommandResponse()
 }
+

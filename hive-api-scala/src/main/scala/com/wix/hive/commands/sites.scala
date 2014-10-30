@@ -3,8 +3,8 @@ package com.wix.hive.commands
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.model.{SiteData, Activity}
 
-case class Site() extends HiveBaseCommand[SiteData] {
-  override def method: HttpMethod = GET
-  override def url: String = "/sites"
-  override def urlParams = "/site"
+case object Site extends HiveBaseCommand[SiteData] {
+  override val method: HttpMethod = GET
+  override val url: String = "/sites"
+  override val urlParams = "/site"
 }

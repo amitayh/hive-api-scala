@@ -11,16 +11,7 @@ class GetActivitiesTest extends SpecificationWithJUnit {
   "createHttpRequestData" should {
 
     "create HttpRequestData with all fields" in new Context {
-
-
-      private val types = Seq("type1", "type2")
-      private val until = Some(new DateTime(2014, 1, 1, 0, 0))
-      private val from = Some(new DateTime(2010, 1, 1, 0, 0))
-      private val scope = ActivityScope.app
-      private val cursor = Some("crsr")
-      private val pageSize = PageSizes.`50`
       val command = GetActivities(types, until, from, scope, cursor, pageSize)
-
       val httpData = command.createHttpRequestData
 
       httpData.queryString must havePairs(
@@ -36,7 +27,6 @@ class GetActivitiesTest extends SpecificationWithJUnit {
 
     "create HttpRequestData without optionals" in new Context {
       val command = GetActivities()
-
       val httpData = command.createHttpRequestData
 
       httpData.queryString must havePairs(
@@ -49,6 +39,12 @@ class GetActivitiesTest extends SpecificationWithJUnit {
 
 
   class Context extends Scope {
+    val types = Seq("type1", "type2")
+    val until = Some(new DateTime(2014, 1, 1, 0, 0))
+    val from = Some(new DateTime(2010, 1, 1, 0, 0))
+    val scope = ActivityScope.app
+    val cursor = Some("crsr")
+    val pageSize = PageSizes.`50`
   }
 
 }

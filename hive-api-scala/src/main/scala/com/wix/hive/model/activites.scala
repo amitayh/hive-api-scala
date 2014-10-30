@@ -3,16 +3,22 @@ package com.wix.hive.model
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore}
 import com.fasterxml.jackson.core.`type`.TypeReference
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
+import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
+import scala.util.control.Exception._
+import scalaz.Value
 
-import scala.util.Try
-
-case class Activity(id: String, createdAt: DateTime, activityLocationUrl: Option[String] = None,
-                    activityDetails: Option[ActivityDetails] = None, activityInfo: ActivityInfo)
+case class Activity(id: String,
+                    createdAt: DateTime,
+                    activityInfo: ActivityInfo,
+                    activityLocationUrl: Option[String] = None,
+                    activityDetails: Option[ActivityDetails] = None)
 
 object Activity {
-  import com.wix.hive.model.ActivityType._
+
+  import ActivityType._
+
 
   val activityTypeToClass = Map(
     `auth/login` -> classOf[AuthLogin],
@@ -31,29 +37,32 @@ object Activity {
 
   @JsonCreator
   def factory(props: Map[String, Object]): Activity = {
+
+    def opt[T] = catching[T](classOf[Exception]).opt _
+
     val id = props("id").asInstanceOf[String]
 
-    val createdAt = mapper.convertValue(props("createdAt"), classOf[DateTime])
+    val createdAt = JacksonObjectMapper.mapper.convertValue(props("createdAt"), classOf[DateTime])
 
-    val activityLocationUrl = Try(mapper.convertValue(props("activityLocationUrl"), classOf[String])).toOption
+    val activityLocationUrl = opt(JacksonObjectMapper.mapper.convertValue(props("activityLocationUrl"), classOf[String]))
 
-    val activityDetails = Try(mapper.convertValue(props("activityDetails"), classOf[ActivityDetails])).toOption
+    val activityDetails = opt(JacksonObjectMapper.mapper.convertValue(props("activityDetails"), classOf[ActivityDetails]))
 
     val typ = ActivityType.withName(props("activityType").asInstanceOf[String])
     val activityInfoType = activityTypeToClass(typ)
-    val activityInfo = mapper.convertValue(props("activityInfo"), activityInfoType)
+    val activityInfo = JacksonObjectMapper.mapper.convertValue(props("activityInfo"), activityInfoType)
 
-
-    com.wix.hive.model.Activity(id,
+    Activity(
+      id,
       createdAt,
+      activityInfo,
       activityLocationUrl,
-      activityDetails,
-      activityInfo)
+      activityDetails)
   }
 }
 
 case class ActivityCreationData(createdAt: DateTime, activityLocationUrl: Option[String] = None, activityDetails: Option[ActivityDetails] = None,
-                          activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
+                                activityInfo: ActivityInfo, contactUpdate: Option[ContactActivity] = None) {
   val activityType = activityInfo.activityType.toString
 }
 
@@ -63,6 +72,7 @@ case class ContactActivity(name: Option[ContactName] = None, picture: Option[Str
 
 
 class ActivityTypeRef extends TypeReference[ActivityType.type]
+
 object ActivityType extends Enumeration {
   type ActivityType = Value
   val `auth/login` = Value("auth/login")
@@ -84,13 +94,14 @@ case class ActivityDetails(additionalInfoUrl: String, summary: String)
 
 import com.wix.hive.model.ActivityType._
 
-abstract class ActivityInfo {
+sealed trait ActivityInfo {
   @JsonIgnore
   def activityType: ActivityType
 }
 
 case class AuthLogin() extends ActivityInfo {
-  override val activityType = `auth/login`
+  override val activityType: ActivityType.ActivityType = `auth/login`
+
 }
 
 case class AuthRegister(initiator: String, previousActivityStreamId: String, status: String) extends ActivityInfo {
@@ -151,7 +162,6 @@ case class MusicTrackPlay() extends ActivityInfo {
 
 case class MusicTrackPlayed() extends ActivityInfo {
   override val activityType = `music/track-played`
-
 }
 
 case class MusicTrackShare() extends ActivityInfo {
@@ -162,6 +172,6 @@ case class MusicTrackSkip() extends ActivityInfo {
   override val activityType = `music/track-skip`
 }
 
-case class ActivityTypes(@JsonScalaEnumeration(classOf[ActivityTypeRef])types: Seq[ActivityType])
+case class ActivityTypes(@JsonScalaEnumeration(classOf[ActivityTypeRef]) types: Seq[ActivityType])
 
 case class ActivityCreatedResult(activityId: String, contactId: String)

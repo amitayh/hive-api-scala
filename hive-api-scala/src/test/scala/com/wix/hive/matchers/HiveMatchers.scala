@@ -4,13 +4,13 @@ import com.wix.hive.client.HiveClient
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
 import org.joda.time.{Seconds, DateTime}
-import org.specs2.matcher.{Matchers, Matcher, AlwaysMatcher}
+import org.specs2.matcher.{MustExpectations, Matchers, Matcher, AlwaysMatcher}
 
-trait HiveMatchers extends Matchers {
+trait HiveMatchers extends Matchers with MustExpectations {
 
   def anything[T] = AlwaysMatcher[T]()
 
-  def httpRequestDataWith(method: Matcher[HttpMethod] = be_==(GET),
+  def httpRequestDataWith(method: Matcher[HttpMethod] = be_===(GET),
                           url: Matcher[String] = be(empty),
                           query: Matcher[NamedParameters] = beEmpty,
                           headers: Matcher[NamedParameters] = beEmpty,
@@ -25,14 +25,15 @@ trait HiveMatchers extends Matchers {
 
   def headersFor(commandHeaders: NamedParameters, client: HiveClient) : Matcher[NamedParameters] = {
     havePairs(commandHeaders.toSeq :_*) and
-    havePairs("x-wix-instance-id" -> client.instanceId, "x-wix-application-id" -> client.appId) and
+    havePairs("x-wix-instance-id" -> client.instanceId,
+      "x-wix-application-id" -> client.appId) and
+    haveKey("x-wix-signature") and
     startWith("Hive Scala v") ^^ {(_: NamedParameters)("User-Agent") aka "User-Agent"} and
     almostNow ^^ {(_: NamedParameters)("x-wix-timestamp") aka "x-wix-timestamp"}
   }
 
   def almostNow : Matcher[String] = (x:String) => {
-    val deviationSeconds = 2
-    Math.abs(Seconds.secondsBetween(new DateTime(x), new DateTime()).getSeconds) < deviationSeconds
+    new DateTime(x).getMillis must beCloseTo(new DateTime().getMillis, 2000)
   }
 }
 

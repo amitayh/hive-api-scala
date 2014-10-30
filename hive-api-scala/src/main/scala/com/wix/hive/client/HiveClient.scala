@@ -12,32 +12,24 @@ private object DefaultHttpClientFactory {
   def create: AsyncHttpClient = new DispatchHttpClient()
 }
 
-private object DefaultConfigurations{
+private object DefaultConfigurations {
   val baseUrl = "https://openapi.wix.com"
 }
 
-class HiveClient(val appId: String, val secretKey: String, val instanceId: String,
+
+class HiveClient(val appId: String, secretKey: String, val instanceId: String,
                  httpClient: AsyncHttpClient = DefaultHttpClientFactory.create,
-                  val baseUrl: String = DefaultConfigurations.baseUrl) {
+                 val baseUrl: String = DefaultConfigurations.baseUrl) {
+
   def timestamp: String = new DateTime().toString(ISODateTimeFormat.dateTime())
 
   val version = "1.0.0"
 
-  val versionForUrl = "/v" + version.split('.').head
+  val versionForUrl = "/v1"
 
   val agent = s"Hive Scala v$version"
 
-  object HeaderKeys {
-    val instanceId = "x-wix-instance-id"
-    val applicationId = "x-wix-application-id"
-    val timestamp = "x-wix-timestamp"
-    val signature = "x-wix-signature"
-    val userAgent = "User-Agent"
-  }
-
-  object QueryKeys {
-    val version = "version"
-  }
+  lazy val signer = new HiveSigner(secretKey)
 
 
   def execute[TCommandResult : ClassTag](command: HiveBaseCommand[TCommandResult]): Future[TCommandResult] = {
@@ -49,20 +41,30 @@ class HiveClient(val appId: String, val secretKey: String, val instanceId: Strin
   }
 
   def withSignature(httpData: HttpRequestData): HttpRequestData = {
-    val signature = HiveSigner.getSignature(secretKey, httpData)
-    httpData.copy(headers = httpData.headers + (HeaderKeys.signature -> signature))
+    val signature = signer.getSignature(httpData)
+    httpData.copy(headers = httpData.headers + (HiveClient.SignatureKey -> signature))
   }
 
   def withClientData(httpData: HttpRequestData): HttpRequestData = {
     httpData.copy(
       url = s"$versionForUrl${httpData.url}",
-      queryString = httpData.queryString + (QueryKeys.version -> this.version) ,
+      queryString = httpData.queryString + (HiveClient.VersionKey -> this.version),
       headers = httpData.headers +
-        (HeaderKeys.instanceId -> this.instanceId) +
-        (HeaderKeys.applicationId -> this.appId) +
-        (HeaderKeys.timestamp -> this.timestamp) +
-        (HeaderKeys.userAgent -> this.agent))
+        (HiveClient.InstanceIdKey -> this.instanceId) +
+        (HiveClient.ApplicationIdKey -> this.appId) +
+        (HiveClient.TimestampKey -> this.timestamp) +
+        (HiveClient.UserAgentKey -> this.agent))
   }
 
   def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
+}
+
+object HiveClient {
+  val InstanceIdKey = "x-wix-instance-id"
+  val ApplicationIdKey = "x-wix-application-id"
+  val TimestampKey = "x-wix-timestamp"
+  val SignatureKey = "x-wix-signature"
+  val UserAgentKey = "User-Agent"
+
+  val VersionKey = "version"
 }

@@ -6,9 +6,9 @@ import com.wix.hive.model.Contact
 
 
 case class GetContactById(id: String) extends ContactsCommand[Contact] {
-  override def method: HttpMethod = HttpMethod.GET
+  override val method: HttpMethod = HttpMethod.GET
 
-  override def urlParams = s"/$id"
+  override val urlParams = s"/$id"
 }
 
 case class GetContactByIdResponse()

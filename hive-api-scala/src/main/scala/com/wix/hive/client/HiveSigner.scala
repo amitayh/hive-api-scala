@@ -8,14 +8,17 @@ import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 import org.apache.commons.net.util.Base64
 
 
-object HiveSigner {
+class HiveSigner(key: String) {
 
-  def getSignature(key: String, data: HttpRequestData): String = {
-    val stringToSign = generateStringToSign(data)
-
+  lazy val mac = {
     val secret = new SecretKeySpec(key.getBytes, "HMACSHA256")
-    val mac = Mac.getInstance("HMACSHA256")
-    mac.init(secret)
+    val instance = Mac.getInstance("HMACSHA256")
+    instance.init(secret)
+    instance
+  }
+
+  def getSignature(data: HttpRequestData): String = {
+    val stringToSign = generateStringToSign(data)
 
     val result: Array[Byte] = mac.doFinal(stringToSign.getBytes)
     new Base64(true).encodeToString(result).trim
@@ -26,10 +29,9 @@ object HiveSigner {
 
     val sortedQuery = toSortedSeq(queryString)
     val sortedWixHeaders = toSortedSeq(headers.filterKeys(_.toLowerCase.startsWith("x-wix-")))
-    val sortedParams =  (sortedQuery ++ sortedWixHeaders).mkString("\n")
+    val sortedParams = (sortedQuery ++ sortedWixHeaders).mkString("\n")
     val post = data.bodyAsString
     val postSeparator = if (post.nonEmpty) "\n" else ""
-
 
     s"""$method\n$url\n$sortedParams$postSeparator$post"""
   }

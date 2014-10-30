@@ -7,64 +7,68 @@ import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
+import com.wix.hive.model.ActivityTypes
 import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityTypes, ActivityCreationData}
 import org.joda.time.DateTime
+import com.wix.hive.commands.GetActivities._
 
 abstract class ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {
-  override def url: String = "/activities"
+  override val url: String = "/activities"
 }
 
 case class GetActivityById(id: String) extends ActivityCommand[Activity] {
-  override def method: HttpMethod = GET
+  override val method: HttpMethod = GET
 
-  override def urlParams = s"/$id"
+  override val urlParams = s"/$id"
 }
 
 case class GetActivityTypes() extends ActivityCommand[ActivityTypes] {
-  override def url: String = super.url + "/types"
+  override val urlParams: String = "/types"
 
-  override def method: HttpMethod = GET
+  override val method: HttpMethod = GET
 }
 
 case class CreateActivity(userSessionToken: String, activity: ActivityCreationData) extends ActivityCommand[ActivityCreatedResult] {
   private val userSessionTokenKey: String = "userSessionToken"
 
-  override def method: HttpMethod = POST
+  override val method: HttpMethod = POST
 
-  override def body: Option[AnyRef] = Some(activity)
+  override val body: Option[AnyRef] = Some(activity)
 
-  override def query: NamedParameters = Map(userSessionTokenKey -> userSessionToken)
+  override val query: NamedParameters = Map(userSessionTokenKey -> userSessionToken)
 }
 
-case class GetActivities(activityTypes: Seq[String] = Nil, until: Option[DateTime] = None, from: Option[DateTime] = None,
-                         scope: ActivityScope = ActivityScope.default, cursor: Option[String] = None, pageSize: PageSizes = PageSizes.default)
+case class GetActivities(activityTypes: Seq[String] = Nil,
+                         until: Option[DateTime] = None,
+                         from: Option[DateTime] = None,
+                         scope: ActivityScope = ActivityScope.default,
+                         cursor: Option[String] = None,
+                         pageSize: PageSizes = PageSizes.default)
   extends ActivityCommand[PagingActivitiesResult] {
-  override def method: HttpMethod = GET
 
-  private object QueryKeys {
-    val activityTypes = "activityTypes"
-    val until = "until"
-    val from = "from"
-    val scope = "scope"
-    val cursor = "cursor"
-    val pageSize = "pageSize"
+  override val method: HttpMethod = GET
+
+  override val query: NamedParameters = Map(
+    ScopeKey -> scope,
+    PageSizeKey -> pageSize,
+    ActivityTypesKey -> activityTypes,
+    UntilKey -> until,
+    FromKey -> from,
+    CursorKey -> cursor)
+    .collect {
+    case (k, v: Some[_]) => k -> v.get.toString
+    case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
+    case (k, v: Enumeration#Value) => k -> v.toString
   }
+}
 
-  override def query: NamedParameters = {
-    val requiredParams = Map(QueryKeys.scope -> scope.toString,
-      QueryKeys.pageSize -> pageSize.toString)
-
-    val optionalParams = Map(QueryKeys.activityTypes -> activityTypes,
-      QueryKeys.until -> until,
-      QueryKeys.from -> from,
-      QueryKeys.cursor -> cursor)
-      .collect {
-      case (k, v: Some[_]) => k -> v.get.toString
-      case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
-    }
-
-    (requiredParams ++ optionalParams).toMap
-  }
+object GetActivities {
+  val ActivityTypesKey = "activityTypes"
+  val UntilKey = "until"
+  val FromKey = "from"
+  val ScopeKey = "scope"
+  val CursorKey = "cursor"
+  val PageSizeKey = "pageSize"
 }
 
 object ActivityScope extends Enumeration {
@@ -75,7 +79,8 @@ object ActivityScope extends Enumeration {
 }
 
 case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) {
-  def previousPageCommand = nextCursor.map(c => GetActivities(cursor = this.previousCursor))
 
-  def nextPageCommand = nextCursor.map(c => GetActivities(cursor = this.nextCursor))
+  def previousPageCommand: Option[GetActivities] = previousCursor.map(_ => GetActivities(cursor = this.previousCursor))
+
+  def nextPageCommand: Option[GetActivities] = nextCursor.map(_ => GetActivities(cursor = this.nextCursor))
 }

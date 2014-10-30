@@ -11,7 +11,7 @@ class SiteTest extends SpecificationWithJUnit with HiveMatchers {
   "createHttpRequestData" should {
 
     "create HttpRequestData with parameters" in new Context {
-      val cmd = Site()
+      val cmd = Site
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_==(GET),
         url = be_==("/sites/site"))

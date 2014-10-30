@@ -1,21 +1,22 @@
 package com.wix.hive.client
 
+
 import java.util.UUID
 
 import com.wix.hive.commands._
-import com.wix.hive.commands.contacts.{PageSizes, GetContactById, GetContacts}
+import com.wix.hive.commands.contacts.{GetContactById, PageSizes}
 import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.specification.Scope
+import org.specs2.time.NoTimeConversions
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.{Duration, FiniteDuration}
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 
-abstract class BaseHiveClientIT extends SpecificationWithJUnit {
+abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConversions {
   this: HiveApiDrivers =>
 
   sequential
@@ -41,7 +42,16 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def now = new DateTime()
 
-    def beAContactWith(id: String): Matcher[Contact] = (contact: Contact) => contact.id == id
+    val activityId = randomId
+
+    val activcity = Activity(id = "id", createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
+    val firstPage = (0 to 25).map((id: Int) => activcity.copy(id = id.toString))
+    val secondPage = (25 to 40).map((id: Int) => activcity.copy(id = id.toString))
+    val allActivities = firstPage ++ secondPage
+
+    implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
+
+    def beAContactWith(id: String): Matcher[Contact] = (_: Contact).id == id
 
     def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
 
@@ -51,7 +61,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
 
     def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
 
-    def haveSiteUrl(url: String): Matcher[SiteData] = ((_:SiteData).url) ^^ be_==(url)
+    def haveSiteUrl(url: Matcher[String]): Matcher[SiteData] = url ^^ ((_:SiteData).url aka "siteUrl")
   }
 
   "Hive client" should {
@@ -64,8 +74,6 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     }
 
     "get activity by ID" in new Context {
-      val activityId = randomId
-
       givenAppWithActivitiesById(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
 
       client.execute(GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
@@ -90,7 +98,6 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     }
 
     "get all activities" in new Context {
-      val activityId = randomId
       val activity = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
 
       givenAppWithActivitiesBulk(me, activity)
@@ -99,16 +106,9 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
     }
 
     "get all activities with paging" in new Context {
-      val activityId = randomId
-
-      val firstPage = Seq.range(0, 25).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
-      val secondPage = Seq.range(25, 40).map((id: Int) => Activity(id = id.toString, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
-      val allActivities = firstPage ++ secondPage
-
       givenAppWithActivitiesBulk(me, allActivities: _*)
 
-
-      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
+      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), 1.second)
       firstPageResult must haveSameIds(firstPage: _*)
 
       firstPageResult.nextPageCommand match {
@@ -121,7 +121,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit {
       val url = "http://somesite.com/wix"
       givenAppWithSite(me, url)
 
-      client.execute(Site()) must haveSiteUrl(url).await
+      client.execute(Site) must haveSiteUrl(url).await
     }
 
     "create 'Notification' message to all users of the application" in new Context {
