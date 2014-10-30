@@ -1,22 +1,21 @@
 package com.wix.hive.client
 
-
 import java.util.UUID
 
 import com.wix.hive.commands._
-import com.wix.hive.commands.contacts.{GetContactById, PageSizes}
+import com.wix.hive.commands.contacts.{PageSizes, GetContactById, GetContacts}
 import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.time.NoTimeConversions
+import org.specs2.specification.Scope
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 
-abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConversions {
+abstract class BaseHiveClientIT extends SpecificationWithJUnit {
   this: HiveApiDrivers =>
 
   sequential
@@ -61,18 +60,21 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
 
-    def haveSiteUrl(url: Matcher[String]): Matcher[SiteData] = url ^^ ((_:SiteData).url aka "siteUrl")
+    def haveSiteUrl(url: String): Matcher[SiteData] = ((_:SiteData).url) ^^ be_==(url)
   }
 
   "Hive client" should {
 
-    "get contact by ID" in new Context {
-      val userId = randomId
-      givenContactFetchById(myself = me, respondsWith = Contact(id = userId, createdAt = new DateTime()))
+    "get insights (activity summary) for a contact" in new Context {
+      val contactId = "cb2c0182-0ac7-4c80-acfb-09cc8c5fb744"
+      val from = new DateTime(2010, 1, 1, 0, 0)
+      val until = new DateTime(2013, 1, 2, 0, 0)
+      val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(ActivityType.`auth/login`), 1, from, until)), 1, from, until)
+      givenAppWithUserActivities(me, contactId, summary)
 
-      client.execute(GetContactById(userId)) must beAContactWith(id = userId).await
+      val res = client.execute(InsightActivitySummaryForContact(contactId, from = Some(from), until = Some(until)))
     }
-
+    
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
 
@@ -108,7 +110,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "get all activities with paging" in new Context {
       givenAppWithActivitiesBulk(me, allActivities: _*)
 
-      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), 1.second)
+
+      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
       firstPageResult must haveSameIds(firstPage: _*)
 
       firstPageResult.nextPageCommand match {
@@ -154,6 +157,7 @@ trait HiveApiDrivers {
 
   def givenAppWithSite(appDef: AppDef, url: String): Unit
 
+  def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit
 
   case class AppDef(appId: String, instanceId: String, secret: String)
 

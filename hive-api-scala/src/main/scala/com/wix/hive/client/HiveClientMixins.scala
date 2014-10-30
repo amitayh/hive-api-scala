@@ -20,8 +20,8 @@ trait Activities {
   def createActivity(userSessionToken: String, activity: ActivityCreationData) = self.execute(CreateActivity(userSessionToken, activity))
 
   def getActivities(activityTypes: Seq[String] = Nil, until: Option[DateTime] = None, from: Option[DateTime] = None,
-                    scope: ActivityScope = ActivityScope.default, cursor: Option[String] = None,
-                    pageSize: PageSizes = PageSizes.default) =
+                    scope: ActivityScope = ActivityScope.site, cursor: Option[String] = None,
+                    pageSize: PageSizes = PageSizes.`25`) =
     self.execute(GetActivities(activityTypes, until, from, scope, cursor, pageSize))
 }
 

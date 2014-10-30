@@ -117,4 +117,14 @@ trait HubSimplicator extends HiveApiDrivers {
       .withStandardHeaders(app)
       .willReturn(aResponse().withBody(responseJson)))
   }
+
+  override def givenAppWithUserActivities(app: AppDef, contactId: String,responseWith: ActivitySummary): Unit = {
+    givenThat(responseForUrl(s"/insights/contacts/$contactId/activities/summary", app, responseWith))
+  }
+
+  private def responseForUrl(url: String, app:AppDef, response: AnyRef) ={
+    get(versionedUrlMatcher(url))
+      .withStandardHeaders(app)
+      .willReturn(aResponse().withBody(mapper.writeValueAsString(response)))
+  }
 }

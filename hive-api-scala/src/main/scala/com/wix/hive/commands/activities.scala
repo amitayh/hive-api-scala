@@ -7,10 +7,8 @@ import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
 import com.wix.hive.commands.contacts.PageSizes.PageSizes
-import com.wix.hive.model.ActivityTypes
 import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityTypes, ActivityCreationData}
 import org.joda.time.DateTime
-import com.wix.hive.commands.GetActivities._
 
 abstract class ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {
   override val url: String = "/activities"
@@ -41,20 +39,20 @@ case class CreateActivity(userSessionToken: String, activity: ActivityCreationDa
 case class GetActivities(activityTypes: Seq[String] = Nil,
                          until: Option[DateTime] = None,
                          from: Option[DateTime] = None,
-                         scope: ActivityScope = ActivityScope.default,
+                         scope: ActivityScope = ActivityScope.site,
                          cursor: Option[String] = None,
-                         pageSize: PageSizes = PageSizes.default)
+                         pageSize: PageSizes = PageSizes.`25`)
   extends ActivityCommand[PagingActivitiesResult] {
 
   override val method: HttpMethod = GET
 
-  override val query: NamedParameters = Map(
-    ScopeKey -> scope,
-    PageSizeKey -> pageSize,
-    ActivityTypesKey -> activityTypes,
-    UntilKey -> until,
-    FromKey -> from,
-    CursorKey -> cursor)
+  override def query: NamedParameters = Map(
+    GetActivities.ScopeKey -> scope,
+    GetActivities.PageSizeKey -> pageSize,
+    GetActivities.ActivityTypesKey -> activityTypes,
+    GetActivities.UntilKey -> until,
+    GetActivities.FromKey -> from,
+    GetActivities.CursorKey -> cursor)
     .collect {
     case (k, v: Some[_]) => k -> v.get.toString
     case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
@@ -74,12 +72,9 @@ object GetActivities {
 object ActivityScope extends Enumeration {
   type ActivityScope = Value
   val site, app = Value
-
-  val default = site
 }
 
 case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) {
-
   def previousPageCommand: Option[GetActivities] = previousCursor.map(_ => GetActivities(cursor = this.previousCursor))
 
   def nextPageCommand: Option[GetActivities] = nextCursor.map(_ => GetActivities(cursor = this.nextCursor))

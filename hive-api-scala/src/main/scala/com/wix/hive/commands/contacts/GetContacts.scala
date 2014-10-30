@@ -27,6 +27,4 @@ case class GetContactsResponse(results: PagingContactsResult)
 object PageSizes extends Enumeration {
   type PageSizes = Value
   val `25`, `50`, `100` = Value
-
-  val default = `25`
 }
