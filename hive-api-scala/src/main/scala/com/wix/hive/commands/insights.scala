@@ -1,7 +1,7 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.http.{NamedParameters, HttpMethod}
 import com.wix.hive.client.http.HttpMethod.HttpMethod
+import com.wix.hive.client.http.{HttpMethod, NamedParameters}
 import com.wix.hive.commands.ActivityScope.ActivityScope
 import com.wix.hive.model.ActivitySummary
 import org.joda.time.DateTime

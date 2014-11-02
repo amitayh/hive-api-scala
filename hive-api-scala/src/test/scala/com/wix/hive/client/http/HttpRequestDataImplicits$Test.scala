@@ -1,8 +1,8 @@
 package com.wix.hive.client.http
 
+import com.wix.hive.client.http.HttpRequestDataImplicits._
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
-import com.wix.hive.client.http.HttpRequestDataImplicits._
 
 class HttpRequestDataImplicitsTest extends SpecificationWithJUnit {
 

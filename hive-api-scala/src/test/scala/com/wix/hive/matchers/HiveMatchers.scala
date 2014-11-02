@@ -2,9 +2,9 @@ package com.wix.hive.matchers
 
 import com.wix.hive.client.HiveClient
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
-import org.joda.time.{Seconds, DateTime}
-import org.specs2.matcher.{MustExpectations, Matchers, Matcher, AlwaysMatcher}
+import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
+import org.joda.time.DateTime
+import org.specs2.matcher.{AlwaysMatcher, Matcher, Matchers, MustExpectations}
 
 trait HiveMatchers extends Matchers with MustExpectations {
 

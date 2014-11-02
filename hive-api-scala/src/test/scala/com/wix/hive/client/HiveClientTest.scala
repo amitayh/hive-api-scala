@@ -1,7 +1,7 @@
 package com.wix.hive.client
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
-import com.wix.hive.client.http.{NamedParameters, AsyncHttpClient, HttpMethod, HttpRequestData}
+import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
 import com.wix.hive.commands.HiveBaseCommand
 import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mock.Mockito

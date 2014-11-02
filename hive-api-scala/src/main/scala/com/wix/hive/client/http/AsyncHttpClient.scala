@@ -3,16 +3,14 @@ package com.wix.hive.client.http
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
+import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
-import dispatch.{Http, url}
+import dispatch.Defaults._
+import dispatch.{Http, url, _}
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-
-import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
-import dispatch.Defaults._
-import dispatch._
 
 
 trait AsyncHttpClient {

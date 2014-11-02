@@ -1,7 +1,7 @@
 package com.wix.hive.commands.activities
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands.{CreateActivity, GetActivityById}
+import com.wix.hive.commands.CreateActivity
 import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.model._
 import org.joda.time.DateTime

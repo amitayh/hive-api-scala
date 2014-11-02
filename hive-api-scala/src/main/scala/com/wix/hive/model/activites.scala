@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.ActivityType.ActivityType
 import org.joda.time.DateTime
+
 import scala.util.control.Exception._
 import scalaz.Value
 
@@ -17,7 +18,7 @@ case class Activity(id: String,
 
 object Activity {
 
-  import ActivityType._
+  import com.wix.hive.model.ActivityType._
 
 
   val activityTypeToClass = Map(

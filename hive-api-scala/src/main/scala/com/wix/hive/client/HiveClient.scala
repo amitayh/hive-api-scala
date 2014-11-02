@@ -1,5 +1,6 @@
 package com.wix.hive.client
 
+import com.typesafe.config._
 import com.wix.hive.client.http._
 import com.wix.hive.commands.HiveBaseCommand
 import org.joda.time.DateTime
@@ -7,9 +8,6 @@ import org.joda.time.format.ISODateTimeFormat
 
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-import com.typesafe.config._
-
-import scalaz.std.set
 
 private object DefaultHttpClientFactory {
   def create: AsyncHttpClient = new DispatchHttpClient()
