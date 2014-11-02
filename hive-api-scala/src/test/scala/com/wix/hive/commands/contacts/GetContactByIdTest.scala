@@ -1,5 +1,6 @@
 package com.wix.hive.commands.contacts
 
+import com.wix.hive.commands.GetContactById
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 

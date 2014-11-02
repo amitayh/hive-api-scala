@@ -2,7 +2,7 @@ package com.wix.hive.model
 
 import java.util.Date
 
-import com.wix.hive.commands.contacts.GetContacts
+import com.wix.hive.commands.GetContacts
 import com.wix.hive.model.EmailStatus.EmailStatus
 import org.joda.time.DateTime
 

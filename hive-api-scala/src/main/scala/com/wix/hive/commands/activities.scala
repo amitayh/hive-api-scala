@@ -3,9 +3,8 @@ package com.wix.hive.commands
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.NamedParameters
 import com.wix.hive.commands.ActivityScope.ActivityScope
-import com.wix.hive.commands.contacts.PageSizes
-import com.wix.hive.commands.contacts.PageSizes.PageSizes
-import com.wix.hive.model.{Activity, ActivityCreatedResult, ActivityCreationData, ActivityTypes}
+import com.wix.hive.model.PageSizes.PageSizes
+import com.wix.hive.model._
 import org.joda.time.DateTime
 
 abstract class ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {

@@ -4,8 +4,7 @@ import java.util.UUID
 
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.commands._
-import com.wix.hive.commands.contacts.PageSizes
-import com.wix.hive.model.ActivityType._
+import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import dispatch.url
 import org.joda.time.DateTime

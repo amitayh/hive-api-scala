@@ -1,5 +1,7 @@
 package com.wix.hive.commands.contacts
 
+import com.wix.hive.commands.GetContacts
+import com.wix.hive.model.PageSizes
 import org.specs2.mutable._
 import org.specs2.specification.Scope
 

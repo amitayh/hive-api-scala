@@ -1,14 +1,5 @@
 package com.wix.hive.client
 
-import com.wix.hive.commands.ActivityScope.ActivityScope
-import com.wix.hive.commands._
-import com.wix.hive.commands.contacts.PageSizes._
-import com.wix.hive.commands.contacts.{CreateContact, GetContactById, GetContacts, PageSizes}
-import com.wix.hive.model._
-import org.joda.time.DateTime
-
-import scala.concurrent.Future
-
 //trait ForInstance extends HiveClient {
 //  def forInstance(instanceId: String) = this.execute(instanceId, _)
 //}

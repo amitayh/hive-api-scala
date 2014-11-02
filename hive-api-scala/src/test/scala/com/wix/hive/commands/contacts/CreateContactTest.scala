@@ -1,5 +1,6 @@
 package com.wix.hive.commands.contacts
 
+import com.wix.hive.commands.CreateContact
 import com.wix.hive.model._
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
