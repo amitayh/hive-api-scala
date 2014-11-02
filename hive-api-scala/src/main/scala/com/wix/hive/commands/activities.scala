@@ -43,18 +43,14 @@ case class GetActivities(activityTypes: Seq[String] = Nil,
 
   override val method: HttpMethod = GET
 
-  override def query: NamedParameters = Map(
-    GetActivities.ScopeKey -> scope,
-    GetActivities.PageSizeKey -> pageSize,
-    GetActivities.ActivityTypesKey -> activityTypes,
-    GetActivities.UntilKey -> until,
-    GetActivities.FromKey -> from,
-    GetActivities.CursorKey -> cursor)
-    .collect {
-    case (k, v: Some[_]) => k -> v.get.toString
-    case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
-    case (k, v: Enumeration#Value) => k -> v.toString
-  }
+  override def query: NamedParameters =
+    super.removeOptionalParameters(Map(
+      GetActivities.ScopeKey -> scope,
+      GetActivities.PageSizeKey -> pageSize,
+      GetActivities.ActivityTypesKey -> activityTypes,
+      GetActivities.UntilKey -> until,
+      GetActivities.FromKey -> from,
+      GetActivities.CursorKey -> cursor))
 }
 
 object GetActivities {

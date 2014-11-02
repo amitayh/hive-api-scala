@@ -21,25 +21,43 @@ case class GetContactById(id: String) extends ContactsCommand[Contact] {
 }
 
 case class GetContacts(tag: Seq[String] = Nil, email: Option[String] = None, phone: Option[String] = None,
-                       firstName: Option[String] = None, lastName: Option[String] = None, cursor: Option[String] = None, pageSize: Option[PageSizes] = None) extends ContactsCommand[PagingContactsResult] {
+                       firstName: Option[String] = None, lastName: Option[String] = None, cursor: Option[String] = None,
+                       pageSize: Option[PageSizes] = None) extends ContactsCommand[PagingContactsResult] {
 
   override val method = HttpMethod.GET
 
   override val query = {
-    val tagsParam = if (tag.nonEmpty) Map("tag" -> tag.mkString(",")) else Map[String, String]()
-    val emailParam = email.map("email" -> _).toMap
-    val phoneParam = phone.map("phone" -> _).toMap
-    val firstNameParam = firstName.map("firstName" -> _).toMap
-    val lastNameParam = lastName.map("lastName" -> _).toMap
-    val cursorParam = cursor.map("cursor" -> _).toMap
-    val pageSizeParam = pageSize.map("pageSize" -> _.toString).toMap
-
-    tagsParam ++ emailParam ++ phoneParam ++ firstNameParam ++ lastNameParam ++ cursorParam ++ pageSizeParam
+    super.removeOptionalParameters({
+      import GetContacts.QueryKeys
+      Map(
+        QueryKeys.tag -> tag,
+        QueryKeys.email -> email,
+        QueryKeys.phone -> phone,
+        QueryKeys.firstName -> firstName,
+        QueryKeys.lastName -> lastName,
+        QueryKeys.cursor -> cursor,
+        QueryKeys.pageSize -> pageSize
+      )
+    })
   }
 }
 
+object GetContacts {
 
-trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse]{
+  object QueryKeys {
+    val tag = "tag"
+    val email = "email"
+    val phone = "phone"
+    val firstName = "firstName"
+    val lastName = "lastName"
+    val cursor = "cursor"
+    val pageSize = "pageSize"
+  }
+
+}
+
+
+trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse] {
   override val url: String = "/contacts"
 }
 

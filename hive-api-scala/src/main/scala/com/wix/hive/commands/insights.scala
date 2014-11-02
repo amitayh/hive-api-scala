@@ -22,14 +22,12 @@ case class InsightActivitySummary(contactId: Option[String] = None,
 
   override def method: HttpMethod = HttpMethod.GET
 
-  override def query: NamedParameters = Map(
-    InsightActivitySummary.scope -> scope,
-    InsightActivitySummary.from -> from,
-    InsightActivitySummary.until -> until)
-    .collect {
-    case (k, Some(v)) => (k, v.toString)
-    case (k, v: Enumeration#Value) => k -> v.toString
-  }
+  override def query: NamedParameters =
+    super.removeOptionalParameters(
+      Map(
+        InsightActivitySummary.scope -> scope,
+        InsightActivitySummary.from -> from,
+        InsightActivitySummary.until -> until))
 }
 
 object InsightActivitySummary {
