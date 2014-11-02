@@ -2,10 +2,12 @@ package com.wix.hive.client
 
 import java.util.UUID
 
+import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.commands._
 import com.wix.hive.commands.contacts.PageSizes
 import com.wix.hive.model.ActivityType._
 import com.wix.hive.model._
+import dispatch.url
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
@@ -63,7 +65,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] = (s: ActivitySummary) => (s.total == summary.total) && (s.activityTypes.length == summary.activityTypes.length)
 
-    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] = (as: ActivitySummary) => as.activityTypes.exists(_.activityType == some(typ)) && as.total == total
+    def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_:Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
+    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
+      be_===(total) ^^ { (_: ActivitySummary).total aka "total" } and
+        haveActivityOfType(typ) ^^ { (_: ActivitySummary).activityTypes aka "types" }
   }
 
   "Hive client" should {
@@ -133,8 +138,18 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(activityType), 1, summaryFrom)), 1, summaryFrom)
       givenAppWithUserActivities(me, contactId, summary)
 
-      client.execute(instance, InsightActivitySummaryForContact(contactId)) must haveActivityOfType(typ = activityType, total = 1)
-    }.pendingUntilFixed("from&until not implemented on the server")
+      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = activityType, total = 1).await
+    }
+
+
+    "get insights (activity summary) for all contacts" in new Context {
+      val activityType = ActivityType.`auth/login`
+      val summaryFrom = new DateTime(2010, 1, 1, 0, 0)
+      val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(activityType), 1, summaryFrom)), 1, summaryFrom)
+      givenAppWithActivities(me, summary)
+
+      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = activityType, total = 1).await
+    }
   }
 
   step(shutdownEnv())
@@ -162,10 +177,11 @@ trait HiveApiDrivers {
 
   def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit
 
+  def givenAppWithActivities(app: AppDef, responseWith: ActivitySummary): Unit
+
   case class AppDef(appId: String, instanceId: String, secret: String)
 
   object AppDef {
     def random: AppDef = AppDef(randomId, randomId, randomId)
   }
-
 }
