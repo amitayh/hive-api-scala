@@ -18,36 +18,48 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val key = "appKey"
     val instance = "websiteInstance"
 
-    val client = new HiveClient(id, key, instance, httpClient)
+    val client = HiveClient(Some(id), Some(key), Some(httpClient))
+
+    def oneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
+      method = be_===(HttpMethod.GET),
+      url = be_==(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
+      query = havePairs(commandQuery.toSeq :_*),
+      headers = headersFor(commandHeaders, client, instance),
+      body = be_===(commandBody)))(any)
   }
 
 
   "execute" should {
 
     "call the http client with the correct parameters" in new Context {
-      client.execute(TestCommand())
+      client.execute(instance, TestCommand())
 
-      there was one(httpClient).request(httpRequestDataWith(
-        method = be_===(HttpMethod.GET),
-        url = be_==(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
-        query = havePairs(commandQuery.toSeq :_*),
-        headers = headersFor(commandHeaders, client),
-        body = be_===(commandBody)))(any)
+      oneCallWithCorrectParams
+    }
+  }
+
+  "executeForInsatnce" should {
+
+    "call the http client with the correct parameters" in new Context {
+      val executor = client.executeForInstance(instance)
+
+      executor(TestCommand())
+
+      oneCallWithCorrectParams
     }
   }
 
 
   "apply" should {
     "load with configuration from conf file" >> {
-      val client = HiveClient("instance")
+      val client = HiveClient()
 
-      client.appId must be_===("application-id")
-      client.baseUrl must be_==("http://base-url.com/something")
+      client.appId must be_===("your app-id here")
+      client.baseUrl must be_==("https://openapi.wix.com")
     }
   }
 
 
-  // move into context
   val commandUrl = "/tst"
   val commandParams = "/param"
   val commandQuery = Map("q" -> "query")

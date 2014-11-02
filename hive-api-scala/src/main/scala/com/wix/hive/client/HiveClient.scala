@@ -13,10 +13,6 @@ private object DefaultHttpClientFactory {
   def create: AsyncHttpClient = new DispatchHttpClient()
 }
 
-private object DefaultConfigurations {
-  val baseUrl = "https://openapi.wix.com"
-}
-
 class HiveClientSettings(config: Config) {
   def this() = this(ConfigFactory.load())
 
@@ -24,12 +20,12 @@ class HiveClientSettings(config: Config) {
   config.checkValid(ConfigFactory.defaultReference(), "hive-client")
   val appId = config.getString("hive-client.credentials.appId")
   val appSecret = config.getString("hive-client.credentials.appSecret")
-  val baseUrl = config.getString("hive-client.credentials.baseUrl")
+  val baseUrl = config.getString("hive-client.baseUrl")
 }
 
-class HiveClient(val appId: String, secretKey: String, val instanceId: String,
+class HiveClient(val appId: String, secretKey: String,
                  httpClient: AsyncHttpClient = DefaultHttpClientFactory.create,
-                 val baseUrl: String = DefaultConfigurations.baseUrl) {
+                 val baseUrl: String) {
 
 
   def timestamp: String = new DateTime().toString(ISODateTimeFormat.dateTime())
@@ -43,31 +39,34 @@ class HiveClient(val appId: String, secretKey: String, val instanceId: String,
   lazy val signer = new HiveSigner(secretKey)
 
 
-  def execute[TCommandResult: ClassTag](command: HiveBaseCommand[TCommandResult]): Future[TCommandResult] = {
+  def execute[TCommandResult: ClassTag](instanceId: String, command: HiveBaseCommand[TCommandResult]): Future[TCommandResult] = {
     val httpDataFromCommand = command.createHttpRequestData
 
-    val httpDataForRequest = (withClientData _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
+    val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
 
     httpClient.request(httpDataForRequest)
   }
 
-  def withSignature(httpData: HttpRequestData): HttpRequestData = {
+  def executeForInstance(instanceId: String): (HiveBaseCommand[_] => Future[_])  = this.execute(instanceId, _)
+
+
+  private def withSignature(httpData: HttpRequestData): HttpRequestData = {
     val signature = signer.getSignature(httpData)
     httpData.copy(headers = httpData.headers + (HiveClient.SignatureKey -> signature))
   }
 
-  def withClientData(httpData: HttpRequestData): HttpRequestData = {
+  private def withClientData(instanceId: String)(httpData: HttpRequestData): HttpRequestData = {
     httpData.copy(
       url = s"$versionForUrl${httpData.url}",
       queryString = httpData.queryString + (HiveClient.VersionKey -> this.version),
       headers = httpData.headers +
-        (HiveClient.InstanceIdKey -> this.instanceId) +
+        (HiveClient.InstanceIdKey -> instanceId) +
         (HiveClient.ApplicationIdKey -> this.appId) +
         (HiveClient.TimestampKey -> this.timestamp) +
         (HiveClient.UserAgentKey -> this.agent))
   }
 
-  def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
+  private def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
 }
 
 object HiveClient {
@@ -80,9 +79,17 @@ object HiveClient {
   val VersionKey = "version"
 
 
-  def apply(instanceId: String) = {
+  def apply(appId: Option[String] = None,
+            appSecret: Option[String] = None,
+            httpClient: Option[AsyncHttpClient] = None,
+            baseUrl: Option[String] = None) = {
     val settings = new HiveClientSettings()
 
-    new HiveClient(settings.appId, settings.appSecret, instanceId, baseUrl = settings.baseUrl)
+    val id = appId.getOrElse(settings.appId)
+    val secret = appSecret.getOrElse(settings.appSecret)
+    val url = baseUrl.getOrElse(settings.baseUrl)
+    val client = httpClient.getOrElse(DefaultHttpClientFactory.create)
+
+    new HiveClient(id, secret, client ,url)
   }
 }

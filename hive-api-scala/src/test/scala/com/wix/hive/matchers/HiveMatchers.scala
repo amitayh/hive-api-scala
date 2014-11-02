@@ -23,9 +23,9 @@ trait HiveMatchers extends Matchers with MustExpectations {
       body ^^ { (_: HttpRequestData).body aka "body" }
   }
 
-  def headersFor(commandHeaders: NamedParameters, client: HiveClient) : Matcher[NamedParameters] = {
+  def headersFor(commandHeaders: NamedParameters, client: HiveClient, instanceId: String) : Matcher[NamedParameters] = {
     havePairs(commandHeaders.toSeq :_*) and
-    havePairs("x-wix-instance-id" -> client.instanceId,
+    havePairs("x-wix-instance-id" -> instanceId,
       "x-wix-application-id" -> client.appId) and
     haveKey("x-wix-signature") and
     startWith("Hive Scala v") ^^ {(_: NamedParameters)("User-Agent") aka "User-Agent"} and

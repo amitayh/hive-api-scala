@@ -35,9 +35,9 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     def before = beforeTest()
 
     val me = AppDef.random
+    val instance = me.instanceId
 
-
-    val client = new HiveClient(me.appId, me.secret, me.instanceId, baseUrl = baseUrl)
+    val client = new HiveClient(me.appId, me.secret, baseUrl = baseUrl)
 
     def now = new DateTime()
 
@@ -63,7 +63,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] = (s: ActivitySummary) => (s.total == summary.total) && (s.activityTypes.length == summary.activityTypes.length)
 
-    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] = (as:ActivitySummary) => as.activityTypes.exists(_.activityType == some(typ)) && as.total == total
+    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] = (as: ActivitySummary) => as.activityTypes.exists(_.activityType == some(typ)) && as.total == total
   }
 
   "Hive client" should {
@@ -71,14 +71,14 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
 
-      client.execute(GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
+      client.execute(me.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
     }
 
     "get list of all activity types" in new Context {
       val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
       givenAppActivityTypes(me, types: _*)
 
-      client.execute(GetActivityTypes()) must haveTypes(types).await
+      client.execute(me.instanceId, GetActivityTypes()) must haveTypes(types).await
     }
 
     "create activity for contact" in new Context {
@@ -87,7 +87,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
       val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
 
-      client.execute(command) must haveActivityResult.await
+      client.execute(instance, command) must haveActivityResult.await
 
       verifyActivityCreated(me)
     }
@@ -97,17 +97,17 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
       givenAppWithActivitiesBulk(me, allActivities)
 
-      client.execute(GetActivities()) must haveSameIds(allActivities).await
+      client.execute(instance, GetActivities()) must haveSameIds(allActivities).await
     }
 
     "get all activities with paging" in new Context {
       givenAppWithActivitiesBulk(me, pagingAllActivities: _*)
 
-      val firstPageResult = Await.result(client.execute(GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
+      val firstPageResult = Await.result(client.execute(instance, GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
       firstPageResult must haveSameIds(pagingFirstPage: _*)
 
       firstPageResult.nextPageCommand match {
-        case Some(cmd) => client.execute(cmd) must haveSameIds(paigngSecondPage: _*).await()
+        case Some(cmd) => client.execute(instance, cmd) must haveSameIds(paigngSecondPage: _*).await()
         case None => failure("Didn't get the second page")
       }
     }.pendingUntilFixed("PageSize is not implemented in the server")
@@ -116,7 +116,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       val url = "http://somesite.com/wix"
       givenAppWithSite(me, url)
 
-      client.execute(Site) must haveSiteUrl(url).await
+      client.execute(instance, Site) must haveSiteUrl(url).await
     }
 
     "create 'Notification' message to all users of the application" in new Context {
@@ -133,7 +133,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(activityType), 1, summaryFrom)), 1, summaryFrom)
       givenAppWithUserActivities(me, contactId, summary)
 
-      client.execute(InsightActivitySummaryForContact(contactId)) must haveActivityOfType(typ = activityType, total = 1)
+      client.execute(instance, InsightActivitySummaryForContact(contactId)) must haveActivityOfType(typ = activityType, total = 1)
     }.pendingUntilFixed("from&until not implemented on the server")
   }
 
