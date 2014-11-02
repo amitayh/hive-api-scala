@@ -7,7 +7,7 @@ import com.wix.hive.model.ActivitySummary
 import org.joda.time.DateTime
 
 case class InsightActivitySummaryForContact(contactId: String, scope: ActivityScope = ActivityScope.app,
-                                            from: Option[DateTime], until: Option[DateTime] = None) extends HiveBaseCommand[ActivitySummary] {
+                                            from: Option[DateTime] = None, until: Option[DateTime] = None) extends HiveBaseCommand[ActivitySummary] {
   override def url: String = "/insights/contacts"
 
   override def urlParams: String = s"/$contactId/activities/summary"

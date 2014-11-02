@@ -37,6 +37,16 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
   }
 
 
+  "apply" should {
+    "load with configuration from conf file" >> {
+      val client = HiveClient("instance")
+
+      client.appId must be_===("application-id")
+      client.baseUrl must be_==("http://base-url.com/something")
+    }
+  }
+
+
   // move into context
   val commandUrl = "/tst"
   val commandParams = "/param"

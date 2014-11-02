@@ -119,6 +119,7 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def givenAppWithUserActivities(app: AppDef, contactId: String,responseWith: ActivitySummary): Unit = {
+    throw new RuntimeException("The from&until are not implemented on the server yet")
     givenThat(responseForUrl(s"/insights/contacts/$contactId/activities/summary", app, responseWith))
   }
 
