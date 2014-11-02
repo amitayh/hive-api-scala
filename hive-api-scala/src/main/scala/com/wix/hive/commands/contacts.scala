@@ -5,6 +5,10 @@ import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.model.PageSizes.PageSizes
 import com.wix.hive.model._
 
+trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse] {
+  override val url: String = "/contacts"
+}
+
 case class CreateContact(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
                          tags: Seq[String] = Nil, emails: Seq[ContactEmail] = Nil, phone: Seq[ContactPhone] = Nil,
                          addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil,
@@ -57,9 +61,6 @@ object GetContacts {
 }
 
 
-trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse] {
-  override val url: String = "/contacts"
-}
 
 case class UpsertContact(phone: Option[String], email: Option[String]) extends ContactsCommand[UpsertContactResponse] {
   override val method = HttpMethod.PUT

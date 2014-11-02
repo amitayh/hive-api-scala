@@ -35,13 +35,15 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
   trait Context extends Before {
     def before = beforeTest()
 
-    val me = AppDef.random
-    val instance = me.instanceId
+    val app = AppDef.random
+    val instance = app.instanceId
 
-    val client = new HiveClient(me.appId, me.secret, baseUrl = baseUrl)
+    val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
 
     def now = new DateTime()
 
+    val contactId = "e5d81850-5dd8-407f-9acc-7ffd6c924ecf"
+    val contact = Contact(contactId, new DateTime(2010,1,1,0,0))
     val activityId = randomId
 
     val activity = Activity(id = "id", createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
@@ -49,8 +51,13 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val paigngSecondPage = (25 to 40).map((id: Int) => activity.copy(id = id.toString))
     val pagingAllActivities = pagingFirstPage ++ paigngSecondPage
 
+    val summaryAactivityType = ActivityType.`auth/login`
+    val summaryFrom = new DateTime(2010, 1, 1, 10, 10)
+    val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(summaryAactivityType), 1, summaryFrom)), 1, summaryFrom)
+
     implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
 
+    def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ { (_:Contact).id aka "contactId" }
 
     def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
 
@@ -72,40 +79,46 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
   "Hive client" should {
 
-    "get activity by ID" in new Context {
-      givenAppWithActivitiesById(me, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+    "get contact by ID" in new Context {
+      givenContactFetchById(app, contact)
 
-      client.execute(me.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
+      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await
+    }
+
+    "get activity by ID" in new Context {
+      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+
+      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
     }
 
     "get list of all activity types" in new Context {
       val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
-      givenAppActivityTypes(me, types: _*)
+      givenAppActivityTypes(app, types: _*)
 
-      client.execute(me.instanceId, GetActivityTypes()) must haveTypes(types).await
+      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
     }
 
     "create activity for contact" in new Context {
-      givenAppWithContactExist(me, randomId)
+      givenAppWithContactExist(app, randomId)
       val userSessionToken = getValidUserSessionToken
 
       val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
 
       client.execute(instance, command) must haveActivityResult.await
 
-      verifyActivityCreated(me)
+      verifyActivityCreated(app)
     }
 
     "get all activities" in new Context {
       val allActivities = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
 
-      givenAppWithActivitiesBulk(me, allActivities)
+      givenAppWithActivitiesBulk(app, allActivities)
 
       client.execute(instance, GetActivities()) must haveSameIds(allActivities).await
     }
 
     "get all activities with paging" in new Context {
-      givenAppWithActivitiesBulk(me, pagingAllActivities: _*)
+      givenAppWithActivitiesBulk(app, pagingAllActivities: _*)
 
       val firstPageResult = Await.result(client.execute(instance, GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
       firstPageResult must haveSameIds(pagingFirstPage: _*)
@@ -118,7 +131,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     "get site's URL" in new Context {
       val url = "http://somesite.com/wix"
-      givenAppWithSite(me, url)
+      givenAppWithSite(app, url)
 
       client.execute(instance, Site) must haveSiteUrl(url).await
     }
@@ -131,23 +144,16 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
 
     "get insights (activity summary) for a contact" in new Context {
-      val contactId = "cb2c0182-0ac7-4c80-acfb-09cc8c5fb744"
-      val activityType = ActivityType.`auth/login`
-      val summaryFrom = new DateTime(2010, 1, 1, 0, 0)
-      val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(activityType), 1, summaryFrom)), 1, summaryFrom)
-      givenAppWithUserActivities(me, contactId, summary)
+      givenAppWithUserActivities(app, contactId, summary)
 
-      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = activityType, total = 1).await
+      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
     }
 
 
     "get insights (activity summary) for all contacts" in new Context {
-      val activityType = ActivityType.`auth/login`
-      val summaryFrom = new DateTime(2010, 1, 1, 0, 0)
-      val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(activityType), 1, summaryFrom)), 1, summaryFrom)
-      givenAppWithActivities(me, summary)
+      givenAppWithActivities(app, summary)
 
-      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = activityType, total = 1).await
+      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
     }
   }
 
