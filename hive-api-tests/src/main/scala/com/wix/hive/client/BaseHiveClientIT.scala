@@ -46,15 +46,17 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
 
+    val clientWithInstance = client.executeForInstance(instance)
+
     def now = new DateTime()
 
     val contactId = "e5d81850-5dd8-407f-9acc-7ffd6c924ecf"
-    val contact = Contact(contactId, new DateTime(2010,1,1,0,0))
+    val contact = Contact(contactId, new DateTime(2010, 1, 1, 0, 0))
     val anotherContactId = "c34a8709-6b14-4959-9db7-33a584daefad"
-    val anotherContact = Contact(anotherContactId, new DateTime(2010,1,1,0,0))
+    val anotherContact = Contact(anotherContactId, new DateTime(2010, 1, 1, 0, 0))
 
     val contactName = ContactName(first = Some("First"), last = Some("Last"))
-    val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus= EmailStatus.OptOut)
+    val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
     val address = AddressDTO("tag-address-dto")
@@ -62,8 +64,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val phone = "972-54-5556767"
     val email = "maximn@wix.com"
     val emailStatus = EmailStatus.OptOut
-    
-    val modifiedAt = new DateTime(2012, 2, 10, 10,10)
+
+    val modifiedAt = new DateTime(2012, 2, 10, 10, 10)
+    val contactPhone = ContactPhoneDTO("tag-phone-add", phone)
+
 
     val activityId = randomId
 
@@ -78,10 +82,17 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
 
-    def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ { (_:Contact).id aka "contactId" }
-    def beContactsWith(matcher: Matcher[Seq[Contact]]): Matcher[PagingContactsResult] = matcher ^^ { (_:PagingContactsResult).results aka "results"}
+    def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ {
+      (_: Contact).id aka "contactId"
+    }
 
-    def beCreatedContactWithId(matcher: Matcher[String]): Matcher[CreatedContact] = matcher ^^ { (_: CreatedContact).contactId aka "contactId" }
+    def beContactsWith(matcher: Matcher[Seq[Contact]]): Matcher[PagingContactsResult] = matcher ^^ {
+      (_: PagingContactsResult).results aka "results"
+    }
+
+    def beCreatedContactWithId(matcher: Matcher[String]): Matcher[CreatedContact] = matcher ^^ {
+      (_: CreatedContact).contactId aka "contactId"
+    }
 
     def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
 
@@ -95,12 +106,19 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] = (s: ActivitySummary) => (s.total == summary.total) && (s.activityTypes.length == summary.activityTypes.length)
 
-    def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_:Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
-    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
-      be_===(total) ^^ { (_: ActivitySummary).total aka "total" } and
-        haveActivityOfType(typ) ^^ { (_: ActivitySummary).activityTypes aka "types" }
+    def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_: Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
 
-    def haveUpsertContactId(id: String): Matcher[UpsertContactResponse] =  be_===(id) ^^ { (_:UpsertContactResponse).contactId aka "contactId" }
+    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
+      be_===(total) ^^ {
+        (_: ActivitySummary).total aka "total"
+      } and
+        haveActivityOfType(typ) ^^ {
+          (_: ActivitySummary).activityTypes aka "types"
+        }
+
+    def haveUpsertContactId(id: String): Matcher[UpsertContactResponse] = be_===(id) ^^ {
+      (_: UpsertContactResponse).contactId aka "contactId"
+    }
   }
 
   "Hive client" should {
@@ -112,15 +130,15 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }
 
     "get contacts" in new Context {
-      givenAppWithContacts(app, Seq(contact, anotherContact) :_*)
+      givenAppWithContacts(app, Seq(contact, anotherContact): _*)
 
       client.execute(instance, GetContacts()) must beContactsWith(contain(allOf(beContactWithId(contactId), beContactWithId(anotherContactId)))).await
-    }.pendingUntilFixed("""The server doesn't comply with the protocol, returns an array of Contacts instead of aPagingContactsResult""")
+    }.pendingUntilFixed( """The server doesn't comply with the protocol, returns an array of Contacts instead of aPagingContactsResult""")
 
     "create a contact" in new Context {
-      givenContactCreatedById(app, contactData ,contactId)
+      givenContactCreatedById(app, contactData, contactId)
 
-     client.execute(instance, CreateContact(name = Some(contactName) , emails = Seq(contactEmail))) must beCreatedContactWithId(contactId).await
+      client.execute(instance, CreateContact(name = Some(contactName), emails = Seq(contactEmail))) must beCreatedContactWithId(contactId).await
     }
 
     "upsert a contact" in new Context {
@@ -132,16 +150,23 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }
 
     "add address to contact" in new Context {
-      givenContactAddAddress(app, contactId, modifiedAt,address)
+      givenContactAddAddress(app, contactId, modifiedAt, address)
 
       client.execute(instance, AddAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await
     }
-    
+
     "add email to contact" in new Context {
-      givenEmailAddAddress(app, contactId, modifiedAt, contactEmail)
-      
+      givenContactAddEmail(app, contactId, modifiedAt, contactEmail)
+
       client.execute(instance, AddEmail(contactId, modifiedAt, contactEmail)) must beContactWithId(contactId).await
     }
+
+    "add phone to contact" in new Context {
+      givenContactAddPhone(app, contactId, modifiedAt, contactPhone)
+
+      client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
+    }
+
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
@@ -228,11 +253,15 @@ trait HiveApiDrivers {
   def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit
 
   def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String)
+
   def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
 
   def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit
 
-  def givenEmailAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
+  def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
+
+  def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit
+
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
@@ -258,4 +287,5 @@ trait HiveApiDrivers {
   object AppDef {
     def random: AppDef = AppDef(randomId, randomId, randomId)
   }
+
 }

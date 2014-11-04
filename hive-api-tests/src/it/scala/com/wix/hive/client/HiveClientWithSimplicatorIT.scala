@@ -59,6 +59,9 @@ trait HubSimplicator extends HiveApiDrivers {
         withHeader("x-wix-signature", matching(base64Regex))
   }
 
+  val contactCreatedAt = new DateTime(2012,1,1,1,1)
+  private def aContact(id: String) = Contact(id, createdAt = contactCreatedAt)
+
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
     val contactJson = mapper.writeValueAsString(respondsWith)
 
@@ -95,18 +98,20 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit = {
-    val contact = Contact(id = contactId, createdAt = new DateTime())
-
-    givenThat(responseForUrl(s"/contacts/${contactId}/address.*${urlEncode(modifiedAt.toString)}", app, contact, RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/${contactId}/address.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(address.tag)))
   }
 
-  override def givenEmailAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
-    val contact = Contact(id = contactId, createdAt = new DateTime())
-
-    givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, contact, RequestMethod.POST)
+  override def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
     .withRequestBody(containing(email.email)))
   }
+
+  override def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/phone.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+      .withRequestBody(containing(phone.phone)))
+  }
+
 
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
