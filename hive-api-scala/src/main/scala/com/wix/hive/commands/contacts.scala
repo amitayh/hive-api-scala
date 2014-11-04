@@ -3,6 +3,7 @@ package com.wix.hive.commands
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod._
+import com.wix.hive.commands.UpsertContact.BodyKeys
 import com.wix.hive.commands.common.PageSizes
 import PageSizes.PageSizes
 import com.wix.hive.model.EmailStatus.EmailStatus
@@ -74,8 +75,21 @@ object GetContacts {
 }
 
 
-case class UpsertContact(phone: Option[String], email: Option[String]) extends ContactsCommand[UpsertContactResponse] {
+case class UpsertContact(phone: Option[String] = None, email: Option[String] = None) extends ContactsCommand[UpsertContactResponse] {
   override val method = HttpMethod.PUT
+
+  override def body: Option[AnyRef] ={
+    val map = super.removeOptionalParameters(Map(BodyKeys.phone -> phone, BodyKeys.email -> email))
+    if (map.nonEmpty) Some(map) else None
+  }
 }
 
-case class UpsertContactResponse(id: String)
+object UpsertContact {
+  object BodyKeys {
+    val phone = "phone"
+    val email = "email"
+  }
+}
+
+
+case class UpsertContactResponse(contactId: String)

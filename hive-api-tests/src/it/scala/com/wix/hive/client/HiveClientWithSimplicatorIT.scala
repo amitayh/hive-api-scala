@@ -8,7 +8,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.wix.hive.commands.{ContactData, ContactEmailDTO, CreatedContact}
+import com.wix.hive.commands.{UpsertContactResponse, ContactData, ContactEmailDTO, CreatedContact}
 import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.apache.log4j.BasicConfigurator
@@ -76,6 +76,15 @@ trait HubSimplicator extends HiveApiDrivers {
 
     val activityType = activityInfo.activityType.toString
   }
+
+  override def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = {
+    givenThat(responseForUrl("/contacts", app, UpsertContactResponse(contactId), RequestMethod.PUT).
+      withRequestBody(containing(phone.get))
+      .withRequestBody(containing(email.get)))
+  }
+
+  override def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = ()
+
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {

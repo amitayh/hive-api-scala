@@ -86,98 +86,110 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
       be_===(total) ^^ { (_: ActivitySummary).total aka "total" } and
         haveActivityOfType(typ) ^^ { (_: ActivitySummary).activityTypes aka "types" }
+
+    def haveUpsertContactId(id: String): Matcher[UpsertContactResponse] =  be_===(id) ^^ { (_:UpsertContactResponse).contactId aka "contactId" }
   }
 
   "Hive client" should {
-//
-//    "get contact by ID" in new Context {
-//      givenContactFetchById(app, contact)
-//
-//      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await
-//    }
-//
-//    "get contacts" in new Context {
-//      givenAppWithContacts(app, Seq(contact, anotherContact) :_*)
-//
-//      client.execute(instance, GetContacts()) must beContactsWith(contain(allOf(beContactWithId(contactId), beContactWithId(anotherContactId)))).await
-//    }.pendingUntilFixed("""The server doesn't comply with the protocol, returns an array of Contacts instead of aPagingContactsResult""")
+
+    "get contact by ID" in new Context {
+      givenContactFetchById(app, contact)
+
+      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await
+    }
+
+    "get contacts" in new Context {
+      givenAppWithContacts(app, Seq(contact, anotherContact) :_*)
+
+      client.execute(instance, GetContacts()) must beContactsWith(contain(allOf(beContactWithId(contactId), beContactWithId(anotherContactId)))).await
+    }.pendingUntilFixed("""The server doesn't comply with the protocol, returns an array of Contacts instead of aPagingContactsResult""")
 
     "create a contact" in new Context {
       givenContactCreatedById(app, contactData ,contactId)
 
-      val r  = Await.result(client.execute(instance, CreateContact(name = Some(contactName) , emails = Seq(contactEmail))), 1000 seconds) //must beCreatedContactWithId(contactId).await
+     client.execute(instance, CreateContact(name = Some(contactName) , emails = Seq(contactEmail))) must beCreatedContactWithId(contactId).await
     }
-//
-//    "get activity by ID" in new Context {
-//      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
-//
-//      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
-//    }
-//
-//    "get list of all activity types" in new Context {
-//      val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
-//      givenAppActivityTypes(app, types: _*)
-//
-//      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
-//    }
-//
-//    "create activity for contact" in new Context {
-//      givenAppWithContactExist(app, randomId)
-//      val userSessionToken = getValidUserSessionToken
-//
-//      val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
-//
-//      client.execute(instance, command) must haveActivityResult.await
-//
-//      verifyActivityCreated(app)
-//    }
-//
-//    "get all activities" in new Context {
-//      val allActivities = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
-//
-//      givenAppWithActivitiesBulk(app, allActivities)
-//
-//      client.execute(instance, GetActivities()) must haveSameIds(allActivities).await
-//    }
-//
-//    "get all activities with paging" in new Context {
-//      givenAppWithActivitiesBulk(app, pagingAllActivities: _*)
-//
-//      val firstPageResult = Await.result(client.execute(instance, GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
-//      firstPageResult must haveSameIds(pagingFirstPage: _*)
-//
-//      firstPageResult.nextPageCommand match {
-//        case Some(cmd) => client.execute(instance, cmd) must haveSameIds(paigngSecondPage: _*).await()
-//        case None => failure("Didn't get the second page")
-//      }
-//    }.pendingUntilFixed("PageSize is not implemented in the server")
-//
-//    "get site's URL" in new Context {
-//      val url = "http://somesite.com/wix"
-//      givenAppWithSite(app, url)
-//
-//      client.execute(instance, Site) must haveSiteUrl(url).await
-//    }
-//
-//    "create 'Notification' message to all users of the application" in new Context {
-//      val notification = new NotificationCreationData("title", "content", NotificationType.BusinessTips)
-//
-//      failure("not implemented on server side")
-//    }.pendingUntilFixed
-//
-//
-//    "get insights (activity summary) for a contact" in new Context {
-//      givenAppWithUserActivities(app, contactId, summary)
-//
-//      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
-//    }
-//
-//
-//    "get insights (activity summary) for all contacts" in new Context {
-//      givenAppWithActivities(app, summary)
-//
-//      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
-//    }
+
+    "upsert a contact" in new Context {
+      val phone = "972-54-5556767"
+      val email = "maximn@wix.com"
+
+      givenContactUpsertByPhoneAndEmail(app, Some(phone), Some(email), contactId)
+
+      client.execute(instance, UpsertContact(Some(phone), Some(email))) must haveUpsertContactId(contactId).await
+
+      verifyUpsertContactWithId(app, Some(phone), Some(email), contactId)
+    }
+
+    "get activity by ID" in new Context {
+      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+
+      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
+    }
+
+    "get list of all activity types" in new Context {
+      val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
+      givenAppActivityTypes(app, types: _*)
+
+      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
+    }
+
+    "create activity for contact" in new Context {
+      givenAppWithContactExist(app, randomId)
+      val userSessionToken = getValidUserSessionToken
+
+      val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
+
+      client.execute(instance, command) must haveActivityResult.await
+
+      verifyActivityCreated(app)
+    }
+
+    "get all activities" in new Context {
+      val allActivities = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
+
+      givenAppWithActivitiesBulk(app, allActivities)
+
+      client.execute(instance, GetActivities()) must haveSameIds(allActivities).await
+    }
+
+    "get all activities with paging" in new Context {
+      givenAppWithActivitiesBulk(app, pagingAllActivities: _*)
+
+      val firstPageResult = Await.result(client.execute(instance, GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
+      firstPageResult must haveSameIds(pagingFirstPage: _*)
+
+      firstPageResult.nextPageCommand match {
+        case Some(cmd) => client.execute(instance, cmd) must haveSameIds(paigngSecondPage: _*).await()
+        case None => failure("Didn't get the second page")
+      }
+    }.pendingUntilFixed("PageSize is not implemented in the server")
+
+    "get site's URL" in new Context {
+      val url = "http://somesite.com/wix"
+      givenAppWithSite(app, url)
+
+      client.execute(instance, Site) must haveSiteUrl(url).await
+    }
+
+    "create 'Notification' message to all users of the application" in new Context {
+      val notification = new NotificationCreationData("title", "content", NotificationType.BusinessTips)
+
+      failure("not implemented on server side")
+    }.pendingUntilFixed
+
+
+    "get insights (activity summary) for a contact" in new Context {
+      givenAppWithUserActivities(app, contactId, summary)
+
+      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
+    }
+
+    "get insights (activity summary) for all contacts" in new Context {
+      givenAppWithActivities(app, summary)
+
+      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
+    }
   }
 
   step(shutdownEnv())
@@ -192,6 +204,9 @@ trait HiveApiDrivers {
   def givenAppWithContacts(app: AppDef, respondsWith: Contact*): Unit
 
   def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit
+
+  def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String)
+  def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
