@@ -1,17 +1,21 @@
 package com.wix.hive.commands.contacts
 
+import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.commands.GetContactById
+import com.wix.hive.matchers.HiveMatchers
+import dispatch.url
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-class GetContactByIdTest extends SpecificationWithJUnit {
+class GetContactByIdTest extends SpecificationWithJUnit with HiveMatchers {
 
     "createHttpRequestData" should {
 
-        "create HttpRequestData with id" in new Context {
-            val httpData = command.createHttpRequestData
-
-            httpData.url must endWith(s"/${id}")
+        "create correct HttpRequestData" in new Context {
+            command.createHttpRequestData must httpRequestDataWith(
+            method = be_===(HttpMethod.GET),
+            url = be_===(s"/contacts/$id")
+            )
         }
     }
 

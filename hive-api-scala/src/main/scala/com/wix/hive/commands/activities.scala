@@ -3,7 +3,10 @@ package com.wix.hive.commands
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.NamedParameters
 import com.wix.hive.commands.ActivityScope.ActivityScope
-import com.wix.hive.model.PageSizes.PageSizes
+import com.wix.hive.commands.common.PageSizes
+import com.wix.hive.commands.common.PageSizes.PageSizes
+import com.wix.hive.commands.common.{PageSizes, Cursor}
+import PageSizes.PageSizes
 import com.wix.hive.model._
 import org.joda.time.DateTime
 
@@ -67,8 +70,4 @@ object ActivityScope extends Enumeration {
   val site, app = Value
 }
 
-case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) {
-  def previousPageCommand: Option[GetActivities] = previousCursor.map(_ => GetActivities(cursor = this.previousCursor))
-
-  def nextPageCommand: Option[GetActivities] = nextCursor.map(_ => GetActivities(cursor = this.nextCursor))
-}
+case class PagingActivitiesResult(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[Activity]) extends Cursor

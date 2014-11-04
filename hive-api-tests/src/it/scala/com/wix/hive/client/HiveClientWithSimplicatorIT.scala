@@ -7,6 +7,8 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.http.RequestMethod
+import com.wix.hive.commands.{ContactData, ContactEmailDTO, CreatedContact}
 import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.apache.log4j.BasicConfigurator
@@ -40,7 +42,7 @@ class HiveClientWithSimplicatorIT extends BaseHiveClientIT with HubSimplicator {
 trait HubSimplicator extends HiveApiDrivers {
   val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
 
-  def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url.*")
+  def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url?.*")
 
   implicit class MappingBuilderImplicits(builder: MappingBuilder) {
     val base64Regex = "[A-Za-z0-9+/_-]*"
@@ -60,6 +62,14 @@ trait HubSimplicator extends HiveApiDrivers {
       willReturn(aResponse().withBody(contactJson)))
   }
 
+  def givenAppWithContacts(app: AppDef, respondsWith: Contact*): Unit = {
+    givenThat(responseForUrl("/contacts", app, respondsWith))
+  }
+
+  def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit = {
+    givenThat(responseForUrl("/contacts", app, CreatedContact(respondWithContactId), RequestMethod.POST)
+      .withRequestBody(containing(contact.emails.head.email)))
+  }
 
   case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
     def this(a: Activity) = this(a.id, a.createdAt, a.activityLocationUrl, a.activityDetails, a.activityInfo)
@@ -118,7 +128,7 @@ trait HubSimplicator extends HiveApiDrivers {
       .willReturn(aResponse().withBody(responseJson)))
   }
 
-  override def givenAppWithUserActivities(app: AppDef, contactId: String,responseWith: ActivitySummary): Unit = {
+  override def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit = {
     givenThat(responseForUrl(s"/insights/contacts/$contactId/activities/summary", app, responseWith))
   }
 
@@ -127,8 +137,8 @@ trait HubSimplicator extends HiveApiDrivers {
     givenThat(responseForUrl("/insights/activities/summary", app, responseWith))
   }
 
-  private def responseForUrl(url: String, app:AppDef, response: AnyRef) ={
-    get(versionedUrlMatcher(url))
+  private def responseForUrl(url: String, app: AppDef, response: AnyRef, method: RequestMethod = RequestMethod.GET) = {
+    new MappingBuilder(method, versionedUrlMatcher(url))
       .withStandardHeaders(app)
       .willReturn(aResponse().withBody(mapper.writeValueAsString(response)))
   }

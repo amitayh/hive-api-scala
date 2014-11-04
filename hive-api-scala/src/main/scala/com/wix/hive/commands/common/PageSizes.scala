@@ -1,5 +1,4 @@
-package com.wix.hive.model
-
+package com.wix.hive.commands.common
 
 object PageSizes extends Enumeration {
   type PageSizes = Value

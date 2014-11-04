@@ -1,8 +1,11 @@
 package com.wix.hive.commands
 
+import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.model.PageSizes.PageSizes
+import com.wix.hive.commands.common.PageSizes
+import PageSizes.PageSizes
+import com.wix.hive.model.EmailStatus.EmailStatus
 import com.wix.hive.model._
 
 trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse] {
@@ -10,13 +13,23 @@ trait ContactsCommand[TResponse] extends HiveBaseCommand[TResponse] {
 }
 
 case class CreateContact(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
-                         tags: Seq[String] = Nil, emails: Seq[ContactEmail] = Nil, phone: Seq[ContactPhone] = Nil,
-                         addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil,
-                         notes: Seq[Note] = Nil, custom: Seq[CustomField] = Nil) extends ContactsCommand[CreatedContact] {
+                         emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
+                         addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
+  extends ContactsCommand[CreatedContact] {
   override val method = HttpMethod.POST
+
+  override val body = Some(ContactData(name, picture, company, emails, phones, addresses, urls, dates))
 }
 
-case class CreatedContact(id: String)
+case class ContactData(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
+                       emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
+                       addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
+
+case class ContactEmailDTO(tag: String, email: String, @JsonScalaEnumeration(classOf[EmailStatusRef])emailStatus: EmailStatus)
+case class ContactPhoneDTO(tag: String, phone: String)
+
+
+case class CreatedContact(contactId: String)
 
 case class GetContactById(id: String) extends ContactsCommand[Contact] {
   override val method: HttpMethod = HttpMethod.GET
@@ -59,7 +72,6 @@ object GetContacts {
   }
 
 }
-
 
 
 case class UpsertContact(phone: Option[String], email: Option[String]) extends ContactsCommand[UpsertContactResponse] {
