@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-class AddContactAddressTest extends SpecificationWithJUnit with HiveMatchers {
+class AddAddressTest extends SpecificationWithJUnit with HiveMatchers {
   "createHttpRequestData" should {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
