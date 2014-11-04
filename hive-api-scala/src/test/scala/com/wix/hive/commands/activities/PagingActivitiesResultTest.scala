@@ -1,6 +1,5 @@
 package com.wix.hive.commands.activities
 
-import com.wix.hive.commands.{GetActivities, PagingActivitiesResult}
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope

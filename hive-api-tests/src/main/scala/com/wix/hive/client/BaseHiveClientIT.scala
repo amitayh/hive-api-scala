@@ -2,19 +2,24 @@ package com.wix.hive.client
 
 import java.util.UUID
 
-import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.commands._
+import com.wix.hive.commands.activities._
 import com.wix.hive.commands.common.PageSizes
-import com.wix.hive.model.ActivityType.ActivityType
-import com.wix.hive.model._
-import dispatch.url
+import com.wix.hive.commands.contacts._
+import com.wix.hive.commands.insights.InsightActivitySummary
+import com.wix.hive.commands.sites.Site
+import com.wix.hive.model.activities.ActivityType.ActivityType
+import com.wix.hive.model.activities._
+import com.wix.hive.model.contacts.{Contact, ContactName, EmailStatus, PagingContactsResult}
+import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
+import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
+import com.wix.hive.model.sites.SiteData
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.time.NoTimeConversions
-import scala.concurrent.duration._
 
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
 
 abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConversions {

@@ -1,7 +1,7 @@
 package com.wix.hive.commands.activities
 
 import com.wix.hive.commands.common.PageSizes
-import com.wix.hive.commands.{ActivityScope, GetActivities}
+import com.wix.hive.model.activities.ActivityScope
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope

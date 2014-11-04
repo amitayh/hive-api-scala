@@ -1,7 +1,6 @@
 package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands._
 import com.wix.hive.matchers.HiveMatchers
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit

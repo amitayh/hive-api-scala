@@ -1,9 +1,11 @@
-package com.wix.hive.commands
+package com.wix.hive.commands.insights
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{HttpMethod, NamedParameters}
-import com.wix.hive.commands.ActivityScope.ActivityScope
-import com.wix.hive.model.ActivitySummary
+import com.wix.hive.commands.HiveBaseCommand
+import com.wix.hive.model.activities.ActivityScope
+import com.wix.hive.model.activities.ActivityScope.ActivityScope
+import com.wix.hive.model.insights.ActivitySummary
 import org.joda.time.DateTime
 
 case class InsightActivitySummary(contactId: Option[String] = None,

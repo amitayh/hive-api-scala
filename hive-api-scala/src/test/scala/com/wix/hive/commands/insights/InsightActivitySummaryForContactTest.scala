@@ -1,8 +1,8 @@
 package com.wix.hive.commands.insights
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands.{ActivityScope, InsightActivitySummary}
 import com.wix.hive.matchers.HiveMatchers
+import com.wix.hive.model.activities.ActivityScope
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope

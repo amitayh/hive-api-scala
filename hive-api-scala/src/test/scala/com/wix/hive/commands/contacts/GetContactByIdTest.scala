@@ -1,9 +1,7 @@
 package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands.GetContactById
 import com.wix.hive.matchers.HiveMatchers
-import dispatch.url
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 

@@ -1,10 +1,8 @@
 package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.commands.GetContacts
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.matchers.HiveMatchers
-import org.jboss.netty.handler.codec.http.multipart.HttpData
 import org.specs2.mutable._
 import org.specs2.specification.Scope
 

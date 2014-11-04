@@ -10,9 +10,12 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.wix.hive.commands._
-import com.wix.hive.model.ActivityType.ActivityType
-import com.wix.hive.model._
+import com.wix.hive.commands.contacts._
+import com.wix.hive.model.activities.ActivityType.ActivityType
+import com.wix.hive.model.activities._
+import com.wix.hive.model.contacts.Contact
+import com.wix.hive.model.insights.ActivitySummary
+import com.wix.hive.model.sites.{SiteData, SiteStatus}
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
 

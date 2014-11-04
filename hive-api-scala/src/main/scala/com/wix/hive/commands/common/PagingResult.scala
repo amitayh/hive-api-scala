@@ -1,8 +1,8 @@
 package com.wix.hive.commands.common
 
-import com.wix.hive.commands.GetActivities
+import com.wix.hive.commands.activities.GetActivities
 
-trait Cursor {
+trait PagingResult {
   def  previousCursor: Option[String]
   def nextCursor: Option[String]
 

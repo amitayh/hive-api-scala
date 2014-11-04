@@ -1,10 +1,8 @@
 package com.wix.hive.commands.contacts
 
-import com.wix.hive.client.http.{NamedParameters, HttpMethod}
-import com.wix.hive.commands.{UpsertContact, GetContacts}
-import com.wix.hive.commands.common.PageSizes
+import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.matchers.HiveMatchers
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
+import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
 class UpsertContactTest extends SpecificationWithJUnit with HiveMatchers {
