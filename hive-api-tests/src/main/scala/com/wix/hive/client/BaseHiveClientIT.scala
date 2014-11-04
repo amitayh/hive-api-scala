@@ -56,7 +56,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     val phone = "972-54-5556767"
     val email = "maximn@wix.com"
-
+    val emailStatus = EmailStatus.OptOut
+    
     val modifiedAt = new DateTime(2012, 2, 10, 10,10)
 
     val activityId = randomId
@@ -128,7 +129,13 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "add address to contact" in new Context {
       givenContactAddAddress(app, contactId, modifiedAt,address)
 
-      client.execute(instance, AddContactAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await(timeout = 1000.seconds)
+      client.execute(instance, AddContactAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await
+    }
+    
+    "add email to contact" in new Context {
+      givenEmailAddAddress(app, contactId, modifiedAt, contactEmail)
+      
+      client.execute(instance, AddContactEmail(contactId, modifiedAt, contactEmail)) must beContactWithId(contactId).await
     }
 
     "get activity by ID" in new Context {
@@ -219,6 +226,8 @@ trait HiveApiDrivers {
   def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
 
   def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit
+
+  def givenEmailAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit

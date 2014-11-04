@@ -3,7 +3,6 @@ package com.wix.hive.commands
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.client.http.{NamedParameters, HttpMethod}
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.commands.AddContactAddress.QueryKeys
 import com.wix.hive.commands.UpsertContact.BodyKeys
 import com.wix.hive.commands.common.PageSizes
 import PageSizes.PageSizes
@@ -98,25 +97,36 @@ object UpsertContact {
 
 case class UpsertContactResponse(contactId: String)
 
-case class AddContactAddress(contactId: String, modifiedAt: DateTime, address: AddressDTO) extends ContactsCommand[Contact] {
+
+trait AddToContactCommand[TResult] extends ContactsCommand[TResult] {
+  val modifiedAtKey = "modifiedAt"
+
+  val contactId: String
+  val modifiedAt: DateTime
+
   override def method: HttpMethod = POST
 
-  override def urlParams: String = s"/$contactId/address"
+  override def query: NamedParameters = Map(
+    modifiedAtKey -> modifiedAt.toString
+  )
+
+  override def urlParams: String = s"/$contactId"
+}
+
+
+case class AddContactAddress(contactId: String, modifiedAt: DateTime, address: AddressDTO) extends AddToContactCommand[Contact] {
+  override def urlParams: String = super.urlParams + "/address"
 
   override def body: Option[AnyRef] = Some(address)
-
-  override def query: NamedParameters = Map(
-    QueryKeys.modifiedAt -> modifiedAt.toString
-  )
 }
 
-object AddContactAddress {
-
-  object QueryKeys {
-    val modifiedAt = "modifiedAt"
-  }
-
-}
 
 case class AddressDTO(tag: String, address: Option[String] = None, neighborhood: Option[String] = None, city: Option[String] = None,
                       region: Option[String] = None, country: Option[String] = None, postalCode: Option[String] = None)
+
+
+case class AddContactEmail(contactId: String, modifiedAt: DateTime, email: ContactEmailDTO) extends AddToContactCommand[Contact] {
+  override def urlParams: String = super.urlParams + "/email"
+
+  override def body: Option[AnyRef] = Some(email)
+}

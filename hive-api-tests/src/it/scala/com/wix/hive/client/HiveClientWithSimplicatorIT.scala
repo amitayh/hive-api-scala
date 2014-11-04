@@ -87,12 +87,22 @@ trait HubSimplicator extends HiveApiDrivers {
 
   override def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = ()
 
-  override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt:DateTime, address: AddressDTO): Unit = {
-    val contact = Contact(id = contactId, createdAt = new DateTime())
-    val encodedModifiedAt = URLEncoder.encode(modifiedAt.toString, "UTF-8")
+  private def urlEncode(str: String): String = {
+    URLEncoder.encode(str, "UTF-8")
+  }
 
-    givenThat(responseForUrl(s"/contacts/${contactId}/address.*$encodedModifiedAt", app, contact, RequestMethod.POST)
-    .withRequestBody(containing(address.tag)))
+  override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit = {
+    val contact = Contact(id = contactId, createdAt = new DateTime())
+
+    givenThat(responseForUrl(s"/contacts/${contactId}/address.*${urlEncode(modifiedAt.toString)}", app, contact, RequestMethod.POST)
+      .withRequestBody(containing(address.tag)))
+  }
+
+  override def givenEmailAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
+    val contact = Contact(id = contactId, createdAt = new DateTime())
+
+    givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, contact, RequestMethod.POST)
+    .withRequestBody(containing(email.email)))
   }
 
 
