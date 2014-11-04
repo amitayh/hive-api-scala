@@ -23,7 +23,7 @@ class AddAddressTest extends SpecificationWithJUnit with HiveMatchers {
     val modifiedAt = new DateTime(2010, 3, 2, 1, 2)
     val address = AddressDTO("tag")
 
-    val cmd = AddContactAddress(contactId, modifiedAt, address)
+    val cmd = AddAddress(contactId, modifiedAt, address)
   }
 
 }

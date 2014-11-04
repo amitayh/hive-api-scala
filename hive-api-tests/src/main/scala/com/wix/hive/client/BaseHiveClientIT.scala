@@ -134,13 +134,13 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "add address to contact" in new Context {
       givenContactAddAddress(app, contactId, modifiedAt,address)
 
-      client.execute(instance, AddContactAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await
+      client.execute(instance, AddAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await
     }
     
     "add email to contact" in new Context {
       givenEmailAddAddress(app, contactId, modifiedAt, contactEmail)
       
-      client.execute(instance, AddContactEmail(contactId, modifiedAt, contactEmail)) must beContactWithId(contactId).await
+      client.execute(instance, AddEmail(contactId, modifiedAt, contactEmail)) must beContactWithId(contactId).await
     }
 
     "get activity by ID" in new Context {
