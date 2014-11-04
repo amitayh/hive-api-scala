@@ -1,5 +1,7 @@
 package com.wix.hive.client
 
+import java.net.URLEncoder
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -8,7 +10,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.RequestMethod
-import com.wix.hive.commands.{UpsertContactResponse, ContactData, ContactEmailDTO, CreatedContact}
+import com.wix.hive.commands._
 import com.wix.hive.model.ActivityType.ActivityType
 import com.wix.hive.model._
 import org.apache.log4j.BasicConfigurator
@@ -84,6 +86,14 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = ()
+
+  override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt:DateTime, address: AddressDTO): Unit = {
+    val contact = Contact(id = contactId, createdAt = new DateTime())
+    val encodedModifiedAt = URLEncoder.encode(modifiedAt.toString, "UTF-8")
+
+    givenThat(responseForUrl(s"/contacts/${contactId}/address.*$encodedModifiedAt", app, contact, RequestMethod.POST)
+    .withRequestBody(containing(address.tag)))
+  }
 
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {

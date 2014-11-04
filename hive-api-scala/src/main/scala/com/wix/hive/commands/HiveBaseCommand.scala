@@ -17,7 +17,7 @@ trait HiveBaseCommand[T] {
 
   def body: Option[AnyRef] = None
 
-  final def createHttpRequestData: HttpRequestData = HttpRequestData(method, url + urlParams, query, headers, body)
+  def createHttpRequestData: HttpRequestData = HttpRequestData(method, url + urlParams, query, headers, body)
 
   protected def removeOptionalParameters(params: Map[String, Any]): NamedParameters = params.collect {
     case (k, v: Some[_]) => k -> v.get.toString

@@ -15,10 +15,10 @@ class UpsertContactTest extends SpecificationWithJUnit with HiveMatchers {
       command.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
         url = be_===("/contacts"),
-        body = beSome(beLike[AnyRef] { case params: NamedParameters => params must havePairs(
+        body = beSome(be_==(Map(
           "phone" -> "972-54-5551234",
-          "email" -> "email@wix.com")
-        }))
+          "email" -> "email@wix.com")))
+      )
     }
 
     "create HttpRequestData with default parameters" in new Context {

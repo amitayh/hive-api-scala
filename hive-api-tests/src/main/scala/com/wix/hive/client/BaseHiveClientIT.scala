@@ -52,6 +52,13 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus= EmailStatus.OptOut)
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
+    val address = AddressDTO("tag-address-dto")
+
+    val phone = "972-54-5556767"
+    val email = "maximn@wix.com"
+
+    val modifiedAt = new DateTime(2012, 2, 10, 10,10)
+
     val activityId = randomId
 
     val activity = Activity(id = "id", createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
@@ -111,14 +118,17 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }
 
     "upsert a contact" in new Context {
-      val phone = "972-54-5556767"
-      val email = "maximn@wix.com"
-
       givenContactUpsertByPhoneAndEmail(app, Some(phone), Some(email), contactId)
 
       client.execute(instance, UpsertContact(Some(phone), Some(email))) must haveUpsertContactId(contactId).await
 
       verifyUpsertContactWithId(app, Some(phone), Some(email), contactId)
+    }
+
+    "add address to contact" in new Context {
+      givenContactAddAddress(app, contactId, modifiedAt,address)
+
+      client.execute(instance, AddContactAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await(timeout = 1000.seconds)
     }
 
     "get activity by ID" in new Context {
@@ -207,6 +217,8 @@ trait HiveApiDrivers {
 
   def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String)
   def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
+
+  def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
