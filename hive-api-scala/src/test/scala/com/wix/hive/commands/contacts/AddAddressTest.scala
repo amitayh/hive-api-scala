@@ -11,7 +11,7 @@ class AddAddressTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.POST),
-        url = contain(contactId),
+        url = contain(contactId) and contain("address"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(address))
       )

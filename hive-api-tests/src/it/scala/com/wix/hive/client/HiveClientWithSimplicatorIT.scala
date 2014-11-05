@@ -13,9 +13,10 @@ import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.contacts._
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
-import com.wix.hive.model.contacts.Contact
+import com.wix.hive.model.contacts.{ContactUrl, Contact}
 import com.wix.hive.model.insights.ActivitySummary
 import com.wix.hive.model.sites.{SiteData, SiteStatus}
+import dispatch.url
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
 
@@ -112,6 +113,15 @@ trait HubSimplicator extends HiveApiDrivers {
       .withRequestBody(containing(phone.phone)))
   }
 
+  override def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit ={
+    givenThat(responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+      .withRequestBody(containing(url.url)))
+  }
+
+  override def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+      .withRequestBody(containing(date.date.toString)))
+  }
 
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {

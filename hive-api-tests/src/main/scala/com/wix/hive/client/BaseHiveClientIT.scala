@@ -9,10 +9,11 @@ import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.sites.Site
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
-import com.wix.hive.model.contacts.{Contact, ContactName, EmailStatus, PagingContactsResult}
+import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
 import com.wix.hive.model.sites.SiteData
+import dispatch.url
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
@@ -59,6 +60,9 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
+    val date = new DateTime(2013, 1, 2, 2 ,3)
+    val contactDate = ContactDateDTO(tag = "date-tag", date)
+    
     val address = AddressDTO("tag-address-dto")
 
     val phone = "972-54-5556767"
@@ -68,6 +72,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val modifiedAt = new DateTime(2012, 2, 10, 10, 10)
     val contactPhone = ContactPhoneDTO("tag-phone-add", phone)
 
+    val url = "http://wix.com/somesite"
+    val contactUrl = ContactUrlDTO("tag-contact-add", url)
 
     val activityId = randomId
 
@@ -167,6 +173,18 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
     }
 
+    "add URL to contact" in new Context {
+      givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
+
+      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl))
+    }
+    
+    "add date to contact" in new Context {
+      givenContactAddDate(app, contactId, modifiedAt, contactDate)
+      
+      client.execute(instance, AddDate(contactId, modifiedAt, contactDate))
+    }
+
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
@@ -213,7 +231,6 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }.pendingUntilFixed("PageSize is not implemented in the server")
 
     "get site's URL" in new Context {
-      val url = "http://somesite.com/wix"
       givenAppWithSite(app, url)
 
       client.execute(instance, Site) must haveSiteUrl(url).await
@@ -261,6 +278,10 @@ trait HiveApiDrivers {
   def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
 
   def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit
+
+  def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit
+
+  def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit
 
 
 
