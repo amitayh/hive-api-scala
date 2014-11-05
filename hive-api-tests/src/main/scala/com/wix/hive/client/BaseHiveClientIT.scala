@@ -61,7 +61,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     val date = new DateTime(2013, 1, 2, 2 ,3)
     val contactDate = ContactDateDTO(tag = "date-tag", date)
-    
+
+    val addressId = "9a9cf711-d537-44a5-97e3-d45b7e7ffe53"
     val address = AddressDTO("tag-address-dto")
 
     val phone = "972-54-5556767"
@@ -76,6 +77,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     val contactCompany = CompanyDTO(Some("role-comp"), contactName.first)
     val contactPicture = PictureDTO("some-pic")
+    val contactAddress = AddressDTO("tag-address-contact")
 
     val activityId = randomId
 
@@ -204,9 +206,14 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "update contact's picture" in new Context {
       givenContactUpdatePicture(app, contactId, modifiedAt, contactPicture)
 
-      client.execute(instance, UpdatePicture(contactId, modifiedAt, contactPicture))
-    }
+      client.execute(instance, UpdatePicture(contactId, modifiedAt, contactPicture)) must beContactWithId(contactId).await
+    }.pendingUntilFixed("Documentation states PictureDTO but server expects string")
 
+    "update contact's address" in new Context {
+      givenContactUpdateAddress(app, contactId, modifiedAt, addressId, contactAddress)
+
+      client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
+    }
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
@@ -310,6 +317,8 @@ trait HiveApiDrivers {
   def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit
 
   def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit
+
+  def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId:String, address: AddressDTO): Unit
 
 
 

@@ -136,11 +136,15 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit = {
+    throw new RuntimeException("Until HUB is fixed")
     givenThat(responseForUrl(s"/contacts/$contactId/picture.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(picture.picture)))
   }
 
-
+  override def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId: String, address: AddressDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/address/$addressId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
+      .withRequestBody(containing(address.tag)))
+  }
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {
