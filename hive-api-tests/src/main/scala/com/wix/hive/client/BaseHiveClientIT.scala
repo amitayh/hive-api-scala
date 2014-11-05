@@ -13,7 +13,6 @@ import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
 import com.wix.hive.model.sites.SiteData
-import dispatch.url
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
@@ -75,6 +74,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val url = "http://wix.com/somesite"
     val contactUrl = ContactUrlDTO("tag-contact-add", url)
 
+    val contactCompany = CompanyDTO(Some("role-comp"), contactName.first)
+
     val activityId = randomId
 
     val activity = Activity(id = "id", createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
@@ -85,6 +86,8 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val summaryAactivityType = ActivityType.`auth/login`
     val summaryFrom = new DateTime(2010, 1, 1, 10, 10)
     val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(summaryAactivityType), 1, summaryFrom)), 1, summaryFrom)
+    val authRegister = AuthRegister("ini", "stream", "ACTIVE")
+
 
     implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
 
@@ -176,24 +179,30 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "add URL to contact" in new Context {
       givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
 
-      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl))
+      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
     }
     
     "add date to contact" in new Context {
       givenContactAddDate(app, contactId, modifiedAt, contactDate)
       
-      client.execute(instance, AddDate(contactId, modifiedAt, contactDate))
+      client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
     }
 
     "update contact's name" in new Context {
       givenContactUpdateName(app, contactId, modifiedAt, contactName)
 
-      client.execute(instance, UpdateName(contactId, modifiedAt, contactName))
+      client.execute(instance, UpdateName(contactId, modifiedAt, contactName)) must beContactWithId(contactId).await
+    }
+
+    "update contact's company" in new Context {
+      givenContactUpdateCompany(app, contactId, modifiedAt, contactCompany)
+
+      client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
     }
 
 
     "get activity by ID" in new Context {
-      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
+      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 
       client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
     }
@@ -290,6 +299,8 @@ trait HiveApiDrivers {
   def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit
 
   def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit
+
+  def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit
 
 
 

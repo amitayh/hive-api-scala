@@ -3,6 +3,7 @@ package com.wix.hive.client
 import java.net.URLEncoder
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.github.tomakehurst.wiremock.WireMockServer
@@ -19,6 +20,7 @@ import com.wix.hive.model.sites.{SiteData, SiteStatus}
 import dispatch.url
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 
 /**
  * Created with IntelliJ IDEA.
@@ -120,14 +122,19 @@ trait HubSimplicator extends HiveApiDrivers {
 
   override def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
-      .withRequestBody(containing(date.date.toString)))
+      .withRequestBody(containing(ISO8601Utils.format(date.date.toDate, true))))
   }
 
   override def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(name.first.get)))
   }
 
+
+  override def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
+      .withRequestBody(containing(company.role.get)))
+  }
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {
