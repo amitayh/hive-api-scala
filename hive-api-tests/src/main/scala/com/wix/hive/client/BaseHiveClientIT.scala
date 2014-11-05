@@ -185,6 +185,12 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(instance, AddDate(contactId, modifiedAt, contactDate))
     }
 
+    "update contact's name" in new Context {
+      givenContactUpdateName(app, contactId, modifiedAt, contactName)
+
+      client.execute(instance, UpdateName(contactId, modifiedAt, contactName))
+    }
+
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE")))
@@ -282,6 +288,8 @@ trait HiveApiDrivers {
   def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit
 
   def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit
+
+  def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit
 
 
 
