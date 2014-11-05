@@ -56,7 +56,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val anotherContact = Contact(anotherContactId, new DateTime(2010, 1, 1, 0, 0))
 
     val contactName = ContactName(first = Some("First"), last = Some("Last"))
+
+    val emailId = "48d21810-1a8a-4b69-ba25-8272f598667b"
     val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
+
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
     val date = new DateTime(2013, 1, 2, 2 ,3)
@@ -214,6 +217,11 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
       client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
     }
+    "update contact's email" in new Context {
+      givenContactUpdateEmail(app, contactId, modifiedAt, emailId, contactEmail)
+
+      client.execute(instance, UpdateEmail(contactId, modifiedAt, emailId, contactEmail))
+    }
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
@@ -319,6 +327,8 @@ trait HiveApiDrivers {
   def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit
 
   def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId:String, address: AddressDTO): Unit
+
+  def givenContactUpdateEmail(app: AppDef, contactId: String, modifiedAt: DateTime, emailId: String, email: ContactEmailDTO): Unit
 
 
 
