@@ -18,9 +18,7 @@ class AddUrlTest extends SpecificationWithJUnit with HiveMatchers {
     }
   }
 
-  class Context extends Scope {
-    val contactId = "0g6f6d66-e27c-48ce-9ad0-1fa30977954d"
-    val modifiedAt = new DateTime(2010, 3, 2, 1, 2)
+  class Context extends ContextForModification {
     val url = ContactUrlDTO("contact-tag", "http://wix.com")
 
     val cmd = AddUrl(contactId, modifiedAt, url)

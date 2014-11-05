@@ -7,22 +7,22 @@ import org.joda.time.DateTime
 import org.specs2.mutable.{SpecificationWithJUnit, Specification}
 import org.specs2.specification.Scope
 
-class UpdateCompanyTest extends SpecificationWithJUnit with HiveMatchers {
+class UpdatePictureTest extends SpecificationWithJUnit with HiveMatchers {
   "createHttpRequestData" should {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("company"),
+        url = contain(contactId) and contain("picture"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(company))
+        body = beSome(be_==(picture))
       )
     }
   }
 
-  class Context extends ContextForModification {
-    val company = CompanyDTO(Some("role in company"), Some("my name"))
+  class Context extends ContextForModification{
+    val picture = PictureDTO("some-pic-name")
 
-    val cmd = UpdateCompany(contactId, modifiedAt, company)
+    val cmd = UpdatePicture(contactId, modifiedAt, picture)
   }
 
 }

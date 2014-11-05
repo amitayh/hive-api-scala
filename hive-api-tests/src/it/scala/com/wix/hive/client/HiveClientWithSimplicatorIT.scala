@@ -130,11 +130,17 @@ trait HubSimplicator extends HiveApiDrivers {
       .withRequestBody(containing(name.first.get)))
   }
 
-
   override def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(company.role.get)))
   }
+
+  override def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/picture.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
+      .withRequestBody(containing(picture.picture)))
+  }
+
+
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {

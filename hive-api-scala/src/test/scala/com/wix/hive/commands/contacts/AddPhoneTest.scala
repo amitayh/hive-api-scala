@@ -18,9 +18,7 @@ class AddPhoneTest extends SpecificationWithJUnit with HiveMatchers {
     }
   }
 
-  class Context extends Scope {
-    val contactId = "0a6f6d66-e27c-48ce-9ad0-1fa30977954b"
-    val modifiedAt = new DateTime(2010, 3, 2, 1, 2)
+  class Context extends ContextForModification {
     val phone = ContactPhoneDTO("tag-phone", "972-54-5551234")
 
     val cmd = AddPhone(contactId, modifiedAt, phone)

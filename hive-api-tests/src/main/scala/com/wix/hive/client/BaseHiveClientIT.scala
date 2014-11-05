@@ -75,6 +75,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val contactUrl = ContactUrlDTO("tag-contact-add", url)
 
     val contactCompany = CompanyDTO(Some("role-comp"), contactName.first)
+    val contactPicture = PictureDTO("some-pic")
 
     val activityId = randomId
 
@@ -200,6 +201,12 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
     }
 
+    "update contact's picture" in new Context {
+      givenContactUpdatePicture(app, contactId, modifiedAt, contactPicture)
+
+      client.execute(instance, UpdatePicture(contactId, modifiedAt, contactPicture))
+    }
+
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
@@ -301,6 +308,8 @@ trait HiveApiDrivers {
   def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit
 
   def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit
+
+  def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit
 
 
 

@@ -19,9 +19,7 @@ class UpdateNameTest extends SpecificationWithJUnit with HiveMatchers {
     }
   }
 
-  class Context extends Scope {
-    val contactId = "3d49b088-1d05-4576-9a31-103c3510be58"
-    val modifiedAt = new DateTime(2010, 6, 2, 1, 2)
+  class Context extends ContextForModification {
     val name = ContactName(Some("Mr."), Some("first"), Some("middle"), Some("last"))
 
     val cmd = UpdateName(contactId, modifiedAt, name)

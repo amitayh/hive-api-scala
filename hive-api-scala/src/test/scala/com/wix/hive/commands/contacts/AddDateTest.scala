@@ -18,9 +18,7 @@ class AddDateTest extends SpecificationWithJUnit with HiveMatchers {
     }
   }
 
-  class Context extends Scope {
-    val contactId = "ff45a6b8-cc75-41cb-815d-9e6584e5067d"
-    val modifiedAt = new DateTime(2010, 3, 2, 1, 2)
+  class Context extends ContextForModification {
     val contactDate = new DateTime(2012, 1, 2, 3, 2)
     val date = ContactDateDTO("tag-date", contactDate)
 
