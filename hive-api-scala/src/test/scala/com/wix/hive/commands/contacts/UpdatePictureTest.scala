@@ -2,10 +2,7 @@ package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.matchers.HiveMatchers
-import com.wix.hive.model.contacts.ContactName
-import org.joda.time.DateTime
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
-import org.specs2.specification.Scope
+import org.specs2.mutable.SpecificationWithJUnit
 
 class UpdatePictureTest extends SpecificationWithJUnit with HiveMatchers {
   "createHttpRequestData" should {

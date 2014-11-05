@@ -2,8 +2,7 @@ package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.matchers.HiveMatchers
-import com.wix.hive.model.contacts.EmailStatus
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
+import org.specs2.mutable.SpecificationWithJUnit
 
 class UpdateUrlTest extends SpecificationWithJUnit with HiveMatchers {
 

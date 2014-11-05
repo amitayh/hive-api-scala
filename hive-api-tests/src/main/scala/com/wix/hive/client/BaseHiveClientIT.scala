@@ -245,6 +245,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(instance, UpdateDate(contactId, modifiedAt, dateId, contactDate)) must beContactWithId(contactId).await
     }
 
+    "update contact's email subscription" in new Context {
+      failure("Not implemented in the HUB")
+    }.pendingUntilFixed
+
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 

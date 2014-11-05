@@ -2,9 +2,7 @@ package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.matchers.HiveMatchers
-import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
-import org.specs2.specification.Scope
 
 class AddAddressTest extends SpecificationWithJUnit with HiveMatchers {
   "createHttpRequestData" should {

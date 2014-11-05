@@ -1,6 +1,6 @@
 package com.wix.hive.commands.contacts
 
-import com.wix.hive.model.contacts.{Company, Contact}
+import com.wix.hive.model.contacts.Contact
 import org.joda.time.DateTime
 
 case class UpdateCompany(contactId: String, modifiedAt: DateTime, company: CompanyDTO) extends UpdateContactCommand[Contact] {

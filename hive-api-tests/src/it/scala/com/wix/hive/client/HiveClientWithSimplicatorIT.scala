@@ -14,13 +14,11 @@ import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.contacts._
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
-import com.wix.hive.model.contacts.{ContactName, ContactUrl, Contact}
+import com.wix.hive.model.contacts.{Contact, ContactName}
 import com.wix.hive.model.insights.ActivitySummary
 import com.wix.hive.model.sites.{SiteData, SiteStatus}
-import dispatch.url
 import org.apache.log4j.BasicConfigurator
 import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
 
 /**
  * Created with IntelliJ IDEA.

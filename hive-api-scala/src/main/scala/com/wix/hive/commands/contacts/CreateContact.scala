@@ -1,9 +1,7 @@
 package com.wix.hive.commands.contacts
 
-import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.model.contacts.EmailStatus._
-import com.wix.hive.model.contacts.{Address, Company, ContactName, EmailStatusRef, _}
+import com.wix.hive.model.contacts.{Address, Company, ContactName, _}
 
 case class CreateContact(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
                          emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
