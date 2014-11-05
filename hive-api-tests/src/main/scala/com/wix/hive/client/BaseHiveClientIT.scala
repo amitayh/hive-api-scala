@@ -73,8 +73,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val emailStatus = EmailStatus.OptOut
 
     val modifiedAt = new DateTime(2012, 2, 10, 10, 10)
+    val phoneId = "2ac68c77-d4e6-4e37-9e82-bfa2479bb1d1"
     val contactPhone = ContactPhoneDTO("tag-phone-add", phone)
 
+    val urlId = "c8226786-cca9-48a9-8750-a2043c867d35"
     val url = "http://wix.com/somesite"
     val contactUrl = ContactUrlDTO("tag-contact-add", url)
 
@@ -217,10 +219,23 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
       client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
     }
+
     "update contact's email" in new Context {
       givenContactUpdateEmail(app, contactId, modifiedAt, emailId, contactEmail)
 
-      client.execute(instance, UpdateEmail(contactId, modifiedAt, emailId, contactEmail))
+      client.execute(instance, UpdateEmail(contactId, modifiedAt, emailId, contactEmail)) must beContactWithId(contactId).await
+    }
+
+    "update cotnact's phone" in new Context {
+      givenContactUpdatePhone(app, contactId, modifiedAt, phoneId, contactPhone)
+
+      client.execute(instance, UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)) must beContactWithId(contactId).await
+    }
+
+    "update contact's url" in new Context {
+      givenContactUpdateUrl(app, contactId, modifiedAt, urlId, contactUrl)
+
+      client.execute(instance, UpdateUrl(contactId, modifiedAt, urlId, contactUrl))
     }
 
     "get activity by ID" in new Context {
@@ -330,6 +345,9 @@ trait HiveApiDrivers {
 
   def givenContactUpdateEmail(app: AppDef, contactId: String, modifiedAt: DateTime, emailId: String, email: ContactEmailDTO): Unit
 
+  def givenContactUpdatePhone(app: AppDef, contactId: String, modifiedAt: DateTime, phoneId: String, phone: ContactPhoneDTO): Unit
+
+  def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit

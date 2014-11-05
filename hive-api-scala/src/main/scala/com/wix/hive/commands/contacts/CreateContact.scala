@@ -19,6 +19,6 @@ case class ContactData(name: Option[ContactName] = None, picture: Option[String]
                        emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
                        addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
 
-case class ContactPhoneDTO(tag: String, phone: String)
 
-case class ContactEmailDTO(tag: String, email: String, @JsonScalaEnumeration(classOf[EmailStatusRef]) emailStatus: EmailStatus)
+
+
