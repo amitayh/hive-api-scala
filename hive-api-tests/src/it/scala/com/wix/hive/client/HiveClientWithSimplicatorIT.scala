@@ -157,8 +157,13 @@ trait HubSimplicator extends HiveApiDrivers {
   }
 
   override def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/phone/$urlId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/url/$urlId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(url.url)))
+  }
+
+  override def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit = {
+    givenThat(responseForUrl(s"/contacts/$contactId/date/$dateId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
+      .withRequestBody(containing(date.tag)))
   }
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {

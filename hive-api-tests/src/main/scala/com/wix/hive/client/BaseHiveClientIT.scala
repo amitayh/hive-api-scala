@@ -60,6 +60,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val emailId = "48d21810-1a8a-4b69-ba25-8272f598667b"
     val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
 
+    val dateId = "e1157acc-41aa-460e-87e9-7cee90778b06"
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
     val date = new DateTime(2013, 1, 2, 2 ,3)
@@ -235,7 +236,13 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "update contact's url" in new Context {
       givenContactUpdateUrl(app, contactId, modifiedAt, urlId, contactUrl)
 
-      client.execute(instance, UpdateUrl(contactId, modifiedAt, urlId, contactUrl))
+      client.execute(instance, UpdateUrl(contactId, modifiedAt, urlId, contactUrl)) must beContactWithId(contactId).await
+    }
+
+    "update contact's date" in new Context {
+      givenContactUpdateDate(app, contactId, modifiedAt, dateId, contactDate)
+
+      client.execute(instance, UpdateDate(contactId, modifiedAt, dateId, contactDate)) must beContactWithId(contactId).await
     }
 
     "get activity by ID" in new Context {
@@ -348,6 +355,9 @@ trait HiveApiDrivers {
   def givenContactUpdatePhone(app: AppDef, contactId: String, modifiedAt: DateTime, phoneId: String, phone: ContactPhoneDTO): Unit
 
   def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit
+
+  def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit
+
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
