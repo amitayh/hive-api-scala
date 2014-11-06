@@ -249,6 +249,12 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       failure("Not implemented in the HUB")
     }.pendingUntilFixed
 
+    "get activities for a given contact" in new Context {
+      givenActivitiesForContact(app, contactId, activity)
+
+      client.execute(instance, GetContactActivities(contactId))
+    }
+    
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 
@@ -274,11 +280,9 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }
 
     "get all activities" in new Context {
-      val allActivities = Activity(id = activityId, createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
+      givenAppWithActivitiesBulk(app, activity)
 
-      givenAppWithActivitiesBulk(app, allActivities)
-
-      client.execute(instance, GetActivities()) must haveSameIds(allActivities).await
+      client.execute(instance, GetActivities()) must haveSameIds(activity).await
     }
 
     "get all activities with paging" in new Context {
@@ -361,6 +365,8 @@ trait HiveApiDrivers {
   def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit
 
   def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit
+
+  def givenActivitiesForContact(app: AppDef, contactId: String, activity: Activity): Unit
 
 
 

@@ -25,7 +25,7 @@ case class InsightActivitySummary(contactId: Option[String] = None,
   override def method: HttpMethod = HttpMethod.GET
 
   override def query: NamedParameters =
-    super.removeOptionalParameters(
+    super.mapToStrings(
       Map(
         InsightActivitySummary.scope -> scope,
         InsightActivitySummary.from -> from,

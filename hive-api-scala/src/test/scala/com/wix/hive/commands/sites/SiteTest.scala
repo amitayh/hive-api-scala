@@ -1,7 +1,6 @@
-package com.wix.hive.commands.contacts
+package com.wix.hive.commands.sites
 
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.commands.sites.Site
 import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mutable._
 import org.specs2.specification.Scope

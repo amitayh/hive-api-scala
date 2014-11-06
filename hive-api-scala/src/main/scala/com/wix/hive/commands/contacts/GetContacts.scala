@@ -5,14 +5,18 @@ import com.wix.hive.commands.common.PageSizes._
 import com.wix.hive.model.contacts.PagingContactsResult
 
 
-case class GetContacts(tag: Seq[String] = Nil, email: Option[String] = None, phone: Option[String] = None,
-                       firstName: Option[String] = None, lastName: Option[String] = None, cursor: Option[String] = None,
+case class GetContacts(tag: Seq[String] = Nil,
+                       email: Option[String] = None,
+                       phone: Option[String] = None,
+                       firstName: Option[String] = None,
+                       lastName: Option[String] = None,
+                       cursor: Option[String] = None,
                        pageSize: Option[PageSizes] = None) extends ContactsCommand[PagingContactsResult] {
 
   override val method = HttpMethod.GET
 
   override val query = {
-    super.removeOptionalParameters({
+    super.mapToStrings({
       import com.wix.hive.commands.contacts.GetContacts.QueryKeys
       Map(
         QueryKeys.tag -> tag,
