@@ -15,7 +15,7 @@ class GetContactActivitiesTest extends SpecificationWithJUnit with HiveMatchers 
     "create HttpRequestData with all fields" in new Context {
       command.createHttpRequestData must httpRequestDataWith(
       method = be_===(HttpMethod.GET),
-      url = contain(contactId) and contain("activities"),
+      url = contain(contactId) and contain("activities") and contain("contacts"),
       query = havePairs(
         "activityTypes" -> types.mkString(","),
         "until" -> until.get.toString,
@@ -29,7 +29,7 @@ class GetContactActivitiesTest extends SpecificationWithJUnit with HiveMatchers 
 
       commandWithDefaults.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.GET),
-        url = contain(contactId) and contain("activities"),
+        url = contain(contactId) and contain("activities") and contain("contacts"),
         query = havePairs(
           "scope" -> ActivityScope.site.toString,
           "pageSize" -> PageSizes.`25`.toString))

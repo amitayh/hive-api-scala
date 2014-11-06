@@ -11,6 +11,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, WireMock}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import com.wix.hive.commands.activities.PagingActivitiesResult
 import com.wix.hive.commands.contacts._
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
@@ -60,7 +61,8 @@ trait HubSimplicator extends HiveApiDrivers {
         withHeader("x-wix-signature", matching(base64Regex))
   }
 
-  val contactCreatedAt = new DateTime(2012,1,1,1,1)
+  val contactCreatedAt = new DateTime(2012, 1, 1, 1, 1)
+
   private def aContact(id: String) = Contact(id, createdAt = contactCreatedAt)
 
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
@@ -105,7 +107,7 @@ trait HubSimplicator extends HiveApiDrivers {
 
   override def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
-    .withRequestBody(containing(email.email)))
+      .withRequestBody(containing(email.email)))
   }
 
   override def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit = {
@@ -113,7 +115,7 @@ trait HubSimplicator extends HiveApiDrivers {
       .withRequestBody(containing(phone.phone)))
   }
 
-  override def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit ={
+  override def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(url.url)))
   }
@@ -164,8 +166,10 @@ trait HubSimplicator extends HiveApiDrivers {
       .withRequestBody(containing(date.tag)))
   }
 
-  override def givenActivitiesForContact(app: AppDef, contactId: String, activity: Activity): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/activities", app, aContact(contactId), RequestMethod.GET))
+  override def givenActivitiesForContact(app: AppDef, contactId: String, cursor: String,activities: Activity*): Unit = {
+    val resp = PagingActivitiesResultAsInHubServer(1, None, None, activities.map(new ActivityAsInHubServer(_)))
+
+    givenThat(responseForUrl(s"/contacts/$contactId/activities.*$cursor", app, resp, RequestMethod.GET))
   }
 
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
@@ -180,9 +184,9 @@ trait HubSimplicator extends HiveApiDrivers {
     }
   }
 
-  override def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit = {
-    case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
+  case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
 
+  override def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit = {
     val resp = mapper.writeValueAsString(PagingActivitiesResultAsInHubServer(1, None, None, activities.map(new ActivityAsInHubServer(_))))
 
     givenThat(get(versionedUrlMatcher("/activities.*")).

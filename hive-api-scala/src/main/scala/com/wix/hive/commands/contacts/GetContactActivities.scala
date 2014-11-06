@@ -17,5 +17,6 @@ case class GetContactActivities(contactId: String,
                                 scope: ActivityScope = ActivityScope.site,
                                 cursor: Option[String] = None,
                                 pageSize: PageSizes = PageSizes.`25`) extends BaseGetActivitiesCommand(activityTypes, until, from, scope, cursor, pageSize) {
-  override val urlParams = s"/$contactId/activitibees"
+  override val url: String = "/contacts"
+  override val urlParams = s"/$contactId/activities"
 }

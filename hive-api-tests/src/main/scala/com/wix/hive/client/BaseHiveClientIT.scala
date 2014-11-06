@@ -97,6 +97,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val summary = ActivitySummary(Seq(ActivityTypesSummary(Some(summaryAactivityType), 1, summaryFrom)), 1, summaryFrom)
     val authRegister = AuthRegister("ini", "stream", "ACTIVE")
 
+    val cursor = "5e841234-9d1b-432a-b0dc-d8747a23bb87"
 
     implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
 
@@ -190,10 +191,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
       client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
     }
-    
+
     "add date to contact" in new Context {
       givenContactAddDate(app, contactId, modifiedAt, contactDate)
-      
+
       client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
     }
 
@@ -250,11 +251,11 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }.pendingUntilFixed
 
     "get activities for a given contact" in new Context {
-      givenActivitiesForContact(app, contactId, activity)
+      givenActivitiesForContact(app, contactId, cursor, activity)
 
-      client.execute(instance, GetContactActivities(contactId))
+      client.execute(instance, GetContactActivities(contactId, cursor = Some(cursor))) must haveSameIds(activity).await
     }
-    
+
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 
@@ -366,8 +367,7 @@ trait HiveApiDrivers {
 
   def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit
 
-  def givenActivitiesForContact(app: AppDef, contactId: String, activity: Activity): Unit
-
+  def givenActivitiesForContact(app: AppDef, contactId: String, cursor: String, activities: Activity*): Unit
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit

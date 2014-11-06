@@ -2,6 +2,7 @@ package com.wix.hive.commands.activities
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{HttpMethod, NamedParameters}
+import com.wix.hive.commands.HiveBaseCommand
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.common.PageSizes.PageSizes
 import com.wix.hive.model.activities.ActivityScope
@@ -13,7 +14,7 @@ abstract class BaseGetActivitiesCommand(activityTypes: Seq[String] = Nil,
                                         from: Option[DateTime] = None,
                                         scope: ActivityScope = ActivityScope.site,
                                         cursor: Option[String] = None,
-                                        pageSize: PageSizes = PageSizes.`25`) extends ActivityCommand[PagingActivitiesResult] {
+                                        pageSize: PageSizes = PageSizes.`25`) extends HiveBaseCommand[PagingActivitiesResult] {
   override val method: HttpMethod = HttpMethod.GET
 
   override def query: NamedParameters =
