@@ -1,7 +1,5 @@
 package com.wix.hive.commands.activities
 
-import com.wix.hive.client.http.HttpMethod.{HttpMethod, _}
-import com.wix.hive.client.http._
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.common.PageSizes._
 import com.wix.hive.model.activities.ActivityScope

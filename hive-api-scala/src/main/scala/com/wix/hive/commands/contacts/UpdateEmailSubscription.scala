@@ -1,8 +1,8 @@
 package com.wix.hive.commands.contacts
 
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
-import com.wix.hive.model.contacts.{EmailStatusRef, Contact}
 import com.wix.hive.model.contacts.EmailStatus.EmailStatus
+import com.wix.hive.model.contacts.{Contact, EmailStatusRef}
 import org.joda.time.DateTime
 
 case class UpdateEmailSubscription(contactId: String, modifiedAt: DateTime, emailId: String, subscription: EmailStatus) extends UpdateContactCommand[Contact] {

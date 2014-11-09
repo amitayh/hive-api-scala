@@ -1,13 +1,10 @@
 package com.wix.hive.commands.contacts
 
-import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.commands.activities.{BaseGetActivitiesCommand, PagingActivitiesResult}
+import com.wix.hive.commands.activities.BaseGetActivitiesCommand
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.common.PageSizes._
 import com.wix.hive.model.activities.ActivityScope
 import com.wix.hive.model.activities.ActivityScope._
-import com.wix.hive.model.activities.ActivityType.ActivityType
 import org.joda.time.DateTime
 
 case class GetContactActivities(contactId: String,

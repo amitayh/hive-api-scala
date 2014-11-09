@@ -1,24 +1,19 @@
 package com.wix.hive.client
 
-import java.util.UUID
-
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.sites.Site
-import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
-import com.wix.hive.model.sites.SiteData
 import org.joda.time.DateTime
-import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.time.NoTimeConversions
 
-import scala.concurrent.{Future, Await}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 
@@ -37,8 +32,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
   step(initEnv())
 
-
-  trait Context extends Before {
+  trait Context extends Before with HiveCommandsMatchers {
     def before = beforeTest()
 
     val app = AppDef.random
@@ -98,49 +92,6 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val authRegister = AuthRegister("ini", "stream", "ACTIVE")
 
     val cursor = "5e841234-9d1b-432a-b0dc-d8747a23bb87"
-
-    implicit def value2BeMatcher[T](t: T): Matcher[T] = be_===(t)
-
-    def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ {
-      (_: Contact).id aka "contactId"
-    }
-
-    def beContactsWith(matcher: Matcher[Seq[Contact]]): Matcher[PagingContactsResult] = matcher ^^ {
-      (_: PagingContactsResult).results aka "results"
-    }
-
-    def beCreatedContactWithId(matcher: Matcher[String]): Matcher[CreatedContact] = matcher ^^ {
-      (_: CreatedContact).contactId aka "contactId"
-    }
-
-    def beAnActivityWith(id: String): Matcher[Activity] = (activity: Activity) => activity.id == id
-
-    def haveTypes(types: Seq[ActivityType]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
-
-    def haveActivityResult: Matcher[ActivityCreatedResult] =  {
-        not(beEqualTo("")) ^^ { (_:ActivityCreatedResult).activityId aka "activityId" } and
-        not(beEqualTo("")) ^^ { (_: ActivityCreatedResult).contactId aka "contactId" }
-    }
-
-    def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
-
-    def haveSiteUrl(url: String): Matcher[SiteData] = ((_: SiteData).url) ^^ be_==(url)
-
-    def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] = (s: ActivitySummary) => (s.total == summary.total) && (s.activityTypes.length == summary.activityTypes.length)
-
-    def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_: Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
-
-    def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
-      be_===(total) ^^ {
-        (_: ActivitySummary).total aka "total"
-      } and
-        haveActivityOfType(typ) ^^ {
-          (_: ActivitySummary).activityTypes aka "types"
-        }
-
-    def haveUpsertContactId(id: String): Matcher[UpsertContactResponse] = be_===(id) ^^ {
-      (_: UpsertContactResponse).contactId aka "contactId"
-    }
   }
 
   "Hive client" should {
@@ -263,12 +214,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       givenAppWithContactExist(app, contactId)
 
       import activity._
-
-      val m: Matcher[Future[ActivityCreatedResult]] =haveActivityResult.await
-      val x : Future[ActivityCreatedResult] = client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo))
-
-
-       x must m
+      client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
 
       verifyActivityCreated(app)
     }
@@ -276,7 +222,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 
-      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(id = activityId).await
+      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(activityId).await
     }
 
     "get list of all activity types" in new Context {
@@ -344,72 +290,3 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
   step(shutdownEnv())
 }
 
-trait HiveApiDrivers {
-
-  def randomId: String = UUID.randomUUID().toString
-
-  def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit
-
-  def givenAppWithContacts(app: AppDef, respondsWith: Contact*): Unit
-
-  def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit
-
-  def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String)
-
-  def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
-
-  def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit
-
-  def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
-
-  def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit
-
-  def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit
-
-  def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit
-
-  def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit
-
-  def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit
-
-  def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit
-
-  def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId:String, address: AddressDTO): Unit
-
-  def givenContactUpdateEmail(app: AppDef, contactId: String, modifiedAt: DateTime, emailId: String, email: ContactEmailDTO): Unit
-
-  def givenContactUpdatePhone(app: AppDef, contactId: String, modifiedAt: DateTime, phoneId: String, phone: ContactPhoneDTO): Unit
-
-  def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit
-
-  def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit
-
-  def givenActivitiesForContact(app: AppDef, contactId: String, cursor: String, activities: Activity*): Unit
-
-
-
-  def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
-
-  def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit
-
-  def givenAppActivityTypes(app: AppDef, types: ActivityType*): Unit
-
-  def givenAppWithContactExist(app: AppDef, contactId: String): Unit
-
-  def getValidUserSessionToken: String
-
-  def verifyActivityCreated(appDef: AppDef): Unit
-
-  def givenAppWithSite(appDef: AppDef, url: String): Unit
-
-  def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit
-
-  def givenAppWithActivities(app: AppDef, responseWith: ActivitySummary): Unit
-
-  case class AppDef(appId: String, instanceId: String, secret: String)
-
-  object AppDef {
-    def random: AppDef = AppDef(randomId, randomId, randomId)
-  }
-
-}
