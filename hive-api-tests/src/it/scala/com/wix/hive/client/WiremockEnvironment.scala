@@ -5,22 +5,18 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.apache.log4j.BasicConfigurator
 
-
-class HiveClientWithSimplicatorIT extends BaseHiveClientIT with HubSimplicator {
+trait WiremockEnvironment {
   val serverPort = 8089
 
-  override val baseUrl = s"http://localhost:$serverPort"
-  val wireMockServer = new WireMockServer(new WireMockConfiguration().port(serverPort))
+  lazy val wireMockServer = new WireMockServer(new WireMockConfiguration().port(serverPort))
 
-  override def initEnv(): Unit = {
+  lazy val initEnvironment = {
     BasicConfigurator.configure()
     WireMock.configureFor("localhost", serverPort)
     wireMockServer.start()
   }
 
-  override def shutdownEnv() = wireMockServer.shutdown()
-
-  override def beforeTest(): Unit = {
+  def resetMocks = {
     WireMock.reset()
     WireMock.resetAllScenarios()
   }

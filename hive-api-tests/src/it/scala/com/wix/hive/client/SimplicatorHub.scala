@@ -17,7 +17,7 @@ import com.wix.hive.model.insights.ActivitySummary
 import com.wix.hive.model.sites.{SiteData, SiteStatus}
 import org.joda.time.DateTime
 
-trait HubSimplicator extends HiveApiDrivers {
+trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
 
   private def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url?.*")
