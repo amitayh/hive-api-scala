@@ -9,7 +9,7 @@ class AddPhoneTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.POST),
-        url = contain(contactId) and contain("phone"),
+        url = be_===(s"/contacts/$contactId/phone"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(phone))
       )

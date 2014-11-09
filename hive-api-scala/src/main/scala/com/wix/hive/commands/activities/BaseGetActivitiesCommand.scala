@@ -18,7 +18,7 @@ abstract class BaseGetActivitiesCommand(activityTypes: Seq[String] = Nil,
   override val method: HttpMethod = HttpMethod.GET
 
   override def query: NamedParameters =
-    super.mapToStrings(Map(
+    super.mapValuesToStrings(Map(
       BaseGetActivitiesCommand.ScopeKey -> scope,
       BaseGetActivitiesCommand.PageSizeKey -> pageSize,
       BaseGetActivitiesCommand.ActivityTypesKey -> activityTypes,

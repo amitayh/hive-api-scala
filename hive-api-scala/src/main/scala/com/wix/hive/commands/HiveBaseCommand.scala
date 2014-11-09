@@ -19,9 +19,10 @@ trait HiveBaseCommand[T] {
 
   def createHttpRequestData: HttpRequestData = HttpRequestData(method, url + urlParams, query, headers, body)
 
-  protected def mapToStrings(params: Map[String, Any]): NamedParameters = params.collect {
+  protected def mapValuesToStrings(params: Map[String, Any]): NamedParameters = params.collect {
     case (k, v: Some[_]) => k -> v.get.toString
     case (k, v: Seq[_]) if v.nonEmpty => k -> v.mkString(",")
     case (k, v: Enumeration#Value) => k -> v.toString
+    case (k, v: String) => k -> v
   }
 }

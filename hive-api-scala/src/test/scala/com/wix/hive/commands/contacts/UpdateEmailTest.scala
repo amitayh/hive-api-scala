@@ -18,7 +18,7 @@ class UpdateEmailTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("email") and contain(emailId),
+        url = be_===(s"/contacts/$contactId/email/$emailId"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(email))
       )

@@ -17,7 +17,7 @@ class UpdatePhoneTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("phone") and contain(phoneId),
+        url = be_===(s"/contacts/$contactId/phone/$phoneId"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(phone))
       )

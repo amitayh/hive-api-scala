@@ -19,7 +19,7 @@ class UpdateDateTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("date") and contain(dateId),
+        url = be_===(s"/contacts/$contactId/date/$dateId"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(date))
       )

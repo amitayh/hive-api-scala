@@ -17,7 +17,7 @@ class UpdateUrlTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("url") and contain(urlId),
+        url = be_===(s"/contacts/$contactId/url/$urlId"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(url))
       )

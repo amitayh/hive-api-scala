@@ -172,6 +172,7 @@ trait HubSimplicator extends HiveApiDrivers {
     givenThat(responseForUrl(s"/contacts/$contactId/activities.*$cursor", app, resp, RequestMethod.GET))
   }
 
+
   override def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit = {
     activities foreach {
       case activity: Activity =>
@@ -208,9 +209,17 @@ trait HubSimplicator extends HiveApiDrivers {
   override def givenAppWithContactExist(app: AppDef, contactId: String): Unit = {
     val responseJson = mapper.writeValueAsString(ActivityCreatedResult("activityId", "contactId"))
 
-    givenThat(post(versionedUrlMatcher(s"/activities.*userSessionToken=$getValidUserSessionToken"))
+    val createActivityUsingContactSessionUrl = s"/activities.*userSessionToken=$getValidUserSessionToken"
+    val createActivityUsingContactId = s"/contacts/$contactId/activities"
+
+    givenThat(post(versionedUrlMatcher(s"($createActivityUsingContactId|$createActivityUsingContactSessionUrl)"))
       .withStandardHeaders(app).
       willReturn(aResponse().withBody(responseJson)))
+//
+//    givenThat(post(versionedUrlMatcher(createActivityUsingContactSessionUrl))
+//      .withStandardHeaders(app).
+//      willReturn(aResponse().withBody(responseJson)))
+
   }
 
   override def verifyActivityCreated(appDef: AppDef): Unit = ()

@@ -16,7 +16,7 @@ case class GetContacts(tag: Seq[String] = Nil,
   override val method = HttpMethod.GET
 
   override val query = {
-    super.mapToStrings({
+    super.mapValuesToStrings({
       import com.wix.hive.commands.contacts.GetContacts.QueryKeys
       Map(
         QueryKeys.tag -> tag,

@@ -9,7 +9,7 @@ class UpdateAddressTest extends SpecificationWithJUnit with HiveMatchers {
     "work with parameters" in new Context {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.PUT),
-        url = contain(contactId) and contain("address") and contain(addressId),
+        url = be_===(s"/contacts/$contactId/address/$addressId"),
         query = havePair("modifiedAt", modifiedAt.toString),
         body = beSome(be_==(address))
       )

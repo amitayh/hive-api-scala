@@ -7,7 +7,7 @@ case class UpsertContact(phone: Option[String] = None, email: Option[String] = N
   override val method = HttpMethod.PUT
 
   override def body: Option[AnyRef] = {
-    val map = super.mapToStrings(Map(BodyKeys.phone -> phone, BodyKeys.email -> email))
+    val map = super.mapValuesToStrings(Map(BodyKeys.phone -> phone, BodyKeys.email -> email))
     if (map.nonEmpty) Some(map) else None
   }
 }

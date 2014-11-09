@@ -18,7 +18,7 @@ import org.specs2.matcher.Matcher
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.time.NoTimeConversions
 
-import scala.concurrent.Await
+import scala.concurrent.{Future, Await}
 import scala.concurrent.duration._
 
 
@@ -46,7 +46,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
 
-    val clientWithInstance = client.executeForInstance(instance)
+    val clientForInstance = client.executeForInstance(instance)
 
     def now = new DateTime()
 
@@ -117,7 +117,10 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
 
     def haveTypes(types: Seq[ActivityType]): Matcher[ActivityTypes] = (_: ActivityTypes).types == types
 
-    def haveActivityResult: Matcher[ActivityCreatedResult] = (res: ActivityCreatedResult) => res.activityId.nonEmpty && res.contactId.nonEmpty
+    def haveActivityResult: Matcher[ActivityCreatedResult] =  {
+        not(beEqualTo("")) ^^ { (_:ActivityCreatedResult).activityId aka "activityId" } and
+        not(beEqualTo("")) ^^ { (_: ActivityCreatedResult).contactId aka "contactId" }
+    }
 
     def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
 
@@ -256,6 +259,20 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(instance, GetContactActivities(contactId, cursor = Some(cursor))) must haveSameIds(activity).await
     }
 
+    "create activity for contact" in new Context {
+      givenAppWithContactExist(app, contactId)
+
+      import activity._
+
+      val m: Matcher[Future[ActivityCreatedResult]] =haveActivityResult.await
+      val x : Future[ActivityCreatedResult] = client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo))
+
+
+       x must m
+
+      verifyActivityCreated(app)
+    }
+
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
 
@@ -269,7 +286,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
       client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
     }
 
-    "create activity for contact" in new Context {
+    "create activity for contact using contact's user session" in new Context {
       givenAppWithContactExist(app, randomId)
       val userSessionToken = getValidUserSessionToken
 
@@ -368,6 +385,7 @@ trait HiveApiDrivers {
   def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit
 
   def givenActivitiesForContact(app: AppDef, contactId: String, cursor: String, activities: Activity*): Unit
+
 
 
   def givenAppWithActivitiesById(myself: AppDef, activities: Activity*): Unit
