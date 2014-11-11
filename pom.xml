@@ -9,6 +9,13 @@
     <packaging>pom</packaging>
     <name>Hive Scala API - Modules</name>
 
+    <developers>
+        <developer>
+            <name>Maxim Novak</name>
+            <email>maximn@wix.com</email>
+        </developer>
+    </developers>
+
     <modules>
         <module>hive-api-scala</module>
         <module>hive-api-contract-tests</module>
