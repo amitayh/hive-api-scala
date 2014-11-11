@@ -23,10 +23,10 @@ class HiveClientSettings(config: Config) {
   val baseUrl = config.getString("hive-client.baseUrl")
 }
 
-class HiveClient(val appId: String, secretKey: String,
-                 httpClient: AsyncHttpClient = DefaultHttpClientFactory.create,
-                 val baseUrl: String) {
-
+class HiveClient(val appId: String,
+                 secretKey: String,
+                 val baseUrl: String,
+                 httpClient: AsyncHttpClient = DefaultHttpClientFactory.create) {
 
   def timestamp: String = new DateTime().toString(ISODateTimeFormat.dateTime())
 
@@ -89,7 +89,6 @@ object HiveClient {
     val secret = appSecret.getOrElse(settings.appSecret)
     val url = baseUrl.getOrElse(settings.baseUrl)
     val client = httpClient.getOrElse(DefaultHttpClientFactory.create)
-
-    new HiveClient(id, secret, client ,url)
+    new HiveClient(id, secret, url, client)
   }
 }
