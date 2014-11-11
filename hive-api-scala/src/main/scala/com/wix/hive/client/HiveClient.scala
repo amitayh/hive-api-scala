@@ -47,7 +47,7 @@ class HiveClient(val appId: String, secretKey: String,
     httpClient.request(httpDataForRequest)
   }
 
-  def executeForInstance(instanceId: String): (HiveBaseCommand[_] => Future[_])  = this.execute(instanceId, _)
+  def executeForInstance(instanceId: String): (HiveBaseCommand[_] => Future[_]) = this.execute(instanceId, _)
 
 
   private def withSignature(httpData: HttpRequestData): HttpRequestData = {
