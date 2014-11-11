@@ -36,7 +36,7 @@ class HiveClient(val appId: String, secretKey: String,
 
   val agent = s"Hive Scala v$version"
 
-  lazy val signer = new HiveSigner(secretKey)
+  val signer = new HiveSigner(secretKey)
 
 
   def execute[TCommandResult: ClassTag](instanceId: String, command: HiveBaseCommand[TCommandResult]): Future[TCommandResult] = {

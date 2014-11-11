@@ -11,7 +11,7 @@ class UpdateAddressTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/address/$addressId"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(address))
+        body = beSome(address)
       )
     }
   }
@@ -22,5 +22,4 @@ class UpdateAddressTest extends SpecificationWithJUnit with HiveMatchers {
 
     val cmd = UpdateAddress(contactId, modifiedAt, addressId, address)
   }
-
 }

@@ -12,7 +12,7 @@ class UpdateNameTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/name"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(name))
+        body = beSome(name)
       )
     }
   }

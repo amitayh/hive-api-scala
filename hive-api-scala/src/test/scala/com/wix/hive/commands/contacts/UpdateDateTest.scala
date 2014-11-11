@@ -21,7 +21,7 @@ class UpdateDateTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/date/$dateId"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(date))
+        body = beSome(date)
       )
     }
   }

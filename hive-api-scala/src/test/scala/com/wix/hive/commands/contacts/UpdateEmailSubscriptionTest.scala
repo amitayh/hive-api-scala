@@ -21,7 +21,7 @@ class UpdateEmailSubscriptionTest extends SpecificationWithJUnit with HiveMatche
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/email/$emailId/subscription"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(res))
+        body = beSome(res)
       )
     }
   }

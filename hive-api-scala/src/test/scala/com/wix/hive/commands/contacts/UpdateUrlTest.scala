@@ -19,7 +19,7 @@ class UpdateUrlTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/url/$urlId"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(url))
+        body = beSome(url)
       )
     }
   }

@@ -12,7 +12,7 @@ class AddDateTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.POST),
         url = be_===(s"/contacts/$contactId/date"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(date))
+        body = beSome(date)
       )
     }
   }

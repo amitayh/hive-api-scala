@@ -11,7 +11,7 @@ class UpdatePictureTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/picture"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(picture))
+        body = beSome(picture)
       )
     }
   }

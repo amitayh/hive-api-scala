@@ -19,7 +19,7 @@ class UpdatePhoneTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/phone/$phoneId"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(phone))
+        body = beSome(phone)
       )
     }
   }

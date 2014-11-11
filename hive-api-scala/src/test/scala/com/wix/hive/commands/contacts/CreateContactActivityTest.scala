@@ -24,8 +24,7 @@ class CreateContactActivityTest extends SpecificationWithJUnit with HiveMatchers
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(HttpMethod.POST),
         url = be_===(s"/contacts/$contactId/activities"),
-        body = beSome(be_==(ContactActivityDate(createdAt, locationUrl, details, info)))
-      )
+        body = beSome(ContactActivityDate(createdAt, locationUrl, details, info)))
     }
   }
 }

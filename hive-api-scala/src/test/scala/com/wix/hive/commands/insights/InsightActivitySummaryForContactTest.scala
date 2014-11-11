@@ -37,6 +37,4 @@ class InsightActivitySummaryForContactTest extends SpecificationWithJUnit with H
         query = havePair("scope" -> ActivityScope.app.toString))
     }
   }
-
-
 }

@@ -22,23 +22,26 @@ trait HiveCommandsMatchers extends Matchers {
 
   def haveTypes(types: Seq[ActivityType]): Matcher[ActivityTypes] = be_===(types) ^^ { (_: ActivityTypes).types aka "types" }
 
-  def haveActivityResult: Matcher[ActivityCreatedResult] =
+  def haveActivityResult: Matcher[ActivityCreatedResult] = {
     not(beEqualTo("")) ^^ { (_: ActivityCreatedResult).activityId aka "activityId" } and
-      not(beEqualTo("")) ^^ { (_: ActivityCreatedResult).contactId aka "contactId" }
+    not(beEqualTo("")) ^^ { (_: ActivityCreatedResult).contactId aka "contactId" }
+  }
 
   def haveSameIds(activities: Activity*): Matcher[PagingActivitiesResult] = (res: PagingActivitiesResult) => res.results.map(_.id).toSet == activities.map(_.id).toSet
 
   def haveSiteUrl(url: String): Matcher[SiteData] = ((_: SiteData).url) ^^ be_==(url)
 
-  def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] =
+  def matchActivitySummary(summary: ActivitySummary): Matcher[ActivitySummary] = {
     be_===(summary.total) ^^ { (_: ActivitySummary).total aka "total" } and
-      be_===(summary.activityTypes.length) ^^ { (_: ActivitySummary).activityTypes.length aka "activityTypes.length" }
+    be_===(summary.activityTypes.length) ^^ { (_: ActivitySummary).activityTypes.length aka "activityTypes.length" }
+  }
 
   def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_: Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
 
-  def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] =
+  def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] = {
     be_===(total) ^^ { (_: ActivitySummary).total aka "total" } and
-      haveActivityOfType(typ) ^^ { (_: ActivitySummary).activityTypes aka "types" }
+    haveActivityOfType(typ) ^^ { (_: ActivitySummary).activityTypes aka "types" }
+  }
 
   def haveUpsertContactId(id: String): Matcher[UpsertContactResponse] = be_===(id) ^^ { (_: UpsertContactResponse).contactId aka "contactId" }
 }

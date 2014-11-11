@@ -20,7 +20,7 @@ class UpdateEmailTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===(s"/contacts/$contactId/email/$emailId"),
         query = havePair("modifiedAt", modifiedAt.toString),
-        body = beSome(be_==(email))
+        body = beSome(email)
       )
     }
   }

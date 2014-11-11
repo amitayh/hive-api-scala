@@ -13,8 +13,7 @@ class CreateContactTest extends SpecificationWithJUnit with HiveMatchers {
       cmd.createHttpRequestData must httpRequestDataWith(
       method = be_===(HttpMethod.POST),
       url = be_===("/contacts"),
-      body = beSome(be_==(ContactData(cmd.name, cmd.picture, cmd.company, cmd.emails, cmd.phones, cmd.addresses,
-        cmd.urls, cmd.dates)))
+      body = beSome(ContactData(cmd.name, cmd.picture, cmd.company, cmd.emails, cmd.phones, cmd.addresses, cmd.urls, cmd.dates))
       )
     }
   }
