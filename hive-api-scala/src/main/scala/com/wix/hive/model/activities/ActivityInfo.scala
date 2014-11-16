@@ -46,11 +46,18 @@ case class CartAddress(firstName: String, lastName: String, email: String, phone
 
 case class CartItem(id: String, sku: Option[String], title: String, quantity: Int, price: BigDecimal, formattedPrice: Option[String],
                     currency: String, productLink: Option[String], weight: BigDecimal, formattedWeight: Option[String],
-                    media: Media, variants: Seq[Variant], payment: Payment, shippingAddress: Option[CartAddress],
-                    billingAddress: Option[CartAddress], paymentGateway: Option[String], note: Option[String],
-                    buyerAcceptsMarketing: Option[Boolean])
+                    media: Media, variants: Seq[Variant])
 
-case class ECommercePurchase(cartId: String, storeId: String, orderId: Option[String], items: Seq[CartItem]) extends ActivityInfo {
+case class ECommercePurchase(cartId: String,
+                             storeId: String,
+                             orderId: Option[String],
+                             items: Seq[CartItem],
+                             payment: Payment,
+                             shippingAddress: Option[CartAddress],
+                             billingAddress: Option[CartAddress],
+                             paymentGateway: Option[String],
+                             note: Option[String],
+                             buyerAcceptsMarketing: Option[Boolean]) extends ActivityInfo {
   override val activityType = `e_commerce/purchase`
 }
 
