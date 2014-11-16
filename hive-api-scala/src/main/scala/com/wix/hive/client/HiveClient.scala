@@ -16,7 +16,6 @@ private object DefaultHttpClientFactory {
 class HiveClientSettings(config: Config) {
   def this() = this(ConfigFactory.load())
 
-
   config.checkValid(ConfigFactory.defaultReference(), "hive-client")
   val appId = config.getString("hive-client.credentials.appId")
   val appSecret = config.getString("hive-client.credentials.appSecret")
@@ -81,8 +80,8 @@ object HiveClient {
 
   def apply(appId: Option[String] = None,
             appSecret: Option[String] = None,
-            httpClient: Option[AsyncHttpClient] = None,
-            baseUrl: Option[String] = None) = {
+            baseUrl: Option[String] = None,
+            httpClient: Option[AsyncHttpClient] = None) = {
     val settings = new HiveClientSettings()
 
     val id = appId.getOrElse(settings.appId)

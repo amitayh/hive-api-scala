@@ -11,19 +11,23 @@ Scala client for the Wix Hive API
 ## Installation
 
 TODO: Maven /+ SBT
+``` maven
+<dependency>
+    <groupId>com.wixpress</groupId>
+    <artifactId>hive-api-scala</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+</dependency>
+```
 
 ## Quick Start
 
-``` scala
-TODO: val client = HiveClient(....)
-TODO: .execute or .executeWithInstance
-```
-## Manual
 
 ### Configuration
-The entry point to the Wix Hive API is the `HiveClient` class. You can initialize the class by passing it a configuration block.
+The entry point to the Wix Hive API is the `HiveClient` class. You can initialize the class using a configuration file or by passing it the configuration values.
 
-####The basic configuration is:
+To use the configuration file ('reference.conf') just don't pass any parameters to the HiveClient() apply method.
+
+####The configuration file looks like:
 ``` scala
 hive-client {
   credentials {
@@ -34,13 +38,25 @@ hive-client {
 }
 ```
 
-1. The `config.secret_key` and `config.app_id` are obtained by registering an app as it is outlined [here](http://dev.wix.com/docs/display/DRAF/Dev+Center+Registration+Guide)
-2. The `config.instance_id` is obtained by decoding the signed app instance. Learn more about this  [here](http://dev.wix.com/docs/display/DRAF/Using+the+Signed+App+Instance)
+You can override any of the parameters by passing it to the constractor.
 
-####Advanced configuration options include:
+1. The `hive-client.credentials.appSecret` and `hive-client.credentials.appId` are obtained by registering an app as it is outlined [here](http://dev.wix.com/docs/display/DRAF/Dev+Center+Registration+Guide)
+2. The `instance` is obtained by decoding the signed app instance. Learn more about this  [here](http://dev.wix.com/docs/display/DRAF/Using+the+Signed+App+Instance)
 
-TODO : Advanced configuration
 
+Sample code to retrive contact by ID
+
+``` scala
+  val client = new HiveClient()
+  client.execute(instance, GetContactById(contactId))
+```
+As a parameter you can use any class inherits from `HiveBaseCommand`
+
+Thre's an alternative way which is easier if you need to execute multiple commands on the same instance. You can use the convenience method 'executeForInstance'
+``` scala
+  val executor = client.executeForInstance(instance)
+  executor(GetContactById(contactId))
+```
 
 ### Hive Errors
 #### Response Errors
@@ -59,7 +75,7 @@ TODO : Advanced configuration
 ### Contacts API
 
 #### Concurrency Control
-The contacts add and update methods have a concurrency control mechanism associated with them. The mechanism is based on the ``modifiedAt`` request parameter. This parameter needs to have the same value as the underlying contact that is being updated. 
+The contacts add and update methods have a concurrency control mechanism associated with them. The mechanism is based on the ``modifiedAt`` request parameter. This parameter needs to have the same value as the underlying contact that is being updated.
 For example: let us assume we have a contact with ``id=1`` and ``modifiedAt=2014-10-01T14:43:48.560+03:00`` and we want to update the email field. What we would need to do is execute the following method:
 ``` scala
     TODO: Scala code
@@ -70,9 +86,9 @@ For example: let us assume we have a contact with ``id=1`` and ``modifiedAt=2014
 
    client.add_contact_email('1', new_email, '2014-10-01T14:43:48.560+03:00')
 ```
-So lets think about the concurrency now. Let assume we have two update email requests that come in the same time and they get processed sequentially. 
-First one would get processed and update the contact email and in the same time the contacts’ ``modifiedAt`` will change. 
-Second request gets processed but it will fail with a concurrency validation error because it is trying to perform an update operation on a old version of the contact object. 
+So lets think about the concurrency now. Let assume we have two update email requests that come in the same time and they get processed sequentially.
+First one would get processed and update the contact email and in the same time the contacts’ ``modifiedAt`` will change.
+Second request gets processed but it will fail with a concurrency validation error because it is trying to perform an update operation on a old version of the contact object.
 And the system knows that by comparing the two ``modifiedAt`` parameters (one from the DB and the one provided).
 
 #### client.new_contact
@@ -94,7 +110,7 @@ contact = Hive::Contact.new
    # contact.add_custom(field: 'custom1', value: 'custom')
    client.new_contact(contact)
 ```
-  
+
 #### client.contact
 
 **Example:**
@@ -338,10 +354,10 @@ client.upsert_contact( phone: '123456789', email: 'alex@example.com' )
            locationUrl: 'http://www.wix.com',
            details: { summary: 'test', additionalInfoUrl: 'http://www.wix.com' },
            info: { album: { name: 'Wix', id: '1234' } })
-           
+
    client.new_activity(SESSION_ID, base_activity)
    ```
-   
+
 #### client.activity
 
 **Example:**
@@ -349,7 +365,7 @@ client.upsert_contact( phone: '123456789', email: 'alex@example.com' )
    ``` ruby
    client.activity(ACTIVITY_ID)
    ```
-   
+
 #### client.activities
 
 **Examples:**
@@ -358,7 +374,7 @@ client.upsert_contact( phone: '123456789', email: 'alex@example.com' )
    client.activities(activityTypes: Hive::Activities::MUSIC_ALBUM_FAN.type)
    client.activities(from: Time.now.iso8601(3), until: Time.now.iso8601(3))
    ```
-   
+
 ### Insights API
 
 #### client.activities_summary
@@ -367,7 +383,7 @@ client.upsert_contact( phone: '123456789', email: 'alex@example.com' )
    ``` ruby
    client.activities_summary
    ```
-   
+
 #### client.contact_activities_summary
 
 **Example:**

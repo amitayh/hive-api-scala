@@ -18,7 +18,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val key = "appKey"
     val instance = "websiteInstance"
 
-    val client = HiveClient(Some(id), Some(key), Some(httpClient))
+    val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient))
 
     def oneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
       method = be_===(HttpMethod.GET),
