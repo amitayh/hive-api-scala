@@ -419,3 +419,6 @@ We use the GitHub issue tracker to track bugs and features. Before submitting a 
 7. Commit your changes (`git commit -am 'Add some feature'`)
 8. Push to the branch (`git push origin my-new-feature`)
 9. Create a new [Pull Request](http://help.github.com/send-pull-requests/)
+
+
+TODO: How to change the HTTP underlying library

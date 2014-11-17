@@ -8,32 +8,24 @@
     <packaging>jar</packaging>
     <name>Hive Scala API - Tests</name>
 
-    <parent>
-        <groupId>com.wixpress.common</groupId>
-        <artifactId>wix-scala-parent-ng</artifactId>
-        <version>100.0.0-SNAPSHOT</version>
-        <relativePath />
-    </parent>
-
     <properties>
+        <scala.version>2.10.4</scala.version>
+        <scala.dependencies.version>2.10</scala.dependencies.version>
         <wiremock.version>1.50</wiremock.version>
+        <specs2.version>2.4.11</specs2.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.wixpress</groupId>
             <artifactId>hive-api-scala</artifactId>
             <version>1.1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wixpress.common</groupId>
-            <artifactId>wix-framework-scala-dependencies</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.wixpress.common</groupId>
-            <artifactId>wix-framework-scala-test-dependencies</artifactId>
         </dependency>
 
         <dependency>
@@ -42,14 +34,47 @@
             <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2_${scala.dependencies.version}</artifactId>
+            <version>${specs2.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <argLine>-Xms1536m -Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024m</argLine>
+                    <sourceDir>src/main/scala</sourceDir>
+                    <jvmArgs>
+                        <jvmArg>-Xms64m</jvmArg>
+                        <jvmArg>-Xmx1024m</jvmArg>
+                    </jvmArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <configuration>
+                    <args>
+                        <arg>-unchecked</arg>
+                        <arg>-deprecation</arg>
+                    </args>
+                    <addJavacArgs>-deprecation</addJavacArgs>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
         </plugins>
