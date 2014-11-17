@@ -1,4 +1,4 @@
-package com.wix.hive.client
+package com.wix.hive.client.infrastructure
 
 import java.util.UUID
 
@@ -9,10 +9,11 @@ import com.wix.hive.model.contacts.{Contact, ContactName}
 import com.wix.hive.model.insights.ActivitySummary
 import org.joda.time.DateTime
 
-
+/**
+ * User: maximn
+ * Date: 11/17/14
+ */
 trait HiveApiDrivers {
-  def randomId: String = UUID.randomUUID().toString
-
   def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit
 
   def givenAppWithContacts(app: AppDef, respondsWith: Contact*): Unit
@@ -74,7 +75,10 @@ trait HiveApiDrivers {
   case class AppDef(appId: String, instanceId: String, secret: String)
 
   object AppDef {
+    def randomId: String = UUID.randomUUID().toString
+
     def random: AppDef = AppDef(randomId, randomId, randomId)
   }
+
 
 }

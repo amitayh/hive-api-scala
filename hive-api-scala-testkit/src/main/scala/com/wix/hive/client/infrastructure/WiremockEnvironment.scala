@@ -1,22 +1,24 @@
-package com.wix.hive.client
+package com.wix.hive.client.infrastructure
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import org.apache.log4j.BasicConfigurator
 
 trait WiremockEnvironment {
-  val serverPort = 8089
+  val serverPort: Int
 
   lazy val wireMockServer = new WireMockServer(new WireMockConfiguration().port(serverPort))
 
-  lazy val initEnvironment = {
-    BasicConfigurator.configure()
+  def start(): Unit = {
     WireMock.configureFor("localhost", serverPort)
     wireMockServer.start()
   }
 
-  def resetMocks = {
+  def stop(): Unit = {
+    WireMock.shutdownServer()
+  }
+
+  def resetMocks(): Unit = {
     WireMock.reset()
     WireMock.resetAllScenarios()
   }

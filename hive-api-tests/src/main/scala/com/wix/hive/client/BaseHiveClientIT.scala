@@ -1,5 +1,6 @@
 package com.wix.hive.client
 
+import com.wix.hive.client.infrastructure.HiveApiDrivers
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
@@ -79,7 +80,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     val contactPicture = PictureDTO("some-pic")
     val contactAddress = AddressDTO("tag-address-contact")
 
-    val activityId = randomId
+    val activityId = "d903da2e-c3b9-40cf-b2ad-2ff879c26f09"
 
     val activity = Activity(id = "id", createdAt = now, activityInfo = AuthRegister("ini", "stream", "ACTIVE"))
     val pagingFirstPage = (0 to 25).map((id: Int) => activity.copy(id = id.toString))
@@ -233,7 +234,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     }
 
     "create activity for contact using contact's user session" in new Context {
-      givenAppWithContactExist(app, randomId)
+      givenAppWithContactExist(app, "dac62df7-7852-41fc-af0a-6b443745a5ab")
       val userSessionToken = getValidUserSessionToken
 
       val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))

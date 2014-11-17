@@ -1,4 +1,4 @@
-package com.wix.hive.client
+package com.wix.hive.client.infrastructure
 
 import java.net.URLEncoder
 
@@ -51,12 +51,6 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit = {
     givenThat(responseForUrl("/contacts", app, CreatedContact(respondWithContactId), RequestMethod.POST)
       .withRequestBody(containing(contact.emails.head.email)))
-  }
-
-  case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
-    def this(a: Activity) = this(a.id, a.createdAt, a.activityLocationUrl, a.activityDetails, a.activityInfo)
-
-    val activityType = activityInfo.activityType.toString
   }
 
   override def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = {
@@ -156,7 +150,6 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
     }
   }
 
-  case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
 
   override def givenAppWithActivitiesBulk(myself: AppDef, activities: Activity*): Unit = {
     val resp = mapper.writeValueAsString(PagingActivitiesResultAsInHubServer(1, None, None, activities.map(new ActivityAsInHubServer(_))))
@@ -212,4 +205,13 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withStandardHeaders(app)
       .willReturn(aResponse().withBody(mapper.writeValueAsString(response)))
   }
+
+  case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
+    def this(a: Activity) = this(a.id, a.createdAt, a.activityLocationUrl, a.activityDetails, a.activityInfo)
+
+    val activityType = activityInfo.activityType.toString
+  }
+
+  case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
+
 }

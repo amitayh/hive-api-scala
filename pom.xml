@@ -20,5 +20,6 @@
         <module>hive-api-scala</module>
         <module>hive-api-contract-tests</module>
         <module>hive-api-tests</module>
+        <module>hive-api-scala-testkit</module>
     </modules>
 </project>

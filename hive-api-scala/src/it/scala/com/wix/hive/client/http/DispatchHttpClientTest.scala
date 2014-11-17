@@ -1,14 +1,7 @@
 package com.wix.hive.client.http
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.Future
-import org.specs2.matcher.{Expectable, MatchResult, Matcher}
-import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.time.NoTimeConversions
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

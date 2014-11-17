@@ -9,6 +9,7 @@ import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.sites.SiteData
 import org.specs2.matcher.{Matcher, Matchers}
 
+
 trait HiveCommandsMatchers extends Matchers {
   implicit def value2BeMatcher[T <: String](t: T): Matcher[T] = be_===(t)
 

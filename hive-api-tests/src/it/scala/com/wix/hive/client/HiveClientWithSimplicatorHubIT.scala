@@ -1,17 +1,17 @@
 package com.wix.hive.client
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import org.apache.log4j.BasicConfigurator
+import com.wix.hive.client.infrastructure.SimplicatorHub
 
 
 class HiveClientWithSimplicatorHubIT extends BaseHiveClientIT with SimplicatorHub {
+  override val serverPort: Int = 8089
   override val baseUrl = s"http://localhost:$serverPort"
 
-  override def initEnv(): Unit = initEnvironment
+  val hive = new HiveTestkit(serverPort)
 
-  override def shutdownEnv() = wireMockServer.shutdown()
+  override def initEnv(): Unit = hive.start()
 
-  override def beforeTest(): Unit = resetMocks
+  override def shutdownEnv() = hive.stop()
+
+  override def beforeTest(): Unit = hive.resetMocks()
 }
