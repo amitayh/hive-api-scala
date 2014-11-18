@@ -71,14 +71,5 @@ trait HiveApiDrivers {
   def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit
 
   def givenAppWithActivities(app: AppDef, responseWith: ActivitySummary): Unit
-
-  case class AppDef(appId: String, instanceId: String, secret: String)
-
-  object AppDef {
-    def randomId: String = UUID.randomUUID().toString
-
-    def random: AppDef = AppDef(randomId, randomId, randomId)
-  }
-
-
 }
+

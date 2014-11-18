@@ -1,6 +1,6 @@
 package com.wix.hive.client
 
-import com.wix.hive.client.infrastructure.HiveApiDrivers
+import com.wix.hive.client.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
