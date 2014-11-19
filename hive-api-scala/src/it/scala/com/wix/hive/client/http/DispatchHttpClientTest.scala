@@ -1,13 +1,21 @@
 package com.wix.hive.client.http
 
+import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.Future
+import org.specs2.matcher.{Expectable, MatchResult, Matcher}
+import org.specs2.mock.Mockito
+import org.specs2.mutable.{Before, SpecificationWithJUnit}
+import org.specs2.time.NoTimeConversions
 
-import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.util.{Failure, Try}
 
-class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions {
+class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
   sequential
 
   val wireMockServer = new WireMockServer(new WireMockConfiguration().port(8089))
@@ -23,6 +31,11 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     val client = new DispatchHttpClient()
 
     val baseUrl = "http://localhost:8089"
+
+    val httpRequestData = HttpRequestData(HttpMethod.GET, s"$baseUrl/test")
+
+    val executor = mock[ExecutionContextExecutor]
+    val clientWithCustomExecutor = new DispatchHttpClient(executor)
 
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
@@ -54,7 +67,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       givenThat(get(urlMatching("/test"))
         .willReturn(aResponse().withBody( """{"data":"some info"}""")))
 
-      client.request[Dummy](HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must be_===(Dummy("some info")).await(timeout = 1.second)
+      client.request[Dummy](httpRequestData) must be_===(Dummy("some info")).await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
@@ -96,7 +109,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     }
 
     "handle error returned from the server" in new ctx {
-      givenThat(any(urlEqualTo("/test")).willReturn(aResponse().
+      givenThat(get(urlEqualTo("/test")).willReturn(aResponse().
                                                     withStatus(400).
                                                     withBody("""{"errorCode":400,"message":"some msg","wixErrorCode":-23001}""")))
 
@@ -105,6 +118,12 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     "handle failure - no server listening" in new ctx {
       val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
+    }
+
+    "provide other execution context" in new ctx with Mockito {
+      clientWithCustomExecutor.request(httpRequestData)
+
+      there was one(executor).execute(any[Runnable])
     }
   }
 
