@@ -6,10 +6,9 @@ import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
-import dispatch.Defaults._
 import dispatch.{Http, url, _}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.reflect.ClassTag
 
 
@@ -17,13 +16,13 @@ trait AsyncHttpClient {
   def request[T: ClassTag](data: HttpRequestData): Future[T]
 }
 
-class DispatchHttpClient() extends AsyncHttpClient {
+class DispatchHttpClient(executionContext: ExecutionContextExecutor = dispatch.Defaults.executor) extends AsyncHttpClient {
   override def request[T: ClassTag](data: HttpRequestData): Future[T] = {
     val postDataAsString: String = data.bodyAsString
 
     val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
 
-    Http(req > handle[T] _)
+    Http(req > handle[T] _)(executionContext)
   }
 
   def handle[T: ClassTag](r: Response): T = {
@@ -45,11 +44,12 @@ class DispatchHttpClient() extends AsyncHttpClient {
 }
 
 object DispatchHttpClient {
+
   private object `2XX` {
     def unapply(code: Int): Boolean = code / 100 == 2
   }
-}
 
+}
 
 
 case class HttpRequestData(method: HttpMethod,
@@ -67,6 +67,7 @@ object HttpRequestDataImplicits {
       case None => ""
     }
   }
+
 }
 
 object HttpMethod extends Enumeration {
