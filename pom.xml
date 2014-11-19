@@ -13,6 +13,9 @@
         <developer>
             <name>Maxim Novak</name>
             <email>maximn@wix.com</email>
+            <roles>
+                <role>owner</role>
+            </roles>
         </developer>
     </developers>
 
