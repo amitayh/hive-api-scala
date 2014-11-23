@@ -71,6 +71,29 @@ Thre's an alternative way which is easier if you need to execute multiple comman
     504 -> "Gateway timeout"
 ```
 
+## Using the test-kit
+The test-kit provides you with the ability to test your code end to end.
+
+You'll use the `HiveTestkit` class.
+To control it's lifecycle use the  start/stop/resetMocks methods.
+To set expectations use the giveXXX methods.
+
+- Note: If you use Jetty in your project you might want to exlcude it from the test-kit to avoid collisions. That's because with  we use wiremock to set up the HTTP server, and Wiremock uses Jetty 6.
+``` xml
+<dependency>
+  <groupId>com.wixpress</groupId>
+  <artifactId>hive-api-scala-testkit</artifactId>
+  <scope>test</scope>
+  <exclusions>
+    <exclusion>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>servlet-api</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+```
+
+
 ### Contacts API
 
 #### Concurrency Control
