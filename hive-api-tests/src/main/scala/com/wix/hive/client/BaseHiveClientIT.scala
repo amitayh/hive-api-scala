@@ -100,7 +100,7 @@ abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConver
     "get contact by ID" in new Context {
       givenContactFetchById(app, contact)
 
-      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await
+      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await(3, FiniteDuration(3, "seconds"))
     }
 
     "get contacts" in new Context {
