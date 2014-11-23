@@ -11,18 +11,20 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <scala.version>2.10.4</scala.version>
         <scala.dependencies.version>2.10</scala.dependencies.version>
+
         <dispatch.version>0.11.2</dispatch.version>
         <wiremock.version>1.50</wiremock.version>
         <ning.version>1.8.10</ning.version>
         <jodatime.version>2.5</jodatime.version>
         <jackson.version>2.4.3</jackson.version>
         <specs2.version>2.4.6</specs2.version>
-        <scalaz.stream.version>0.1</scalaz.stream.version>
         <joda.convert.version>1.2</joda.convert.version>
         <config.version>1.2.1</config.version>
+        <quasiquotes.version>2.1.0-M1</quasiquotes.version>
     </properties>
 
     <repositories>
@@ -39,6 +41,16 @@
             <url>http://scala-tools.org/repo-releases</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.scalamacros</groupId>
+                <artifactId>quasiquotes_${scala.dependencies.version}</artifactId>
+                <version>${quasiquotes.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -116,12 +128,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.scalaz.stream</groupId>
-            <artifactId>scalaz-stream_${scala.dependencies.version}</artifactId>
-            <version>${scalaz.stream.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
             <version>${joda.convert.version}</version>
@@ -138,27 +144,74 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.5</version>
                     <executions>
                         <execution>
+                            <id>add-test-source</id>
+                            <phase>generate-sources</phase>
                             <goals>
-                                <goal>jar</goal>
+                                <goal>add-test-source</goal>
                             </goals>
+                            <configuration>
+                                <sources>
+                                    <source>src/it/java</source>
+                                    <source>src/it/scala</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-resource</id>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>add-test-resource</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>src/it/resources</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.12.1</version>
+                    <executions>
+                        <execution>
+                            <id>dev</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-embedded.xml</summaryFile>
+                                <argLine>-Xmx2048m -XX:MaxPermSize=1024m</argLine>
+                            </configuration>
+                        </execution>
+                    </executions>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <forkMode>once</forkMode>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.11</version>
+                    <configuration>
+                        <forkMode>once</forkMode>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                        <argLine>-Xmx2048m -XX:MaxPermSize=1024m</argLine>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
@@ -191,6 +244,44 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <executions>
+                    <execution>
+                        <id>framework-tests</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <testClassesDirectory>${project.build.directory}/frameworktests</testClassesDirectory>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

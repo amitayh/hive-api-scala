@@ -9,11 +9,26 @@
     <name>Hive Scala API - Tests</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <scala.version>2.10.4</scala.version>
         <scala.dependencies.version>2.10</scala.dependencies.version>
+
         <wiremock.version>1.50</wiremock.version>
         <specs2.version>2.4.11</specs2.version>
+        <quasiquotes.version>2.1.0-M1</quasiquotes.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.scalamacros</groupId>
+                <artifactId>quasiquotes_${scala.dependencies.version}</artifactId>
+                <version>${quasiquotes.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -49,31 +64,84 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sourceDir>src/main/scala</sourceDir>
-                    <jvmArgs>
-                        <jvmArg>-Xms64m</jvmArg>
-                        <jvmArg>-Xmx1024m</jvmArg>
-                    </jvmArgs>
-                </configuration>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.5</version>
+                    <executions>
+                        <execution>
+                            <id>add-test-source</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>add-test-source</goal>
+                            </goals>
+                            <configuration>
+                                <sources>
+                                    <source>src/it/java</source>
+                                    <source>src/it/scala</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>add-resource</id>
+                            <phase>generate-test-sources</phase>
+                            <goals>
+                                <goal>add-test-resource</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>src/it/resources</directory>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.12.1</version>
+                    <executions>
+                        <execution>
+                            <id>dev</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <summaryFile>target/failsafe-reports/failsafe-summary-embedded.xml</summaryFile>
+                                <argLine>-Xmx2048m -XX:MaxPermSize=1024m</argLine>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <forkMode>once</forkMode>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.11</version>
+                    <configuration>
+                        <forkMode>once</forkMode>
+                        <useSystemClassLoader>true</useSystemClassLoader>
+                        <argLine>-Xmx2048m -XX:MaxPermSize=1024m</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
+        <plugins>
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
+                <version>3.1.5</version>
                 <configuration>
+                    <recompileMode>incremental</recompileMode>
                     <args>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
@@ -82,13 +150,61 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
-
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xms1536m -Xmx2048m -XX:PermSize=512m -XX:MaxPermSize=1024m</argLine>
-                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <executions>
+                    <execution>
+                        <id>framework-tests</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <testClassesDirectory>${project.build.directory}/frameworktests</testClassesDirectory>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
