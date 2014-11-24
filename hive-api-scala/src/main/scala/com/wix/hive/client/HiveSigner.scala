@@ -27,8 +27,8 @@ class HiveSigner(key: String) {
   def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
-    val sortedQuery = toSortedSeq(queryString)
-    val sortedWixHeaders = toSortedSeq(headers.filterKeys(_.toLowerCase.startsWith("x-wix-")))
+    val sortedQuery = getValuesSortedByKey(queryString)
+    val sortedWixHeaders = getValuesSortedByKey(headers.filterKeys(_.toLowerCase.startsWith("x-wix-")))
     val sortedParams = (sortedQuery ++ sortedWixHeaders).mkString("\n")
     val post = data.bodyAsString
     val postSeparator = if (post.nonEmpty) "\n" else ""
@@ -36,5 +36,5 @@ class HiveSigner(key: String) {
     s"""$method\n$url\n$sortedParams$postSeparator$post"""
   }
 
-  def toSortedSeq(params: NamedParameters) = params.toSeq.sortBy(_._1).map(_._2)
+  private def getValuesSortedByKey(params: NamedParameters) = params.toSeq.sortBy(_._1).map(_._2)
 }
