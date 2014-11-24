@@ -10,9 +10,12 @@ import org.apache.commons.net.util.Base64
 
 class HiveSigner(key: String) {
 
+  private val encryptionMethod = "HMACSHA256"
+  private lazy val base64: Base64 = new Base64(true)
+
   lazy val mac = {
-    val secret = new SecretKeySpec(key.getBytes, "HMACSHA256")
-    val instance = Mac.getInstance("HMACSHA256")
+    val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
+    val instance = Mac.getInstance(encryptionMethod)
     instance.init(secret)
     instance
   }
@@ -21,7 +24,7 @@ class HiveSigner(key: String) {
     val stringToSign = generateStringToSign(data)
 
     val result: Array[Byte] = mac.doFinal(stringToSign.getBytes)
-    new Base64(true).encodeToString(result).trim
+    base64.encodeToString(result).trim
   }
 
   def generateStringToSign(data: HttpRequestData): String = {
