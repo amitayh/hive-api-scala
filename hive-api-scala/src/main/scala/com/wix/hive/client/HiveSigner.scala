@@ -27,11 +27,11 @@ class HiveSigner(key: String) {
     base64.encodeToString(result).trim
   }
 
-  def generateStringToSign(data: HttpRequestData): String = {
+  private def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
     val sortedQuery = getValuesSortedByKey(queryString)
-    val sortedWixHeaders = getValuesSortedByKey(headers.filterKeys(_.toLowerCase.startsWith("x-wix-")))
+    val sortedWixHeaders = getValuesSortedByKey(headers.filterKeys { str => val lower = str.toLowerCase; lower != "x-wix-signature" && lower.startsWith("x-wix-")})
     val sortedParams = (sortedQuery ++ sortedWixHeaders).mkString("\n")
     val post = data.bodyAsString
     val postSeparator = if (post.nonEmpty) "\n" else ""

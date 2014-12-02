@@ -1,0 +1,46 @@
+package com.wix.hive.server
+
+import com.wix.hive.client.http.HttpRequestData
+import com.wix.hive.server.webhooks.{Webhook, WebhooksProcessor}
+
+import scala.util.Try
+
+/**
+ * User: maximn
+ * Date: 11/27/14
+ */
+
+
+//
+//
+//class InstanceDecoder(key: String) {
+//  def decode(instance: String): Try[WixInstance] = ???
+//}
+//
+//class WixInstance()
+//
+
+//"instanceId": "138e00ea-3284-8869-ebbc-0314d8854549",
+//"signDate": "2014-11-25T07:21:10.920Z",
+//"uid": "fde01512-8eed-4f42-878f-b891a7a1be66",
+//"permissions": "OWNER",
+//"ipAndPort": "88.119.150.196/35982",
+//"vendorProductId": null,
+//"demoMode": false
+trait ReqeustProcessor {
+  def process[T <% HttpRequestData](data: HttpRequestData): Unit
+}
+
+trait WebhookRequestProcessor extends ReqeustProcessor {
+  val secret: String
+  val processor = new WebhooksProcessor(secret)
+
+  override def process[T <% HttpRequestData](data: HttpRequestData): Unit = processor.convert(data)
+}
+
+
+
+
+//class PrintlnEventProcessor[T <: Webhook] extends WebhookProcessor[T] {
+//  override def process(data: Try[_]): Unit = println(data.toString)
+//}

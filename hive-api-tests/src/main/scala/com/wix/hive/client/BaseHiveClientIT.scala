@@ -18,16 +18,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 
-abstract class BaseHiveClientIT extends SpecificationWithJUnit with NoTimeConversions {
+abstract class BaseHiveClientIT extends BaseIT  {
   this: HiveApiDrivers =>
-
-  sequential
-
-  def initEnv(): Unit
-
-  def shutdownEnv(): Unit
-
-  def beforeTest(): Unit
 
   val baseUrl: String
 

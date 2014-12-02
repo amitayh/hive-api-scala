@@ -6,8 +6,10 @@ import com.wix.hive.commands.HiveBaseCommand
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, _}
 import scala.reflect.ClassTag
+
 
 private object DefaultHttpClientFactory {
   def create: AsyncHttpClient = new DispatchHttpClient()

@@ -1,7 +1,5 @@
 package com.wix.hive.client.infrastructure
 
-import java.util.UUID
-
 import com.wix.hive.commands.contacts._
 import com.wix.hive.model.activities.Activity
 import com.wix.hive.model.activities.ActivityType.ActivityType

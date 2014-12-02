@@ -11,8 +11,9 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.time.NoTimeConversions
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContextExecutor}
+import scala.concurrent.{Await, ExecutionContextExecutor, _}
 import scala.util.{Failure, Try}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
@@ -35,7 +36,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     val httpRequestData = HttpRequestData(HttpMethod.GET, s"$baseUrl/test")
 
     val executor = mock[ExecutionContextExecutor]
-    val clientWithCustomExecutor = new DispatchHttpClient(executor)
+    val clientWithCustomExecutor = new DispatchHttpClient()(executor)
 
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 

@@ -138,6 +138,11 @@
             <artifactId>config</artifactId>
             <version>${config.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>finagle-http_${scala.dependencies.version}</artifactId>
+            <version>6.22.0</version>
+        </dependency>
     </dependencies>
 
     <build>
