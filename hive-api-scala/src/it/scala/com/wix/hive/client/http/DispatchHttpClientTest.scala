@@ -13,7 +13,7 @@ import org.specs2.time.NoTimeConversions
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContextExecutor, _}
+import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.util.{Failure, Try}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {

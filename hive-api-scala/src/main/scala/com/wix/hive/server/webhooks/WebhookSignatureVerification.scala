@@ -14,7 +14,7 @@ class WebhookSignatureVerification(secret: String) extends HttpRequestHelpers {
   private lazy val signer = new HiveSigner(secret)
 
   def verify(req: HttpRequestData): Try[HttpRequestData] = {
-    tryHeader(req, "x-wix-signature") flatMap { sig =>
+    tryHeader(req, "X-Wix-Signature") flatMap { sig =>
       val calculatedSignature = signer.getSignature(req)
       sig match {
         case `calculatedSignature` => Success(req)

@@ -1,9 +1,6 @@
 package com.wix.hive.server
 
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.server.webhooks.{Webhook, WebhooksProcessor}
-
-import scala.util.Try
 
 /**
  * User: maximn
@@ -31,12 +28,12 @@ trait ReqeustProcessor {
   def process[T <% HttpRequestData](data: HttpRequestData): Unit
 }
 
-trait WebhookRequestProcessor extends ReqeustProcessor {
-  val secret: String
-  val processor = new WebhooksProcessor(secret)
-
-  override def process[T <% HttpRequestData](data: HttpRequestData): Unit = processor.convert(data)
-}
+//trait WebhookRequestProcessor extends ReqeustProcessor[Webhook] {
+//  val secret: String
+//  private val processor = new WebhooksProcessor(secret)
+//
+//  override def process[T < HttpRequestData](data: HttpRequestData): Try[Webhook] = processor.convert(data)
+//}
 
 
 

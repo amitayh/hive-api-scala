@@ -6,4 +6,6 @@ import com.wix.hive.client.infrastructure.SimplicatorWebhooksDriver
  * User: maximn
  * Date: 12/2/14
  */
-class WebhooksTestkit(override val url: String, override val port: Int, override val secret: String) extends SimplicatorWebhooksDriver
+class WebhooksWithSimplicator extends BaseWebhooksIT with SimplicatorWebhooksDriver {
+
+}

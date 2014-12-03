@@ -24,6 +24,7 @@ class FinagleWebServerTest extends SpecificationWithJUnit with Mockito {
   val srv = new FinagleWebServer(8000) {
     override def process[T <% HttpRequestData](data: HttpRequestData): Unit = func(data)
   }
+
   srv.start()
 
 
@@ -32,8 +33,6 @@ class FinagleWebServerTest extends SpecificationWithJUnit with Mockito {
   trait ctx extends Before
   with HiveMatchers {
     override def before: Any = org.mockito.Mockito.reset(func)
-
-
 
     val client: Service[HttpRequest, HttpResponse] = Http.newService("localhost:8000")
 

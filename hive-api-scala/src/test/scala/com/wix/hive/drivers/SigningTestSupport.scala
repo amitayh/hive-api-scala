@@ -45,11 +45,11 @@ trait SigningTestSupport {
 
   val provisioningWebhook = Webhook(instanceId, provisioningData, webhookParameters)
 
-  val provisiningSignature = "au5D4f1mkOn7SL_wm9h6QNSTN5m2h1ucNgin2oB3Jns"
+  val provisiningSignature = "lzAV4deRv3jgpxTmUat2Yz9Pd5fJk36uEM--hcnpY5Q"
 
   val provisioningWebhookRequest = HttpRequestData(HttpMethod.POST,
   "/callback-url",
   queryString = Map.empty,
-  headers = headers + ("x-wix-signature" -> provisiningSignature) + ("x-wix-event-type" -> "/provision/provision"),
+  headers = headers + ("X-Wix-Signature" -> provisiningSignature) + ("X-Wix-Event-Type" -> "/provision/provision"),
   body = Some(provisioningData))
 }

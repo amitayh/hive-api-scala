@@ -7,7 +7,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, _}
+import scala.concurrent.Future
 import scala.reflect.ClassTag
 
 

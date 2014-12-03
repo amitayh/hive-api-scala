@@ -1,6 +1,5 @@
 package com.wix.hive.server.providers
 
-import com.twitter.finagle.http.Request
 import com.wix.hive.client.http.HttpRequestData
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest}
 
@@ -24,7 +23,8 @@ object FinagleProvider {
 
     val headers = req.headers().map(h => (h.getKey, h.getValue)).toMap
 
-    val content = req.asInstanceOf[Request].getContentString()
+    //val content = req.asInstanceOf[Request].getContentString()
+    val content = new String(req.getContent.array())
     val body = if (content.nonEmpty) new Some(content) else None
 
     HttpRequestData(method, url, headers = headers, body = body)

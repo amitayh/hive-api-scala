@@ -13,7 +13,7 @@ class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
   private lazy val base64: Base64 = new Base64(true)
 
-  lazy val mac = {
+  private lazy val mac = {
     val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
     val instance = Mac.getInstance(encryptionMethod)
     instance.init(secret)

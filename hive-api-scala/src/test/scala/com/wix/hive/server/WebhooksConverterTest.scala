@@ -2,7 +2,7 @@ package com.wix.hive.server
 
 import com.wix.hive.drivers.SigningTestSupport
 import com.wix.hive.server.webhooks.exceptions.MissingHeaderException
-import com.wix.hive.server.webhooks.{Webhook, WebhooksProcessor}
+import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
@@ -10,11 +10,13 @@ import org.specs2.specification.Scope
  * User: maximn
  * Date: 11/30/14
  */
-class WebhooksProcessorTest extends SpecificationWithJUnit {
+class WebhooksConverterTest extends SpecificationWithJUnit {
 
   trait ctx extends Scope
   with SigningTestSupport{
-    val processor = new WebhooksProcessor(key)
+    val processor = new WebhooksConverter{
+      override val secret: String = key
+    }
   }
 
   "process" should {

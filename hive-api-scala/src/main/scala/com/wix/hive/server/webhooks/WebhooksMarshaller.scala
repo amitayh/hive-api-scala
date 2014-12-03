@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
  * Date: 12/1/14
  */
 object WebhooksMarshaller {
-  val eventTypeKey = "x-wix-event-type"
+  val eventTypeKey = "X-Wix-Event-Type"
 }
 
 class WebhooksMarshaller extends HttpRequestHelpers {

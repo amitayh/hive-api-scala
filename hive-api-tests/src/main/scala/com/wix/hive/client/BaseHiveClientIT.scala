@@ -11,8 +11,7 @@ import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
 import org.joda.time.DateTime
-import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.time.NoTimeConversions
+import org.specs2.mutable.Before
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
