@@ -10,9 +10,9 @@ import scala.util.Try
  * Date: 12/1/14
  */
 object WebhooksConverter {
-  val appIdKey = "X-Wix-Application-Id"
-  val instanceIdKey = "X-Wix-Instance-Id"
-  val timestampKey = "X-Wix-Timestamp"
+  val appIdKey = "x-wix-application-id"
+  val instanceIdKey = "x-wix-instance-id"
+  val timestampKey = "x-wix-timestamp"
 }
 
 trait  WebhooksConverter extends HttpRequestHelpers {

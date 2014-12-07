@@ -16,10 +16,10 @@ import scala.util.Try
 trait WebServerBase  {
   def start(): ListeningServer
   def stop(after: Duration): Future[Unit]
-
+  protected def process[T <% HttpRequestData](data: HttpRequestData): Unit
 }
 
-abstract class FinagleWebServer(port: Int) extends WebServerBase with ReqeustProcessor {
+abstract class FinagleWebServer(port: Int) extends WebServerBase {
   val serviceDefinition = new Service[HttpRequest, HttpResponse] {
     def apply(req: HttpRequest): Future[HttpResponse] = {
       val d: HttpRequestData = req
@@ -36,7 +36,7 @@ abstract class FinagleWebServer(port: Int) extends WebServerBase with ReqeustPro
 }
 
 
-abstract class FinagleWebhooksWebServer(port: Int) extends FinagleWebServer(port) with WebhooksConverter {
+abstract class FinagleWebhooksWebServer(val port: Int, val secret: String) extends FinagleWebServer(port) with WebhooksConverter {
 
   override def process[T <% HttpRequestData](req: HttpRequestData): Unit =
   {

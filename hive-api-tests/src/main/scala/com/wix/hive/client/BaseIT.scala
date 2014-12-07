@@ -7,7 +7,7 @@ import org.specs2.time.NoTimeConversions
  * User: maximn
  * Date: 12/2/14
  */
-abstract class BaseIT extends SpecificationWithJUnit with NoTimeConversions{
+abstract class BaseIT extends SpecificationWithJUnit with NoTimeConversions {
   sequential
 
   def initEnv(): Unit

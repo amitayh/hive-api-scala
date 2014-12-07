@@ -22,4 +22,4 @@ class UnkownWebhookTypeException(val `type`: String)
   extends WebhookParsingException(s"Unknown webhook type. Given: ${`type`}")
 
 class BadFormattedWebhookException(val json: String, val cause: Throwable)
-  extends WebhookParsingException(s"Bad formatted webhook body: $json", cause)
+  extends WebhookParsingException(s"Bad formatted webhook body: $json. Cause: $cause", cause)

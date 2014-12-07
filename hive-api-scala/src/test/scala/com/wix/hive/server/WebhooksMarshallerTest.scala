@@ -18,7 +18,7 @@ class WebhooksMarshallerTest extends SpecificationWithJUnit {
   val marshaller = new WebhooksMarshaller
 
   def aReq(eventType: String, item: WebhookData) = {
-    val req = HttpRequestData(HttpMethod.GET, headers = Map("X-Wix-Event-Type" -> eventType), url = "/notImportantForMarshalling", body = Some(item))
+    val req = HttpRequestData(HttpMethod.GET, headers = Map("x-wix-event-type" -> eventType), url = "/notImportantForMarshalling", body = Some(item))
     val expected = item
     (req, expected)
   }

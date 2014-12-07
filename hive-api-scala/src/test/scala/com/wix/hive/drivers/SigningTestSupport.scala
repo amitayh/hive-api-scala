@@ -36,7 +36,7 @@ trait SigningTestSupport {
     body = Some( """{"name":{"first":"Wix","last":"Cool"},"company":{},"emails":[{"email":"alext@wix.com","tag":"work"}],"phones":[{"phone":"123456789","tag":"work"}],"addresses":[],"urls":[],"dates":[],"notes":[],"custom":[]}"""))
 
   var dataWithBodySignature = "t_n4yQWIgQeTbCP9oOCKUa0NZpyiNX1nsfxHS3vjiH0"
-
+  var dataWithBodyNoUrlSignature = "LYggyCOW0-O0x2liflR_qvXqoYRlN5bSu8DaYpC4gtg"
 
 
   val provisioningData = Provision(instanceId, None)
@@ -45,11 +45,11 @@ trait SigningTestSupport {
 
   val provisioningWebhook = Webhook(instanceId, provisioningData, webhookParameters)
 
-  val provisiningSignature = "lzAV4deRv3jgpxTmUat2Yz9Pd5fJk36uEM--hcnpY5Q"
+  val provisiningSignature = "54tx1k6LA-jMCSGN0kSde3nOa7oVupBzvSwn0YNCyRM"
 
   val provisioningWebhookRequest = HttpRequestData(HttpMethod.POST,
   "/callback-url",
   queryString = Map.empty,
-  headers = headers + ("X-Wix-Signature" -> provisiningSignature) + ("X-Wix-Event-Type" -> "/provision/provision"),
+  headers = headers.map { case(key,value) => key.toLowerCase -> value} + ("x-wix-signature" -> provisiningSignature) + ("x-wix-event-type" -> "/provision/provision"),
   body = Some(provisioningData))
 }

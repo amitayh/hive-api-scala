@@ -1,5 +1,6 @@
 package com.wix.hive.server.webhooks
 
+import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 import org.joda.time.DateTime
 
 /**
@@ -12,7 +13,7 @@ case class WebhookParameters(appId: String, timestamp: DateTime)
 
 sealed trait WebhookData
 
-case class Provision(instanceId: String, originInstanceId: Option[String]) extends WebhookData
+case class Provision (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
 
 case class BillingUpgrade(vendorProductId: String) extends WebhookData
 

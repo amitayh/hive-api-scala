@@ -19,7 +19,7 @@ with SigningTestSupport{
 
   "verify" should {
     "be true for value req" in new ctx {
-      val signedRequest = dataWithBody.copy(headers = dataWithBody.headers + ("X-Wix-Signature" -> dataWithBodySignature))
+      val signedRequest = dataWithBody.copy(headers = dataWithBody.headers + ("x-wix-signature" -> dataWithBodyNoUrlSignature))
 
       verifier.verify(signedRequest) must beSuccessfulTry(signedRequest)
     }
@@ -29,7 +29,7 @@ with SigningTestSupport{
     }
 
     "be false if wrong signature" in new ctx {
-      val badlySignedRequest = dataWithBody.copy(headers = dataWithBody.headers + ("X-Wix-Signature" -> "xxxx"))
+      val badlySignedRequest = dataWithBody.copy(headers = dataWithBody.headers + ("x-wix-signature" -> "xxxx"))
 
       verifier.verify(badlySignedRequest) must beFailedTry[HttpRequestData].withThrowable[InvalidSignatureException]
     }

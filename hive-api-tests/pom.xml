@@ -16,7 +16,7 @@
         <scala.dependencies.version>2.10</scala.dependencies.version>
 
         <wiremock.version>1.50</wiremock.version>
-        <specs2.version>2.4.11</specs2.version>
+        <specs2.version>2.3.12</specs2.version>
         <quasiquotes.version>2.1.0-M1</quasiquotes.version>
     </properties>
 

@@ -29,12 +29,11 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   def aReq(instanceId: String, parameters: WebhookParameters, eventType: String, content: String): HttpRequest = {
     val req = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, url)
     req.setContent(ChannelBuffers.wrappedBuffer(content.getBytes("UTF8")))
-    req.headers.add("X-Wix-Application-Id", parameters.appId)
-    req.headers.add("X-Wix-Instance-Id", instanceId)
-    req.headers.add("X-Wix-Timestamp", parameters.timestamp)
-    req.headers.add("X-Wix-Event-Type", eventType)
-
-    req.headers.add("X-Wix-Signature", signer.getSignature(req))
+    req.headers.add("x-wix-application-id", parameters.appId)
+    req.headers.add("x-wix-instance-id", instanceId)
+    req.headers.add("x-wix-timestamp", parameters.timestamp)
+    req.headers.add("x-wix-event-type", eventType)
+    req.headers.add("x-wix-signature", "PZZj4fTDYQz_5Zkv0132U1iNlEV6bOz6QXvz_IW2jrM")
 
     req
   }

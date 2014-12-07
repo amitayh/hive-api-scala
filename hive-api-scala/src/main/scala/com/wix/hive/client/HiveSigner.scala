@@ -34,9 +34,8 @@ class HiveSigner(key: String) {
     val sortedWixHeaders = getValuesSortedByKey(headers.filterKeys { str => val lower = str.toLowerCase; lower != "x-wix-signature" && lower.startsWith("x-wix-")})
     val sortedParams = (sortedQuery ++ sortedWixHeaders).mkString("\n")
     val post = data.bodyAsString
-    val postSeparator = if (post.nonEmpty) "\n" else ""
 
-    s"""$method\n$url\n$sortedParams$postSeparator$post"""
+    Seq(method, url, sortedParams, post) filter(_ != "") mkString "\n"
   }
 
   private def getValuesSortedByKey(params: NamedParameters) = params.toSeq.sortBy(_._1).map(_._2)

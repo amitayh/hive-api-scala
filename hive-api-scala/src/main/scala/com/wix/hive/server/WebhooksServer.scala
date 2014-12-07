@@ -24,9 +24,6 @@ import com.wix.hive.client.http.HttpRequestData
 //"ipAndPort": "88.119.150.196/35982",
 //"vendorProductId": null,
 //"demoMode": false
-trait ReqeustProcessor {
-  def process[T <% HttpRequestData](data: HttpRequestData): Unit
-}
 
 //trait WebhookRequestProcessor extends ReqeustProcessor[Webhook] {
 //  val secret: String

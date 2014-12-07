@@ -9,6 +9,7 @@ import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.specs2.execute.AsResult._
+import org.specs2.matcher.Matcher
 import org.specs2.mock.Mockito
 import org.specs2.specification.Before
 
@@ -37,18 +38,17 @@ abstract class BaseWebhooksIT
 
   val key = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
 
-  val srv = new FinagleWebhooksWebServer(8001) {
-    override val secret: String = key
-
+  val srv = new FinagleWebhooksWebServer(8001, key) {
     override def onReq(webhook: Try[Webhook]): Unit = mockFunc(webhook)
   }
-
 
   step(initEnv())
 
 
-  trait ctx extends Before {
+  trait ctx extends Before
+  with HiveCommandsMatchers{
     override def before: Any = beforeTest()
+       val timeout = new org.specs2.time.Duration(2000)
 
     val client: Service[HttpRequest, HttpResponse] = Http.newService("localhost:8001")
 
@@ -56,10 +56,17 @@ abstract class BaseWebhooksIT
     val instanceId = "79502740-ff16-4ff0-9d55-fbac00964b64"
     val timestamp = new DateTime(2014,2,11,1,2)
 
-    val provision = Provision("cf6ced5b-9917-4a74-bf35-180bb8eeae40", None)
-    def provisionWebhook = Webhook(instanceId, provision, WebhookParameters(appId, timestamp))
+    val provision = Provision(instanceId, None)
+    val provisionWebhook = Webhook(instanceId, provision, WebhookParameters(appId, timestamp))
+
+    def beProvisionWebhook(instanceId: Matcher[String], appId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Webhook] ={
+      instanceId ^^ { (_: Webhook).instanceId aka "instanceId" } and
+      instanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].instanceId aka "provision.instanceId" } and
+      appId ^^ { (_: Webhook).parameters.appId aka "parameters.appId" } and
+      originInstanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].originInstanceId aka "data.originInstanceId" }
 
 
+    }
   }
 
 
@@ -67,7 +74,7 @@ abstract class BaseWebhooksIT
     "provision" in new ctx {
       callProvisionWebhook(provisionWebhook)
 
-      there was one(mockFunc).apply(be_===(Success(provisionWebhook)))
+      there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook].withValue(beProvisionWebhook(instanceId, appId)))
     }
   }
 
