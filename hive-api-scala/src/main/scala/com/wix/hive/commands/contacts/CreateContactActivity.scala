@@ -7,8 +7,8 @@ import org.joda.time.DateTime
 
 case class CreateContactActivity(contactID: String,
                                  createdAt: DateTime,
-                                 activityLocationUrl: Option[String],
-                                 activityDetails: Option[ActivityDetails],
+                                 activityLocationUrl: Option[String] = None,
+                                 activityDetails: Option[ActivityDetails] = None,
                                  activityInfo: ActivityInfo) extends ContactsCommand[ActivityCreatedResult] {
   override def method: HttpMethod = HttpMethod.POST
 
