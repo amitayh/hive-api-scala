@@ -20,8 +20,6 @@ trait HiveApiDrivers {
 
   def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String)
 
-  def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit
-
   def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit
 
   def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit
@@ -61,8 +59,6 @@ trait HiveApiDrivers {
   def givenAppWithContactExist(app: AppDef, contactId: String): Unit
 
   def getValidUserSessionToken: String
-
-  def verifyActivityCreated(appDef: AppDef): Unit
 
   def givenAppWithSite(appDef: AppDef, url: String): Unit
 

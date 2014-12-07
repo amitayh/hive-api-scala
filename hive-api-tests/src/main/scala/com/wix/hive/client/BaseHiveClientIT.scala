@@ -110,8 +110,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
       givenContactUpsertByPhoneAndEmail(app, Some(phone), Some(email), contactId)
 
       client.execute(instance, UpsertContact(Some(phone), Some(email))) must haveUpsertContactId(contactId).await
-
-      verifyUpsertContactWithId(app, Some(phone), Some(email), contactId)
     }
 
     "add address to contact" in new Context {
@@ -207,8 +205,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
       import activity._
       client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
-
-      verifyActivityCreated(app)
     }
 
     "get activity by ID" in new Context {
@@ -231,8 +227,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
       val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
 
       client.execute(instance, command) must haveActivityResult.await
-
-      verifyActivityCreated(app)
     }
 
     "get all activities" in new Context {

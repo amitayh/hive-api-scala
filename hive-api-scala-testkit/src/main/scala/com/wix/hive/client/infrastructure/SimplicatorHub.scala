@@ -59,8 +59,6 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withRequestBody(containing(email.get)))
   }
 
-  override def verifyUpsertContactWithId(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = ()
-
   private def urlEncode(str: String): String = {
     URLEncoder.encode(str, "UTF-8")
   }
@@ -180,8 +178,6 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withStandardHeaders(app).
       willReturn(aResponse().withBody(responseJson)))
   }
-
-  override def verifyActivityCreated(appDef: AppDef): Unit = ()
 
   override def givenAppWithSite(app: AppDef, url: String): Unit = {
     val responseJson = mapper.writeValueAsString(SiteData(url, SiteStatus.published))
