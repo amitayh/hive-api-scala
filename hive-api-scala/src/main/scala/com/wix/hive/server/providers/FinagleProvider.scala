@@ -23,7 +23,6 @@ object FinagleProvider {
 
     val headers = req.headers().map(h => (h.getKey, h.getValue)).toMap
 
-    //val content = req.asInstanceOf[Request].getContentString()
     val content = new String(req.getContent.array())
     val body = if (content.nonEmpty) new Some(content) else None
 

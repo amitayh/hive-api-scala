@@ -25,6 +25,10 @@
         <joda.convert.version>1.2</joda.convert.version>
         <config.version>1.2.1</config.version>
         <quasiquotes.version>2.1.0-M1</quasiquotes.version>
+        <finagle-http.version>6.22.0</finagle-http.version>
+        <servlet.version>3.0.1</servlet.version>
+        <commons-net.version>3.3</commons-net.version>
+        <spring-test.version>4.1.1.RELEASE</spring-test.version>
     </properties>
 
     <repositories>
@@ -117,7 +121,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.3</version>
+            <version>${commons-net.version}</version>
         </dependency>
 
         <dependency>
@@ -141,7 +145,19 @@
         <dependency>
             <groupId>com.twitter</groupId>
             <artifactId>finagle-http_${scala.dependencies.version}</artifactId>
-            <version>6.22.0</version>
+            <version>${finagle-http.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring-test.version}</version>
+            <scope>test</scope>
+
         </dependency>
     </dependencies>
 
