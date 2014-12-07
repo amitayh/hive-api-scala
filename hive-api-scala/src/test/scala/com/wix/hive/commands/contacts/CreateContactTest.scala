@@ -24,7 +24,7 @@ class CreateContactTest extends SpecificationWithJUnit with HiveMatchers {
     val tags = Seq("tag1", "tag2")
     val emails = Seq(ContactEmailDTO("emlTag1,Tag2", "eml1@google.com", EmailStatus.Recurring), ContactEmailDTO("TG_", "fir.lst@yahoo.co.il", EmailStatus.OptOut))
     val phones = Seq(ContactPhoneDTO("phnTag", "+972-54-5551234321"))
-    val address = Seq(Address("adTag", Some(4), Some("some address, in TLV"), Some("neigberhood"), Some("TelAviv"), Some("Central District"), Some("Israel"), Some("40700")))
+    val address = Seq(ContactAddress("adTag", Some("some address, in TLV"), Some("neigberhood"), Some("TelAviv"), Some("Central District"), Some("Israel"), Some("40700")))
     val urls = Seq(ContactUrl("ur1Tag", "http://wix.com", Some(5)))
     val dates = Seq(ImportantDate("Birthday", new DateTime(1985, 2, 11, 0, 0, 0, 0), Some(6)))
     val notes = Seq(Note(Some(new DateTime(2014, 3, 21, 10, 35, 0, 0)), "first note", Some(7)))

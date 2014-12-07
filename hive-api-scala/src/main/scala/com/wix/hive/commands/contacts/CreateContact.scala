@@ -5,7 +5,7 @@ import com.wix.hive.model.contacts.{Address, Company, ContactName, _}
 
 case class CreateContact(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
                          emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
-                         addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
+                         addresses: Seq[ContactAddress] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
   extends ContactsCommand[CreatedContact] {
   override val method = HttpMethod.POST
 
@@ -15,8 +15,4 @@ case class CreateContact(name: Option[ContactName] = None, picture: Option[Strin
 
 case class ContactData(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
                        emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,
-                       addresses: Seq[Address] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
-
-
-
-
+                       addresses: Seq[ContactAddress] = Nil, urls: Seq[ContactUrl] = Nil, dates: Seq[ImportantDate] = Nil)
