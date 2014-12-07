@@ -3,15 +3,13 @@ package com.wix.hive.client
 import com.wix.hive.client.infrastructure.SimplicatorHub
 
 
-class HiveClientWithSimplicatorHubIT extends BaseHiveClientIT with SimplicatorHub {
+class HiveClientWithSimplicatorHubIT extends BaseHiveClientIT with HiveTestkit {
   override val serverPort: Int = 8089
   override val baseUrl = s"http://localhost:$serverPort"
 
-  val hive = new HiveTestkit(serverPort)
+  override def initEnv(): Unit = this.start()
 
-  override def initEnv(): Unit = hive.start()
+  override def shutdownEnv() = this.stop()
 
-  override def shutdownEnv() = hive.stop()
-
-  override def beforeTest(): Unit = hive.resetMocks()
+  override def beforeTest(): Unit = this.resetMocks()
 }
