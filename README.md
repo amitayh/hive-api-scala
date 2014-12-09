@@ -10,13 +10,18 @@ Scala client for the Wix Hive API
 
 ## Installation
 
-TODO: Maven /+ SBT
+### Maven
 ``` maven
 <dependency>
     <groupId>com.wixpress</groupId>
     <artifactId>hive-api-scala</artifactId>
     <version>1.1.0-SNAPSHOT</version>
 </dependency>
+```
+
+### SBT
+``` sbt
+libraryDependencies += "com.wixpress" %% "hive-api-scala" % "1.1.0-SNAPSHOT"
 ```
 
 ## Quick Start
@@ -71,12 +76,31 @@ Thre's an alternative way which is easier if you need to execute multiple comman
     504 -> "Gateway timeout"
 ```
 
-## Using the test-kit
-The test-kit provides you with the ability to test your code end to end.
+#### Concurrency Control
+The contacts add and update methods have a concurrency control mechanism associated with them. The mechanism is based on the ``modifiedAt`` request parameter. This parameter needs to have the same value as the underlying contact that is being updated.
+For example: let us assume we have a contact with ``id=1`` and ``modifiedAt=2014-10-01T14:43:48.560+03:00`` and we want to update the email field.
+So lets think about the concurrency now. Let assume we have two update email requests that come in the same time and they get processed sequentially.
+First one would get processed and update the contact email and in the same time the contacts’ ``modifiedAt`` will change.
+Second request gets processed but it will fail with a concurrency validation error because it is trying to perform an update operation on a old version of the contact object.
+And the system knows that by comparing the two ``modifiedAt`` parameters (one from the DB and the one provided).
 
-You'll use the `HiveTestkit` class.
-To control it's lifecycle use the  start/stop/resetMocks methods.
-To set expectations use the giveXXX methods.
+## Contributing
+
+**Everyone** is encouraged to help **improve** this library. Some of the ways you can contribute include:
+
+1. Use alpha, beta, and pre-release versions.
+2. Report bugs.
+3. Suggest new features.
+4. Write or edit documentation.
+5. Write specifications.
+6. Write code (**no patch is too small**: fix typos, clean up inconsistent whitespace).
+7. Refactor code.
+8. Fix [issues](https://github.com/wix/wix-hive-scala/issues).
+9. Submit an Issue
+
+### Using the test-kit
+
+The test-kit provides you with the ability to test your code end to end.
 
 - Note: If you use Jetty in your project you might want to exlcude it from the test-kit to avoid collisions. That's because with  we use wiremock to set up the HTTP server, and Wiremock uses Jetty 6.
 ``` xml
@@ -93,338 +117,26 @@ To set expectations use the giveXXX methods.
 </dependency>
 ```
 
+To use the test-kit you'll have to mixin `HiveTestkit` and/or `WebhooksTestkit` traits in your tests. The testkit allows you to set up embedded HTTP server that simulates the real hive server.
+Here's a code sample that independent of testing framework. For a full example see `HiveClientWithSimplicatorHubIT` and `WebhooksWithSimplicatorIT`
 
-### Contacts API
-
-#### Concurrency Control
-The contacts add and update methods have a concurrency control mechanism associated with them. The mechanism is based on the ``modifiedAt`` request parameter. This parameter needs to have the same value as the underlying contact that is being updated.
-For example: let us assume we have a contact with ``id=1`` and ``modifiedAt=2014-10-01T14:43:48.560+03:00`` and we want to update the email field. What we would need to do is execute the following method:
 ``` scala
-    TODO: Scala code
-   new_email = Hive::Email.new
-   new_email.tag = 'work_new'
-   new_email.email = 'alex_new@example.com'
-   new_email.emailStatus = 'optOut'
+class HiveTestsSample extends HiveTestkit {
+  override val serverPort: Int = 8089
 
-   client.add_contact_email('1', new_email, '2014-10-01T14:43:48.560+03:00')
+  def beforeEveryTest = resetMocks()
+
+  def sampleTest = {
+    start()
+
+    // Set up your test this.givenXXX(...)
+
+    // Your test code here - new HiveClient(...).execute(..., HiveCommand(...))
+
+    stop()
+  }
+}
 ```
-So lets think about the concurrency now. Let assume we have two update email requests that come in the same time and they get processed sequentially.
-First one would get processed and update the contact email and in the same time the contacts’ ``modifiedAt`` will change.
-Second request gets processed but it will fail with a concurrency validation error because it is trying to perform an update operation on a old version of the contact object.
-And the system knows that by comparing the two ``modifiedAt`` parameters (one from the DB and the one provided).
-
-#### client.new_contact
-
-**Example:**
-``` ruby
-contact = Hive::Contact.new
-   contact.name.first = 'E2E'
-   contact.name.last = 'Cool'
-   contact.company.name = 'Wix'
-   contact.company.role = 'CEO'
-   contact.add_email(email: 'alext@wix.com', tag: 'work')
-   contact.add_phone(phone: '123456789', tag: 'work')
-   contact.add_address(tag: 'home', address: '28208 N Inca St.', neighborhood: 'LODO', city: 'Denver', region: 'CO', country: 'US', postalCode: '80202')
-   contact.add_date(date: Time.now.iso8601(3), tag: 'E2E')
-   contact.add_url(url: 'wix.com', tag: 'site')
-   # PENDING
-   # contact.add_note(content: 'alex', modifiedAt: '2014-08-05T13:59:37.873Z')
-   # contact.add_custom(field: 'custom1', value: 'custom')
-   client.new_contact(contact)
-```
-
-#### client.contact
-
-**Example:**
-``` ruby
-client.contact(CONTACT_ID)
-```
-
-#### client.update_contact (PENDING)
-
-**Example:**
-``` ruby
-   contact.add_email(email: 'wow@wix.com', tag: 'wow')
-   contact.add_address(tag: 'home2', address: '1625 Larimer', neighborhood: 'LODO', city: 'Denver', region: 'CO', country: 'US', postalCode: '80202')
-   contact.add_date(date: Time.now.iso8601(3), tag: 'E2E UPDATE')
-   contact.add_url(url: 'wix.com', tag: 'site')
-
-   # PENDING
-   client.update_contact(CONTACT_ID, contact, MODIFIED_AT)
-```
-
-#### client.contacts_tags (PENDING)
-
-**Example:**
-``` ruby
-client.contacts_tags
-```
-
-#### client.contacts_subscribers (PENDING)
-
-**Example:**
-``` ruby
-client.contacts_subscribers
-```
-
-#### client.update_contact_name
-
-**Example:**
-``` ruby
-client.update_contact_name(CONTACT_ID, Hive::Name.new(first: 'New_Name'), MODIFIED_AT)
-```
-
-#### client.update_contact_company
-
-**Example:**
-``` ruby
-company = Hive::Company.new
-   company.name = 'New_Company'
-
-   client.update_contact_company(CONTACT_ID, company, MODIFIED_AT)
-```
-
-#### client.update_contact_picture
-
-**Example:**
-``` ruby
-client.update_contact_picture(CONTACT_ID, 'wix.com/example.jpg', MODIFIED_AT)
-```
-
-#### client.update_contact_address
-
-**Example:**
-``` ruby
-updated_address = Hive::Address.new
-   updated_address.tag = 'work'
-   updated_address.address = '1625 Larimer St.'
-
-   client.update_contact_address(CONTACT_ID, ADDRESS_ID, updated_address, MODIFIED_AT)
-```
-
-#### client.update_contact_email
-
-**Example:**
-``` ruby
-updated_email = Hive::Email.new
-   updated_email.tag = 'work'
-   updated_email.email = 'alex@example.com'
-   updated_email.emailStatus = 'optOut'
-
-   client.update_contact_email(CONTACT_ID, EMAIL_ID, updated_email, MODIFIED_AT)
-```
-
-#### client.update_contact_phone
-
-**Example:**
-``` ruby
-updated_phone = Hive::Phone.new
-   updated_phone.tag = 'work'
-   updated_phone.phone = '18006666'
-
-   client.update_contact_phone(CONTACT_ID, PHONE_ID, updated_phone, MODIFIED_AT)
-```
-
-#### client.update_contact_date
-
-**Example:**
-``` ruby
-date = Hive::Date.new
-   date.date = Time.now.iso8601(3)
-   date.tag = 'update'
-
-   client.update_contact_date(CONTACT_ID, DATE_ID, date, MODIFIED_AT)
-```
-
-#### client.update_contact_note (PENDING)
-
-**Example:**
-``` ruby
-note = Hive::Note.new
-   note.content = 'Note'
-   note.modifiedAt = Time.now.iso8601(3)
-
-   client.update_contact_phone(CONTACT_ID, NOTE_ID, note, MODIFIED_AT)
-```
-
-#### client.update_contact_custom (PENDING)
-
-**Example:**
-``` ruby
-custom = Hive::Custom.new
-   custom.field = 'custom_update'
-   custom.value = 'custom_value'
-
-   client.update_contact_phone(CONTACT_ID, CUSTOM_ID, custom, MODIFIED_AT)
-```
-
-#### client.add_contact_address
-
-**Example:**
-``` ruby
-new_address = Hive::Address.new
-   new_address.tag = 'work'
-   new_address.address = '1625 Larimer St.'
-
-   client.add_contact_address(CONTACT_ID, new_address, MODIFIED_AT)
-```
-
-#### client.add_contact_email
-
-**Example:**
-``` ruby
-new_email = Hive::Email.new
-   new_email.tag = 'work_new'
-   new_email.email = 'alex_new@example.com'
-   new_email.emailStatus = 'optOut'
-
-   client.add_contact_email(CONTACT_ID, new_email, MODIFIED_AT)
-```
-
-#### client.add_contact_phone
-
-**Example:**
-``` ruby
-new_phone = Hive::Phone.new
-   new_phone.tag = 'work_new'
-   new_phone.phone = '18006666'
-
-   client.add_contact_phone(CONTACT_ID, new_phone, MODIFIED_AT)
-```
-
-#### client.add_contact_note
-**Example:**
-``` ruby
-note = Hive::Note.new
-   note.content = 'Note'
-
-   client.add_contact_note(CONTACT_ID, note, MODIFIED_AT)
-```
-
-#### client.add_contact_custom
-
-**Example:**
-``` ruby
-custom = Hive::Custom.new
-   custom.field = 'custom_update'
-   custom.value = 'custom_value'
-
-   client.add_contact_custom(CONTACT_ID, custom, MODIFIED_AT)
-```
-
-#### client.add_contact_tags (PENDING)
-
-**Example:**
-``` ruby
-tags = ['tag1/tag', 'tag2/tag']
-
-   client.add_contact_tags(CONTACT_ID, tags, MODIFIED_AT)
-```
-
-#### client.add_contact_activity
-
-**Example:**
-``` ruby
-FACTORY = Hive::Activities
-activity = Hive::Activity.new(
-       type: FACTORY::MUSIC_ALBUM_FAN.type,
-       locationUrl: 'http://www.wix.com',
-       details: { summary: 'test', additionalInfoUrl: 'http://www.wix.com' },
-       info: { album: { name: 'Wix', id: '1234' } })
-
-   client.add_contact_activity(CONTACT_ID, activity)
-```
-
-#### client.contact_activities
-
-**Example:**
-``` ruby
-client.contact_activities(CONTACT_ID)
-```
-
-#### client.contacts
-
-**Examples:**
-``` ruby
-client.contacts
-client.contacts( pageSize: 50 )
-client.contacts( tag: 'contacts_server/new' )
-client.contacts( email: 'alex@example.com' )
-client.contacts( phone: '123456789' )
-client.contacts( firstName: 'E2E' )
-client.contacts( lastName:'Cool' )
-```
-
-#### client.upsert_contact
-
-**Examples:**
-``` ruby
-client.upsert_contact( phone: '123456789' )
-client.upsert_contact( email: 'alex@example.com' )
-client.upsert_contact( phone: '123456789', email: 'alex@example.com' )
-```
-
-### Activities API
-**Note**: Activity info is created via a factory: 'FACTORY = Hive::Activities'
-
-#### client.new_activity
-
-**Example:**
-   ``` ruby
-   Hive::Activity.new(
-           type: FACTORY::MUSIC_ALBUM_FAN.type,
-           locationUrl: 'http://www.wix.com',
-           details: { summary: 'test', additionalInfoUrl: 'http://www.wix.com' },
-           info: { album: { name: 'Wix', id: '1234' } })
-
-   client.new_activity(SESSION_ID, base_activity)
-   ```
-
-#### client.activity
-
-**Example:**
-
-   ``` ruby
-   client.activity(ACTIVITY_ID)
-   ```
-
-#### client.activities
-
-**Examples:**
-   ``` ruby
-   client.activities
-   client.activities(activityTypes: Hive::Activities::MUSIC_ALBUM_FAN.type)
-   client.activities(from: Time.now.iso8601(3), until: Time.now.iso8601(3))
-   ```
-
-### Insights API
-
-#### client.activities_summary
-
-**Example:**
-   ``` ruby
-   client.activities_summary
-   ```
-
-#### client.contact_activities_summary
-
-**Example:**
-   ``` ruby
-   client.contact_activities_summary(CONTACT_ID)
-   ```
-## Contributing
-
-**Everyone** is encouraged to help **improve** this library. Some of the ways you can contribute include:
-
-1. Use alpha, beta, and pre-release versions.
-2. Report bugs.
-3. Suggest new features.
-4. Write or edit documentation.
-5. Write specifications.
-6. Write code (**no patch is too small**: fix typos, clean up inconsistent whitespace).
-7. Refactor code.
-8. Fix [issues](https://github.com/wix/wix-hive-scala/issues).
-9. Submit an Issue
 
 ### Submitting an Issue
 
@@ -441,8 +153,3 @@ We use the GitHub issue tracker to track bugs and features. Before submitting a 
 7. Commit your changes (`git commit -am 'Add some feature'`)
 8. Push to the branch (`git push origin my-new-feature`)
 9. Create a new [Pull Request](http://help.github.com/send-pull-requests/)
-
-
-TODO: How to change the HTTP underlying library
-TODO: Document the testkit
-TODO: How to provide execution context/change http client
