@@ -200,12 +200,12 @@ abstract class BaseHiveClientIT extends BaseIT  {
       client.execute(instance, GetContactActivities(contactId, cursor = Some(cursor))) must haveSameIds(activity).await
     }
 
-    "create activity for contact" in new Context {
-      givenAppWithContactExist(app, contactId)
+//    "create activity for contact" in new Context {
+//      givenAppWithContactExist(app, contactId)
 
-      import activity._
-      client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
-    }
+//      import activity._
+//      client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
+//    }
 
     "get activity by ID" in new Context {
       givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
