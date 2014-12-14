@@ -64,8 +64,6 @@ abstract class BaseWebhooksIT
       instanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].instanceId aka "provision.instanceId" } and
       appId ^^ { (_: Webhook).parameters.appId aka "parameters.appId" } and
       originInstanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].originInstanceId aka "data.originInstanceId" }
-
-
     }
   }
 
