@@ -24,7 +24,7 @@ case class AuthStatusChange() extends ActivityInfo {
 
 case class NameValuePair(name: String, value: String)
 
-case class ContactContactForm(items: Seq[NameValuePair]) extends ActivityInfo {
+case class ContactContactForm(fields: Seq[NameValuePair]) extends ActivityInfo {
   override val activityType = `contact/contact-form`
 }
 
