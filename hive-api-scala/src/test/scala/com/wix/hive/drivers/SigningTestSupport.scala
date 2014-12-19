@@ -38,7 +38,6 @@ trait SigningTestSupport {
   var dataWithBodySignature = "t_n4yQWIgQeTbCP9oOCKUa0NZpyiNX1nsfxHS3vjiH0"
   var dataWithBodyNoUrlSignature = "LYggyCOW0-O0x2liflR_qvXqoYRlN5bSu8DaYpC4gtg"
 
-
   val provisioningData = Provision(instanceId, None)
 
   private val webhookParameters = WebhookParameters(appId, new DateTime(timestamp))
