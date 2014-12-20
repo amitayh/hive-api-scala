@@ -13,6 +13,7 @@ object Webhook {
   def resolveType(wh: Webhook) = {
     wh.data match {
       case t: Provision => "/provision/provision"
+      case t: ProvisionDisabled => "/provision/disabled"
       case t: BillingUpgrade => "/billing/upgrade"
       case t: BillingCancel => "/billing/cancel"
       case t: ContactsCreated => "/contacnts/created"
@@ -28,6 +29,7 @@ case class WebhookParameters(appId: String, timestamp: DateTime)
 sealed trait WebhookData
 
 case class Provision (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
+case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
 
 case class BillingUpgrade(vendorProductId: String) extends WebhookData
 

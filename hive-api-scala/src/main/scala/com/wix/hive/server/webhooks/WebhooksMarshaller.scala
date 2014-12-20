@@ -17,6 +17,7 @@ object WebhooksMarshaller {
 class WebhooksMarshaller extends HttpRequestHelpers {
   private val eventType2Class = Map(
     "/provision/provision" -> classOf[Provision],
+    "/provision/disabled" -> classOf[ProvisionDisabled],
     "/billing/upgrade" -> classOf[BillingUpgrade],
     "/billing/cancel" -> classOf[BillingCancel],
     "/contacnts/created" -> classOf[ContactsCreated],
