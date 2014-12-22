@@ -1,13 +1,9 @@
 package com.wix.hive.server.providers
 
-import java.net.URI
-import javax.servlet.ServletRequest
-
 import com.wix.hive.client.http.HttpMethod
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
+import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 import org.springframework.mock.web.MockHttpServletRequest
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
 /**
  * User: maximn

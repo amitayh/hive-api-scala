@@ -1,11 +1,9 @@
 package com.wix.hive.server.providers
 
 import java.io.BufferedReader
-import java.util
 import javax.servlet.http.HttpServletRequest
 
-import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
-import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest}
+import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 
 import scala.collection.mutable
 import scala.language.implicitConversions

@@ -1,7 +1,7 @@
 package com.wix.hive.commands.contacts
 
 import com.wix.hive.client.http.HttpMethod
-import com.wix.hive.model.contacts.{Address, Company, ContactName, _}
+import com.wix.hive.model.contacts.{Company, ContactName, _}
 
 case class CreateContact(name: Option[ContactName] = None, picture: Option[String] = None, company: Option[Company] = None,
                          emails: Seq[ContactEmailDTO] = Nil, phones: Seq[ContactPhoneDTO] = Nil,

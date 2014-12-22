@@ -1,9 +1,6 @@
 package com.wix.hive.client.infrastructure
 
-import java.util.concurrent.TimeUnit
-
 import com.twitter.finagle.{Http, Service}
-import com.twitter.util.Await
 import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.json.JacksonObjectMapper
@@ -11,6 +8,7 @@ import com.wix.hive.server.webhooks.{Webhook, WebhookParameters}
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
+
 import scala.concurrent.duration._
 /**
  * User: maximn

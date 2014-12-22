@@ -1,7 +1,5 @@
 package com.wix.hive.client
 
-import com.wix.hive.client.infrastructure.SimplicatorHub
-
 
 class HiveClientWithSimplicatorHubIT extends BaseHiveClientIT with HiveTestkit {
   override val serverPort: Int = 8089

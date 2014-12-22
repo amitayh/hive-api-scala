@@ -1,7 +1,5 @@
 package com.wix.hive.server
 
-import com.wix.hive.client.http.HttpRequestData
-
 /**
  * User: maximn
  * Date: 11/27/14

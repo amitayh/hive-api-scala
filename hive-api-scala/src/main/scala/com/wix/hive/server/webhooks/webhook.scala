@@ -1,6 +1,6 @@
 package com.wix.hive.server.webhooks
 
-import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.joda.time.DateTime
 
 /**
