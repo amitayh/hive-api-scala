@@ -8,7 +8,7 @@ import com.wix.hive.client.http.{NamedParameters, HttpRequestData}
 import org.jboss.netty.handler.codec.http.{HttpMethod, HttpRequest}
 
 import scala.collection.mutable
-
+import scala.language.implicitConversions
 
 /**
  * User: maximn

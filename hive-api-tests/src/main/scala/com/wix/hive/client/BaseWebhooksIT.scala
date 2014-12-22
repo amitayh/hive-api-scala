@@ -25,7 +25,7 @@ abstract class BaseWebhooksIT
   self: WebhooksDriver =>
 
   val port: Int = 8001
-  val url: String = "localhost/webhook-url/"
+  val path: String = "localhost/webhook-url/"
   val secret: String = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
 
   override def initEnv(): Unit = srv.start()
