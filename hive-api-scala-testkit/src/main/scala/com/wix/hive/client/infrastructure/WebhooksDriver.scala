@@ -17,7 +17,7 @@ import scala.concurrent.duration._
  * Date: 12/2/14
  */
 trait WebhooksDriver {
-  def callProvisionWebhook(webhook: Webhook): HttpResponse
+  def callProvisionWebhook(webhook: Webhook)
 }
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
@@ -48,18 +48,19 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     val req = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, path)
     req.setContent(ChannelBuffers.wrappedBuffer(content.getBytes("UTF8")))
 
-    (headers + ("x-wix-signature" -> getSignature(headers, content))) foreach  { case (k: String, v: String) =>
+    val signatureHeader = "x-wix-signature" -> getSignature(headers, content)
+
+    (headers + signatureHeader) foreach  { case (k: String, v: String) =>
       req.headers.add(k, v)
     }
 
     req
   }
 
-  def callProvisionWebhook(webhook: Webhook): HttpResponse = {
+  def callProvisionWebhook(webhook: Webhook) = {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
-    val resp = client(aReq(webhook.instanceId, webhook.parameters, Webhook.resolveType(webhook), payload))
 
-    Await.result(resp, com.twitter.util.Duration(timeout.toSeconds, TimeUnit.SECONDS))
+    client(aReq(webhook.instanceId, webhook.parameters, Webhook.resolveType(webhook), payload))
   }
 
 }
