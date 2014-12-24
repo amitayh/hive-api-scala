@@ -19,6 +19,7 @@
         </developer>
     </developers>
 
+
     <modules>
         <module>hive-api-scala</module>
         <module>hive-api-contract-tests</module>
