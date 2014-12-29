@@ -5,8 +5,10 @@ Scala client for the Wix Hive API
 
 
 ## Prerequisites
-- **Read about** [developing a third party app for the Wix platform](http://dev.wix.com/docs/display/DRAF/Third+Party+Apps+-+Introduction).
+- **Read about** [developing a third party app for the Wix platform](http://dev.wix.com/docs/display/DRAF/Third+Party+Apps+-+Introduction)
 - **Register your app** [here](http://dev.wix.com/docs/display/DRAF/Dev+Center+Registration+Guide) to **obtain** your **APP_KEY** and **APP_SECRET**
+- [Maven](http://maven.apache.org/)
+- [Scala 2.10.3](http://www.scala-lang.org/download/2.10.3.html)
 
 ## Installation
 
