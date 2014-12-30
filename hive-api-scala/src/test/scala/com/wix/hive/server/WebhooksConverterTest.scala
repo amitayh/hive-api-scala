@@ -21,7 +21,7 @@ class WebhooksConverterTest extends SpecificationWithJUnit {
 
   "process" should {
     "return InvalidWebhook for invalid signature" in new ctx {
-      processor.convert(dataWithBody) must beFailedTry[Webhook].withThrowable[MissingHeaderException]
+      processor.convert(dataWithBody) must beFailedTry[Webhook[_]].withThrowable[MissingHeaderException]
     }
 
     "parse raw webhook to actual case class" in new ctx {

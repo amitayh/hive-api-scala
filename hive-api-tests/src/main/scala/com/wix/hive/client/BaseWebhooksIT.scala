@@ -1,5 +1,7 @@
 package com.wix.hive.client
 
+import java.util.UUID
+
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Duration
 import com.wix.hive.client.infrastructure.WebhooksDriver
@@ -34,45 +36,49 @@ abstract class BaseWebhooksIT
 
   override def shutdownEnv(): Unit = srv.stop(Duration.fromMilliseconds(500))
 
-  val mockFunc = mock[Try[Webhook] => Unit]
+  val mockFunc = mock[Try[Webhook[_]] => Unit]
 
   val key = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
 
   val srv = new FinagleWebhooksWebServer(8001, key) {
-    override def onReq(webhook: Try[Webhook]): Unit = mockFunc(webhook)
+    override def onReq(webhook: Try[Webhook[_]]): Unit = mockFunc(webhook)
   }
 
   step(initEnv())
 
 
   trait ctx extends Before
-  with HiveCommandsMatchers{
+  with HiveCommandsMatchers {
     override def before: Any = beforeTest()
-       val timeout = new org.specs2.time.Duration(2000)
+
+    val timeout = new org.specs2.time.Duration(2000)
 
     val client: Service[HttpRequest, HttpResponse] = Http.newService("localhost:8001")
 
-    val appId = "31cafe00-517a-4e20-9955-a77ed8aa7b15"
-    val instanceId = "79502740-ff16-4ff0-9d55-fbac00964b64"
-    val timestamp = new DateTime(2014,2,11,1,2)
+    val appId = UUID.randomUUID().toString
+    val instanceId = UUID.randomUUID().toString
+    val timestamp = new DateTime(2014, 2, 11, 1, 2)
 
-    val provision = Provision(instanceId, None)
-    val provisionWebhook = Webhook(instanceId, provision, WebhookParameters(appId, timestamp))
+    def aProvisionData(instanceId: String = instanceId) = Provision(instanceId, None)
 
-    def beProvisionWebhook(instanceId: Matcher[String], appId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Webhook] ={
-      instanceId ^^ { (_: Webhook).instanceId aka "instanceId" } and
-      instanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].instanceId aka "provision.instanceId" } and
-      appId ^^ { (_: Webhook).parameters.appId aka "parameters.appId" } and
-      originInstanceId ^^ { (_: Webhook).data.asInstanceOf[Provision].originInstanceId aka "data.originInstanceId" }
+    def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = WebhookParameters(appId, timestamp)
+
+    def aProvisionWebhook(instanceId: String = instanceId) = Webhook(instanceId, aProvisionData(instanceId), aWebhookParams())
+
+
+    def beProvisionWebhook(instanceId: Matcher[String], appId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Webhook[Provision]] = {
+      instanceId ^^ {(_: Webhook[Provision]).instanceId aka "instanceId"} and
+        instanceId ^^ {(_: Webhook[Provision]).data.instanceId aka "provision.instanceId"} and
+        appId ^^ {(_: Webhook[Provision]).parameters.appId aka "parameters.appId"} and
+        originInstanceId ^^ {(_: Webhook[Provision]).data.originInstanceId aka "data.originInstanceId"}
     }
   }
 
 
   "webhooks" should {
     "provision" in new ctx {
-      callProvisionWebhook(provisionWebhook)
-
-      there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook].withValue(beProvisionWebhook(instanceId, appId)))
+      callProvisionWebhook(aProvisionWebhook())
+      there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook[Provision]].withValue(beProvisionWebhook(instanceId, appId)))
     }
   }
 

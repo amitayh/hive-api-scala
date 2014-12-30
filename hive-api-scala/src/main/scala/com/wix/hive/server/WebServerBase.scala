@@ -44,6 +44,6 @@ abstract class FinagleWebhooksWebServer(val port: Int, val secret: String) exten
     onReq(webhook)
   }
 
-  def onReq(webhook: Try[Webhook]): Unit
+  def onReq(webhook: Try[Webhook[_]]): Unit
 }
 

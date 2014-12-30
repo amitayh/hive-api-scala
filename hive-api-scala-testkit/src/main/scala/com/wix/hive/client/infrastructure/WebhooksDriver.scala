@@ -4,7 +4,7 @@ import com.twitter.finagle.{Http, Service}
 import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.json.JacksonObjectMapper
-import com.wix.hive.server.webhooks.{Webhook, WebhookParameters}
+import com.wix.hive.server.webhooks.{Provision, Webhook, WebhookParameters}
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
@@ -15,7 +15,7 @@ import scala.concurrent.duration._
  * Date: 12/2/14
  */
 trait WebhooksDriver {
-  def callProvisionWebhook(webhook: Webhook)
+  def callProvisionWebhook(webhook: Webhook[Provision])
 }
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
@@ -55,10 +55,10 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     req
   }
 
-  def callProvisionWebhook(webhook: Webhook) = {
+  def callProvisionWebhook(webhook: Webhook[Provision]) = {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
 
-    client(aReq(webhook.instanceId, webhook.parameters, Webhook.resolveType(webhook), payload))
+    client(aReq(webhook.instanceId, webhook.parameters, "/provision/provision", payload))
   }
 
 }

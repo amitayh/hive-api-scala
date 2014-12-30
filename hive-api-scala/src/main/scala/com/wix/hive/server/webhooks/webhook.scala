@@ -7,22 +7,8 @@ import org.joda.time.DateTime
  * User: maximn
  * Date: 12/1/14
  */
-case class Webhook(instanceId: String, data: WebhookData, parameters: WebhookParameters)
+case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters)
 
-object Webhook {
-  def resolveType(wh: Webhook) = {
-    wh.data match {
-      case t: Provision => "/provision/provision"
-      case t: ProvisionDisabled => "/provision/disabled"
-      case t: BillingUpgrade => "/billing/upgrade"
-      case t: BillingCancel => "/billing/cancel"
-      case t: ContactsCreated => "/contacnts/created"
-      case t: ContactsUpdated => "/contacts/updated"
-      case t: ActivitiesPosted => "/activities/posted"
-      case _ => throw new RuntimeException("Unsupported webhook type")
-    }
-  }
-}
 
 case class WebhookParameters(appId: String, timestamp: DateTime)
 
