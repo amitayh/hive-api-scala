@@ -67,7 +67,9 @@ class HiveClient(val appId: String,
         (HiveClient.UserAgentKey -> this.agent))
   }
 
-  private def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
+
+  //TODO: url calculus is fucked up in case baseUrl has trailing '/'. Please do something smarter than this
+  private[client] def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
 }
 
 object HiveClient {
@@ -92,4 +94,6 @@ object HiveClient {
     val client = httpClient.getOrElse(DefaultHttpClientFactory.create)
     new HiveClient(id, secret, url, client)
   }
+
+  def compose(baseUri: String, suffix: String): String = baseUri.stripSuffix("/") + "/" + suffix.stripPrefix("/")
 }
