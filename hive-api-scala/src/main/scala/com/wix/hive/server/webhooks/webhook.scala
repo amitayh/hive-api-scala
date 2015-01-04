@@ -17,12 +17,12 @@ sealed trait WebhookData
 case class Provision (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
 case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
 
-case class BillingUpgrade(vendorProductId: String) extends WebhookData
-
-case class BillingCancel() extends WebhookData
-
-case class ContactsCreated(contactId: String) extends WebhookData
-
-case class ContactsUpdated(contactId: String) extends WebhookData
+//case class BillingUpgrade(vendorProductId: String) extends WebhookData
+//
+//case class BillingCancel() extends WebhookData
+//
+//case class ContactsCreated(contactId: String) extends WebhookData
+//
+//case class ContactsUpdated(contactId: String) extends WebhookData
 
 case class ActivitiesPosted(activityId: String, activityType: String, contactId: Option[String] = None) extends WebhookData

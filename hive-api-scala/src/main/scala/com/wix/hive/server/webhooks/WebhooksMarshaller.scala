@@ -18,11 +18,11 @@ class WebhooksMarshaller extends HttpRequestHelpers {
   private val eventType2Class = Map(
     "/provision/provision" -> classOf[Provision],
     "/provision/disabled" -> classOf[ProvisionDisabled],
-    "/billing/upgrade" -> classOf[BillingUpgrade],
-    "/billing/cancel" -> classOf[BillingCancel],
-    "/contacnts/created" -> classOf[ContactsCreated],
-    "/contacts/updated" -> classOf[ContactsUpdated],
     "/activities/posted" -> classOf[ActivitiesPosted]
+//    "/billing/upgrade" -> classOf[BillingUpgrade],
+//    "/billing/cancel" -> classOf[BillingCancel],
+//    "/contacnts/created" -> classOf[ContactsCreated],
+//    "/contacts/updated" -> classOf[ContactsUpdated],
   )
 
   def unmarshal(req: HttpRequestData): Try[WebhookData] = {
