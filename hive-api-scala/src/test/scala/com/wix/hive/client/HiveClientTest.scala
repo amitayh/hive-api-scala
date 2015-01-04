@@ -18,14 +18,17 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val key = "appKey"
     val instance = "websiteInstance"
 
-    val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient))
+    val baseUrl = "http://wix.com/"
+    val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient), baseUrl = Some(baseUrl))
 
     def oneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
       method = be_===(HttpMethod.GET),
       url = be_===(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
-      query = havePairs(commandQuery.toSeq :_*),
+      query = havePairs(commandQuery.toSeq: _*),
       headers = headersFor(commandHeaders, client, instance),
       body = be_===(commandBody)))(any)
+
+    val command = TestCommand()
   }
 
 
@@ -38,7 +41,8 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     }
   }
 
-  "executeForInsatnce" should {
+
+  "executeForInstance" should {
 
     "call the http client with the correct parameters" in new Context {
       val executor = client.executeForInstance(instance)
@@ -59,6 +63,24 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     }
   }
 
+
+  "object" should {
+    "compose with no slashes" >> {
+      HiveClient.compose("a", "b") must be_===("a/b")
+    }
+
+    "compose with base slashes" >> {
+      HiveClient.compose("a/", "b") must be_===("a/b")
+    }
+
+    "compose with suffix slashes" >> {
+      HiveClient.compose("a", "/b") must be_===("a/b")
+    }
+
+    "compose with both slashes" >> {
+      HiveClient.compose("a/", "/b") must be_===("a/b")
+    }
+  }
 
   val commandUrl = "/tst"
   val commandParams = "/param"
@@ -81,5 +103,6 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
   }
 
   case class TestCommandResponse()
+
 }
 
