@@ -13,6 +13,9 @@ class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
   private lazy val base64: Base64 = new Base64(true)
 
+  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id") map ("x-wix-" + _)
+  private val excludes = Set("x-wix-signature")
+
   private lazy val mac = {
     val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
     val instance = Mac.getInstance(encryptionMethod)
@@ -30,13 +33,18 @@ class HiveSigner(key: String) {
   private def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
-    val sortedQuery = getValuesSortedByKey(queryString)
-    val sortedWixHeaders = getValuesSortedByKey(headers.filterKeys { str => val lower = str.toLowerCase; lower != "x-wix-signature" && lower.startsWith("x-wix-")})
-    val sortedParams = (sortedQuery ++ sortedWixHeaders).mkString("\n")
-    val post = data.bodyAsString
+    val queryPart = queryString.toList
+      .sortBy { case (name, _) => name }
+      .map { case (_, value) => value }
 
-    Seq(method, url, sortedParams, post) filter(_ != "") mkString "\n"
+    val headerPart = headers.toList
+      .filter {case (name, _) => includes contains name.toLowerCase }
+      .filterNot {case (name, _) => excludes contains name.toLowerCase }
+      .sortBy { case (name, _) => name }
+      .map { case (_, value) => value }
+
+    (Seq(method.toString, url) ++ queryPart ++ headerPart :+ data.bodyAsString)
+      .filterNot { case el: String => el.isEmpty }
+      .mkString("\n")
   }
-
-  private def getValuesSortedByKey(params: NamedParameters) = params.toSeq.sortBy(_._1).map(_._2)
 }

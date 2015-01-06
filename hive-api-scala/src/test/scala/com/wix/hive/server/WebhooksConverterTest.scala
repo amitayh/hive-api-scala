@@ -12,9 +12,8 @@ import org.specs2.specification.Scope
  */
 class WebhooksConverterTest extends SpecificationWithJUnit {
 
-  trait ctx extends Scope
-  with SigningTestSupport{
-    val processor = new WebhooksConverter{
+  trait ctx extends Scope with SigningTestSupport {
+    val processor = new WebhooksConverter {
       override val secret: String = key
     }
   }

@@ -6,8 +6,7 @@ import org.specs2.specification.Scope
 
 class HiveSignerTest extends SpecificationWithJUnit {
 
-  class Context extends Scope
-  with SigningTestSupport{
+  class Context extends Scope with SigningTestSupport {
     val signer = new HiveSigner(key)
   }
 
@@ -19,6 +18,12 @@ class HiveSignerTest extends SpecificationWithJUnit {
 
     "Sign HttpRequestData with body" in new Context {
       signer.getSignature(dataWithBody) must beEqualTo(dataWithBodySignature)
+    }
+
+    "properly filter-out generic wix headers" in new Context {
+      val data = dataWithBody.copy(headers = dataWithBody.headers + ("X-Wix-Country-Code" -> "NL"))
+
+      signer.getSignature(data) must beEqualTo(dataWithBodySignature)
     }
   }
 }
