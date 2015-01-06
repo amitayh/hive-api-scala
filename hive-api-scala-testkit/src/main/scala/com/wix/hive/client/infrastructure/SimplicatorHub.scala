@@ -39,7 +39,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
     val contactJson = mapper.writeValueAsString(respondsWith)
 
-    givenThat(get(versionedUrlMatcher(s"/contacts/${respondsWith.id }")).
+    givenThat(get(versionedUrlMatcher(s"/contacts/${respondsWith.id}")).
       withStandardHeaders(myself).
       willReturn(aResponse().withBody(contactJson)))
   }
@@ -64,68 +64,68 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   }
 
   override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/address.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/address.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(address.tag)))
   }
 
   override def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(email.email)))
   }
 
   override def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/phone.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/phone.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(phone.phone)))
   }
 
   override def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(url.url)))
   }
 
   override def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.POST)
+    givenThat(responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(ISO8601Utils.format(date.date.toDate, true))))
   }
 
   override def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(name.first.get)))
   }
 
   override def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(company.role.get)))
   }
 
   override def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit = {
     throw new RuntimeException("Until HUB is fixed")
-    givenThat(responseForUrl(s"/contacts/$contactId/picture.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/picture.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(picture.picture)))
   }
 
   override def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId: String, address: AddressDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/address/$addressId.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/address/$addressId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(address.tag)))
   }
 
   override def givenContactUpdateEmail(app: AppDef, contactId: String, modifiedAt: DateTime, emailId: String, email: ContactEmailDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/email/$emailId.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/email/$emailId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(email.email)))
   }
 
   override def givenContactUpdatePhone(app: AppDef, contactId: String, modifiedAt: DateTime, phoneId: String, phone: ContactPhoneDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/phone/$phoneId.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/phone/$phoneId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(phone.phone)))
   }
 
   override def givenContactUpdateUrl(app: AppDef, contactId: String, modifiedAt: DateTime, urlId: String, url: ContactUrlDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/url/$urlId.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/url/$urlId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(url.url)))
   }
 
   override def givenContactUpdateDate(app: AppDef, contactId: String, modifiedAt: DateTime, dateId: String, date: ContactDateDTO): Unit = {
-    givenThat(responseForUrl(s"/contacts/$contactId/date/$dateId.*${urlEncode(modifiedAt.toString) }", app, aContact(contactId), RequestMethod.PUT)
+    givenThat(responseForUrl(s"/contacts/$contactId/date/$dateId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(date.tag)))
   }
 
@@ -142,7 +142,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
         import activity._
         val activityJson = mapper.writeValueAsString(new ActivityAsInHubServer(id, createdAt, activityLocationUrl, activityDetails, activityInfo))
 
-        givenThat(get(versionedUrlMatcher(s"/activities/${activity.id }")).
+        givenThat(get(versionedUrlMatcher(s"/activities/${activity.id}")).
           withStandardHeaders(myself).
           willReturn(aResponse().withBody(activityJson)))
     }
@@ -210,4 +210,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
   case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
 
+  override def givenServiceProviderAndCaller(caller: AppDef, provider: AppDef): Unit = {
+    givenThat(responseForUrl("/services/done", provider, "", RequestMethod.POST))
+  }
 }

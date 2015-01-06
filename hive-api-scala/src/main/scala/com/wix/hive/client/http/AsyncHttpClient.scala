@@ -1,6 +1,5 @@
 package com.wix.hive.client.http
 
-import scala.reflect._
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -10,7 +9,7 @@ import com.wix.hive.model.WixAPIErrorException
 import dispatch.{Http, url, _}
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.reflect.ClassTag
+import scala.reflect.{ClassTag, _}
 
 
 trait AsyncHttpClient {

@@ -1,15 +1,19 @@
 package com.wix.hive.client
 
+import java.util.UUID
+
 import com.wix.hive.client.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
+import com.wix.hive.commands.services.ServiceDone
 import com.wix.hive.commands.sites.Site
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.notifications.{NotificationCreationData, NotificationType}
+import com.wix.hive.model.services.{ServiceData, ServiceRunData}
 import org.joda.time.DateTime
 import org.specs2.mutable.Before
 
@@ -24,10 +28,13 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
   step(initEnv())
 
-  trait Context extends Before with HiveCommandsMatchers {
+  trait Context extends Before
+  with HiveCommandsMatchers {
     def before = beforeTest()
 
     val app = AppDef.random
+    val callerApp = AppDef.random
+    val providerApp = app
     val instance = app.instanceId
 
     val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
@@ -84,6 +91,11 @@ abstract class BaseHiveClientIT extends BaseIT  {
     val authRegister = AuthRegister("ini", "stream", "ACTIVE")
 
     val cursor = "5e841234-9d1b-432a-b0dc-d8747a23bb87"
+
+    val servicesOriginId = "52ce347d-b951-43b1-b12d-5b38021a8af1"
+    val servicesCorrelationId = UUID.randomUUID().toString
+    val serviceRunData = ServiceRunData("success", None, None)
+    val serviceData = ServiceData(callerApp.appId, servicesCorrelationId, serviceRunData)
   }
 
   "Hive client" should {
@@ -270,6 +282,12 @@ abstract class BaseHiveClientIT extends BaseIT  {
       givenAppWithActivities(app, summary)
 
       client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
+    }
+
+    "signal service done" in new Context {
+      givenServiceProviderAndCaller(callerApp, providerApp)
+
+      client.execute(instance, ServiceDone(serviceData)) must not(throwA[Throwable]).await
     }
   }
 

@@ -65,5 +65,7 @@ trait HiveApiDrivers {
   def givenAppWithUserActivities(app: AppDef, contactId: String, responseWith: ActivitySummary): Unit
 
   def givenAppWithActivities(app: AppDef, responseWith: ActivitySummary): Unit
+
+  def givenServiceProviderAndCaller(caller: AppDef, provider: AppDef): Unit
 }
 
