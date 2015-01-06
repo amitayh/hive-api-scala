@@ -1,5 +1,6 @@
 package com.wix.hive.client.http
 
+import scala.reflect._
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -36,9 +37,9 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
   }
 
   def asT[T: ClassTag](r: Response): T = {
-    val classOfT = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+    val classOfT = classTag.runtimeClass.asInstanceOf[Class[T]]
 
-    if (classOf[scala.runtime.Nothing$] == classOfT) null.asInstanceOf[T]
+    if (classOf[scala.runtime.Nothing$] == classOfT || classOf[Unit] == classOfT) null.asInstanceOf[T]
     else JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
   }
 }
