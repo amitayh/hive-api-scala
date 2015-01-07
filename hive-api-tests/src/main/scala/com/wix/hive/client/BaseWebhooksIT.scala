@@ -69,6 +69,7 @@ abstract class BaseWebhooksIT
     val activityType = "auth/register"
 
     def anActivityPostedWebhook(instanceId: String = instanceId) = Webhook(instanceId, ActivitiesPosted(activityId, activityType, None), aWebhookParams())
+    def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("success", None, None)), aWebhookParams(appId))
 
     def anything[T] = AlwaysMatcher[T]()
 
@@ -81,6 +82,14 @@ abstract class BaseWebhooksIT
       activityId ^^ {(_: ActivitiesPosted).activityId aka "activityId"} and
         activityType ^^ {(_: ActivitiesPosted).activityType aka "activityType"} and
         contactId ^^ {(_: ActivitiesPosted).contactId aka "contactId"}
+    }
+
+    def beServiceRunResult(providerId: Matcher[String] = not(be(empty)),
+                           correlationId: Matcher[String] = not(be(empty)),
+                            data: Matcher[ServiceRunData] = anything): Matcher[ServiceResult] = {
+      providerId ^^ {(_: ServiceResult).providerId aka "providerId"} and
+      correlationId ^^ { (_: ServiceResult).correlationId aka "correlationId" } and
+      data ^^ { (_: ServiceResult).data aka "data" }
     }
 
     def beProvisionDisabled(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[ProvisionDisabled] = {
@@ -112,6 +121,12 @@ abstract class BaseWebhooksIT
       callActivityPosted(appId, anActivityPostedWebhook())
 
       there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook[ActivitiesPosted]].withValue(beWebhook(instanceId, appId, beActivity(anything, activityType))))
+    }
+
+    "services done" in new ctx {
+      val doneWebhook = aServicesDoneWebhook()
+      callServicesDone(doneWebhook)
+      there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook[ServiceResult]].withValue(beWebhook(instanceId, appId, beServiceRunResult())))
     }
   }
 

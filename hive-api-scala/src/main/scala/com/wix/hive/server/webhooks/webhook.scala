@@ -26,3 +26,6 @@ case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @J
 //case class ContactsUpdated(contactId: String) extends WebhookData
 
 case class ActivitiesPosted(activityId: String, activityType: String, contactId: Option[String] = None) extends WebhookData
+
+case class ServiceResult(providerId: String, correlationId: String, data: ServiceRunData) extends WebhookData
+case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])

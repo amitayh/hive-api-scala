@@ -21,6 +21,8 @@ trait WebhooksDriver {
   def callProvisionDisabledWebhook(webhook: Webhook[ProvisionDisabled])
 
   def callActivityPosted(fromAppId: String, webhook: Webhook[ActivitiesPosted])
+
+  def callServicesDone(webhook: Webhook[ServiceResult])
 }
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
@@ -69,6 +71,10 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
 
   override def callActivityPosted(fromAppId: String, webhook: Webhook[ActivitiesPosted]) = {
     callWebhook(webhook, "/activities/posted")
+  }
+
+  override def callServicesDone(webhook: Webhook[ServiceResult]) = {
+    callWebhook(webhook, "/services/done")
   }
 
   private def callWebhook(webhook: Webhook[_], eventType: String) {
