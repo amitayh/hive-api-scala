@@ -44,7 +44,8 @@ class HiveSigner(key: String) {
       .map { case (_, value) => value }
 
     (Seq(method.toString, url) ++ queryPart ++ headerPart :+ data.bodyAsString)
-      .filterNot { case el: String => el.isEmpty }
+      .filterNot(_.isEmpty)
       .mkString("\n")
+
   }
 }

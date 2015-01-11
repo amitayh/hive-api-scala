@@ -8,6 +8,8 @@ import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.services.ServiceDone
+
+//import com.wix.hive.commands.services.{SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.Site
 import com.wix.hive.drivers.ServicesTestSupport
 import com.wix.hive.model.activities._
@@ -285,8 +287,14 @@ abstract class BaseHiveClientIT extends BaseIT  {
     "signal service done" in new Context {
       givenServiceProviderAndCaller(callerApp, providerApp)
 
-      client.execute(instance, ServiceDone(aServiceData(callerApp.appId))) must not(throwA[Throwable]).await
+      client.execute(instance, ServiceDone(aServiceData(callerApp.appId))) must not(throwA).await
     }
+//
+//    "send email using email service provider" in new Context {
+//      //givenEmailServiceProvider(red)
+//
+//      client.execute(instance, anEmail()) must not(throwA).await
+//    }
   }
 
   step(shutdownEnv())
