@@ -156,7 +156,11 @@
             <artifactId>spring-test</artifactId>
             <version>${spring-test.version}</version>
             <scope>test</scope>
-
+        </dependency>
+        <dependency>
+            <groupId>io.spray</groupId>
+            <artifactId>spray-client</artifactId>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
 
