@@ -16,6 +16,7 @@
         <scala.dependencies.version>2.10</scala.dependencies.version>
 
         <wiremock.version>1.50</wiremock.version>
+        <finagle-http.version>6.22.0</finagle-http.version>
     </properties>
 
     <dependencies>
@@ -36,6 +37,13 @@
             <groupId>com.github.tomakehurst</groupId>
             <artifactId>wiremock</artifactId>
             <version>${wiremock.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>finagle-http_${scala.dependencies.version}</artifactId>
+            <version>${finagle-http.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

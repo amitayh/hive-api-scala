@@ -20,7 +20,7 @@ trait  WebhooksConverter extends HttpRequestHelpers {
   private lazy val validator = new WebhookSignatureVerification(secret)
   private lazy val marshaller = new WebhooksMarshaller
 
-  def convert[T <% HttpRequestData](req: T): Try[Webhook[_]] = {
+  def convert[T <% HttpRequestData](req: T): Try[Webhook[_ <: WebhookData]] = {
     val tryHeaderForReq = tryHeader(req, _: String)
 
     for {
