@@ -1,6 +1,7 @@
 package com.wix.hive.client.infrastructure
 
 import com.wix.hive.commands.contacts._
+import com.wix.hive.commands.services.SendEmail
 import com.wix.hive.model.activities.Activity
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.contacts.{Contact, ContactName}
@@ -67,6 +68,5 @@ trait HiveApiDrivers {
   def givenAppWithActivities(app: AppDef, responseWith: ActivitySummary): Unit
 
   def givenServiceProviderAndCaller(caller: AppDef, provider: AppDef): Unit
-
 }
 

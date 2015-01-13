@@ -10,6 +10,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.contacts._
+import com.wix.hive.commands.services.SendEmail
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts.{Contact, ContactName}
@@ -197,10 +198,10 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
     givenThat(responseForUrl("/insights/activities/summary", app, responseWith))
   }
 
-  private def responseForUrl(url: String, app: AppDef, response: AnyRef, method: RequestMethod = RequestMethod.GET) = {
+  private def responseForUrl(url: String, app: AppDef, response: AnyRef = "", method: RequestMethod = RequestMethod.GET, statusCode: Int = 200) = {
     new MappingBuilder(method, versionedUrlMatcher(url))
       .withStandardHeaders(app)
-      .willReturn(aResponse().withBody(mapper.writeValueAsString(response)))
+      .willReturn(aResponse().withBody(mapper.writeValueAsString(response)).withStatus(statusCode))
   }
 
   case class ActivityAsInHubServer(id: String, createdAt: DateTime, activityLocationUrl: Option[String], activityDetails: Option[ActivityDetails], activityInfo: ActivityInfo) {
@@ -214,4 +215,9 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   override def givenServiceProviderAndCaller(caller: AppDef, provider: AppDef): Unit = {
     givenThat(responseForUrl("/services/done", provider, "", RequestMethod.POST))
   }
+
+
+  def givenSendEmail(app: AppDef, email: SendEmail): Unit ={
+    givenThat(responseForUrl("/services/email", app, method = RequestMethod.POST ,statusCode = 202))
+  } 
 }
