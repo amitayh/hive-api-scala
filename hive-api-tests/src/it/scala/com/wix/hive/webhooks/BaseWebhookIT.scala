@@ -25,7 +25,7 @@ with Mockito {
   val mockFunc = mock[Try[Webhook[_]] => Unit]
 
   val srv = new FinagleWebhooksWebServer(port, secret) {
-    override def onReq(webhook: Try[Webhook[_]]): Unit = mockFunc(webhook)
+    override def onReq(webhook: Try[Webhook[_  <: WebhookData]]): Unit = mockFunc(webhook)
   }
 
   def webhookWith[T <: WebhookData](matcher: Matcher[Webhook[T]]): Unit ={

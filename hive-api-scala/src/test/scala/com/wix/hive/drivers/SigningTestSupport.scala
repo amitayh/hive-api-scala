@@ -1,6 +1,7 @@
 package com.wix.hive.drivers
 
 import com.wix.hive.client.http.{HttpMethod, HttpRequestData}
+import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks.{Provision, Webhook, WebhookParameters}
 import org.joda.time.DateTime
 
@@ -9,14 +10,12 @@ import org.joda.time.DateTime
   * User: maximn
  * Date: 11/30/14
  */
-trait SigningTestSupport {
+trait SigningTestSupport extends HiveMatchers{
   val key = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
-  val instanceId = "13929ab6-4b6e-fd49-fb52-17c9c7e55794"
-  val appId = "13929a86-9df0-8706-0f53-3a0cae292a82"
-  val timestamp = "2014-10-08T10:20:51.036+03:00"
+  val ts = "2014-10-08T10:20:51.036+03:00"
   val headers = Map("X-Wix-Instance-Id" -> instanceId,
     "X-Wix-Application-Id" -> appId,
-    "X-Wix-Timestamp" -> timestamp)
+    "X-Wix-Timestamp" -> ts)
   val query = Map("version" -> "1.0.0")
 
 
@@ -40,7 +39,7 @@ trait SigningTestSupport {
 
   val provisioningData = Provision(instanceId, None)
 
-  private val webhookParameters = WebhookParameters(appId, new DateTime(timestamp))
+  private val webhookParameters = WebhookParameters(appId, new DateTime(ts))
 
   val provisioningWebhook = Webhook(instanceId, provisioningData, webhookParameters)
 

@@ -4,7 +4,7 @@ import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.util.{Duration, Future}
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.server.providers.FinagleProvider.finagleReq2myReq
-import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
+import com.wix.hive.server.webhooks.{WebhookData, Webhook, WebhooksConverter}
 import org.jboss.netty.handler.codec.http._
 
 import scala.util.Try
@@ -44,6 +44,6 @@ abstract class FinagleWebhooksWebServer(val port: Int, val secret: String) exten
     onReq(webhook)
   }
 
-  def onReq(webhook: Try[Webhook[_]]): Unit
+  def onReq(webhook: Try[Webhook[_  <: WebhookData]]): Unit
 }
 

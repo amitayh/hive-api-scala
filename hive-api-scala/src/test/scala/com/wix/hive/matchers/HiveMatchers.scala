@@ -1,5 +1,7 @@
 package com.wix.hive.matchers
 
+import java.util.UUID
+
 import com.wix.hive.client.HiveClient
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
@@ -7,6 +9,11 @@ import org.joda.time.DateTime
 import org.specs2.matcher._
 
 trait HiveMatchers extends Matchers with MustExpectations {
+  val appId = UUID.randomUUID().toString
+  val instanceId = UUID.randomUUID().toString
+  val timestamp = new DateTime(2014, 2, 11, 1, 2)
+
+
   implicit def type2Matcher[T](x: T): BeTypedEqualTo[T] = be_===(x)
 
   def anything[T] = AlwaysMatcher[T]()

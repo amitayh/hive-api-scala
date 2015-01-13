@@ -1,8 +1,12 @@
 package com.wix.hive.server
 
-import com.wix.hive.drivers.SigningTestSupport
+import java.util.UUID
+
+import com.wix.hive.drivers.{WebhooksTestSupport, SigningTestSupport}
+import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks.exceptions.MissingHeaderException
-import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
+import com.wix.hive.server.webhooks.{Provision, Webhook, WebhooksConverter}
+import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
@@ -12,7 +16,10 @@ import org.specs2.specification.Scope
  */
 class WebhooksConverterTest extends SpecificationWithJUnit {
 
-  trait ctx extends Scope with SigningTestSupport {
+  trait ctx extends Scope
+  with HiveMatchers
+  with WebhooksTestSupport
+  with SigningTestSupport {
     val processor = new WebhooksConverter {
       override val secret: String = key
     }
@@ -24,7 +31,8 @@ class WebhooksConverterTest extends SpecificationWithJUnit {
     }
 
     "parse raw webhook to actual case class" in new ctx {
-      processor.convert(provisioningWebhookRequest) must beSuccessfulTry(provisioningWebhook)
+      processor.convert(provisioningWebhookRequest) must beSuccessfulTry[Webhook[Provision]]
+        .withValue(beWebhook(instanceId, appId, beProvision(provisioningData.instanceId, provisioningData.originInstanceId)))
     }
   }
 }

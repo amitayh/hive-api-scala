@@ -41,7 +41,7 @@ abstract class BaseWebhooksIT
   val key = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
 
   val srv = new FinagleWebhooksWebServer(8001, key) {
-    override def onReq(webhook: Try[Webhook[_]]): Unit = mockFunc(webhook)
+    override def onReq(webhook: Try[Webhook[_  <: WebhookData]]): Unit = mockFunc(webhook)
   }
 
   step(initEnv())
@@ -65,12 +65,6 @@ abstract class BaseWebhooksIT
 
     def anActivityPostedWebhook(instanceId: String = instanceId) = Webhook(instanceId, ActivitiesPosted(activityId, activityType, None), aWebhookParams())
     def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("success", None, None)), aWebhookParams(appId))
-
-
-    def beProvision(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Provision] = {
-      instanceId ^^ {(_: Provision).instanceId aka "instanceId"} and
-        originInstanceId ^^ {(_: Provision).originInstanceId aka "originInstanceId"}
-    }
 
     def beActivity(activityId: Matcher[String], activityType: Matcher[String], contactId: Matcher[Option[String]] = beNone): Matcher[ActivitiesPosted] = {
       activityId ^^ {(_: ActivitiesPosted).activityId aka "activityId"} and

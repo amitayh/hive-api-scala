@@ -14,10 +14,6 @@ import org.specs2.matcher.{Matcher, Matchers}
  */
 trait WebhooksTestSupport extends Matchers
 with HiveMatchers {
-  val appId = UUID.randomUUID().toString
-  val instanceId = UUID.randomUUID().toString
-  val timestamp = new DateTime(2014, 2, 11, 1, 2)
-
   def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = WebhookParameters(appId, timestamp)
 
 
@@ -35,6 +31,12 @@ with HiveMatchers {
       appId ^^ {(_: Webhook[T]).parameters.appId aka "parameters.appId"} and
       dataMatcher ^^ {(_: Webhook[T]).data aka "parameters.data"}
   }
+
+  def beProvision(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Provision] = {
+    instanceId ^^ {(_: Provision).instanceId aka "instanceId"} and
+      originInstanceId ^^ {(_: Provision).originInstanceId aka "originInstanceId"}
+  }
+
 
   def beEmailSend(originId: Matcher[String],
                   correlationId: Matcher[String],
