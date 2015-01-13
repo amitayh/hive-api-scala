@@ -1,9 +1,6 @@
 package com.wix.hive.webhooks
 
-import com.wix.hive.drivers.{WebhooksTestSupport, ServicesTestSupport}
-import com.wix.hive.webhooks.BaseWebhookIT
-import org.specs2.matcher.Matcher
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
+import com.wix.hive.drivers.{ServicesTestSupport, WebhooksTestSupport}
 import org.specs2.specification.Scope
 
 

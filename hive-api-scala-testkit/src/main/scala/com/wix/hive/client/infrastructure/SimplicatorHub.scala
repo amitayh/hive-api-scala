@@ -15,7 +15,6 @@ import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts.{Contact, ContactName}
 import com.wix.hive.model.insights.ActivitySummary
-import com.wix.hive.model.services.ServiceData
 import com.wix.hive.model.sites.{SiteData, SiteStatus}
 import org.joda.time.DateTime
 

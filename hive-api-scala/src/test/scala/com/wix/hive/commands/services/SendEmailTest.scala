@@ -1,7 +1,5 @@
 package com.wix.hive.commands.services
 
-import java.util.UUID
-
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.drivers.ServicesTestSupport
 import com.wix.hive.matchers.HiveMatchers

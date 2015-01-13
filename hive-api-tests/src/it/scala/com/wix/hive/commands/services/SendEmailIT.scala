@@ -1,6 +1,6 @@
 package com.wix.hive.commands.services
 
-import com.wix.hive.commands.{BaseHubIt, BaseHiveCtx}
+import com.wix.hive.commands.{BaseHiveCtx, BaseHubIt}
 import com.wix.hive.drivers.ServicesTestSupport
 
 

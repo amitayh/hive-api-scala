@@ -1,11 +1,8 @@
 package com.wix.hive.commands.services
 
-import java.util.UUID
-
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.drivers.ServicesTestSupport
 import com.wix.hive.matchers.HiveMatchers
-import com.wix.hive.model.services.{ServiceData, ServiceRunData}
 import org.specs2.mutable.Specification
 import org.specs2.specification.Scope
 

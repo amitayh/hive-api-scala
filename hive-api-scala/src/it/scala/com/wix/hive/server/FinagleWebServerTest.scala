@@ -7,7 +7,7 @@ import com.wix.hive.client.http._
 import com.wix.hive.matchers.HiveMatchers
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http.{HttpMethod, _}
-import org.specs2.matcher.{BeTypedEqualTo, Matcher}
+import org.specs2.matcher.Matcher
 import org.specs2.mock.Mockito
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
 

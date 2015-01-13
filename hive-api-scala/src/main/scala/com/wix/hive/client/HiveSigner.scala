@@ -3,8 +3,8 @@ package com.wix.hive.client
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
+import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
-import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 import org.apache.commons.net.util.Base64
 
 

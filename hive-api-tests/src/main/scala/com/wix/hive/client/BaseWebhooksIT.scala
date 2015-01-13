@@ -9,10 +9,9 @@ import com.wix.hive.drivers.WebhooksTestSupport
 import com.wix.hive.server.FinagleWebhooksWebServer
 import com.wix.hive.server.webhooks._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
-import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.specs2.execute.AsResult._
-import org.specs2.matcher.{AlwaysMatcher, Matcher}
+import org.specs2.matcher.Matcher
 import org.specs2.mock.Mockito
 import org.specs2.specification.Before
 

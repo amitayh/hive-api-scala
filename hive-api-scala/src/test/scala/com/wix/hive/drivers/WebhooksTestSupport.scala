@@ -6,7 +6,7 @@ import com.wix.hive.commands.services.EmailContacts
 import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks._
 import org.joda.time.DateTime
-import org.specs2.matcher.{AlwaysMatcher, Matchers, Matcher}
+import org.specs2.matcher.{Matcher, Matchers}
 
 /**
  * User: maximn
