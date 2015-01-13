@@ -8,7 +8,7 @@ import com.wix.hive.client.http.HttpMethod._
  * Date: 1/13/15
  */
 object SprayProvider {
-  implicit def servletReq2myReq(req: spray.http.HttpRequest): HttpRequestData = {
+  implicit def sprayReq2myReq(req: spray.http.HttpRequest): HttpRequestData = {
     val uri = req.uri.toString()
     if (uri.contains("?"))
       throw new UnsupportedOperationException(s"Bad URL: $uri. It shouldn't contain a '?' sign (Query string parameters)")
