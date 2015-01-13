@@ -32,7 +32,7 @@ abstract class FinagleWebServer(port: Int) extends WebServerBase {
 
   def start(): ListeningServer = httpServer
 
-  def stop(after: Duration): Future[Unit] = httpServer.close(after)
+  def stop(after: Duration = Duration.fromSeconds(1)): Future[Unit] = httpServer.close(after)
 }
 
 

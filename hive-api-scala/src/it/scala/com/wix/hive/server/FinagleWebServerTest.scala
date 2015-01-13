@@ -37,7 +37,6 @@ class FinagleWebServerTest extends SpecificationWithJUnit with Mockito {
     val client: Service[HttpRequest, HttpResponse] = Http.newService("localhost:8000")
 
 
-    implicit def type2Matcher[T](x: T): BeTypedEqualTo[T] = be_===(x)
 
     def aWebReq(uri: String = "/", content: String = "", headers: Map[String, String] = Map.empty) = {
       val req = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri)

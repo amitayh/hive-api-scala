@@ -5,6 +5,7 @@ import java.util.UUID
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Duration
 import com.wix.hive.client.infrastructure.WebhooksDriver
+import com.wix.hive.drivers.WebhooksTestSupport
 import com.wix.hive.server.FinagleWebhooksWebServer
 import com.wix.hive.server.webhooks._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
@@ -48,18 +49,13 @@ abstract class BaseWebhooksIT
 
 
   trait ctx extends Before
-  with HiveCommandsMatchers {
+  with HiveCommandsMatchers
+  with WebhooksTestSupport {
     override def before: Any = beforeTest()
 
     val timeout = new org.specs2.time.Duration(2000)
 
     val client: Service[HttpRequest, HttpResponse] = Http.newService("localhost:8001")
-
-    val appId = UUID.randomUUID().toString
-    val instanceId = UUID.randomUUID().toString
-    val timestamp = new DateTime(2014, 2, 11, 1, 2)
-
-    def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = WebhookParameters(appId, timestamp)
 
     def aProvisionWebhook(instanceId: String = instanceId) = Webhook(instanceId, Provision(instanceId, None), aWebhookParams())
 
@@ -71,7 +67,6 @@ abstract class BaseWebhooksIT
     def anActivityPostedWebhook(instanceId: String = instanceId) = Webhook(instanceId, ActivitiesPosted(activityId, activityType, None), aWebhookParams())
     def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("success", None, None)), aWebhookParams(appId))
 
-    def anything[T] = AlwaysMatcher[T]()
 
     def beProvision(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[Provision] = {
       instanceId ^^ {(_: Provision).instanceId aka "instanceId"} and
@@ -97,11 +92,6 @@ abstract class BaseWebhooksIT
         originInstanceId ^^ {(_: ProvisionDisabled).originInstanceId aka "originInstanceId"}
     }
 
-    def beWebhook[T <: WebhookData](instanceId: Matcher[String], appId: Matcher[String], dataMatcher: Matcher[T]): Matcher[Webhook[T]] = {
-      instanceId ^^ {(_: Webhook[T]).instanceId aka "instanceId"} and
-        appId ^^ {(_: Webhook[T]).parameters.appId aka "parameters.appId"} and
-        dataMatcher ^^ {(_: Webhook[T]).data aka "parameters.data"}
-    }
   }
 
 

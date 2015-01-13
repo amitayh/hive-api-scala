@@ -1,6 +1,7 @@
 package com.wix.hive.server.webhooks
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.wix.hive.commands.services.EmailContacts
 import org.joda.time.DateTime
 
 /**
@@ -29,3 +30,5 @@ case class ActivitiesPosted(activityId: String, activityType: String, contactId:
 
 case class ServiceResult(providerId: String, correlationId: String, data: ServiceRunData) extends WebhookData
 case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])
+
+case class EmailSend(originId: String, correlationId: String, redemptionToken: String, contacts: EmailContacts) extends WebhookData

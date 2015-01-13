@@ -79,6 +79,12 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     callWebhook(webhook, "/services/done")
   }
 
+  def callEmailSend(webhook: Webhook[EmailSend]) = {
+    callWebhook(webhook, "/services/email/send")
+  }
+
+
+
   private def callWebhook(webhook: Webhook[_], eventType: String) {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)

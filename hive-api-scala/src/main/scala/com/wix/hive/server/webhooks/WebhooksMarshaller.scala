@@ -19,11 +19,12 @@ class WebhooksMarshaller extends HttpRequestHelpers {
     "/provision/provision" -> classOf[Provision],
     "/provision/disabled" -> classOf[ProvisionDisabled],
     "/activities/posted" -> classOf[ActivitiesPosted],
-    "/services/done"-> classOf[ServiceResult]
-//    "/billing/upgrade" -> classOf[BillingUpgrade],
-//    "/billing/cancel" -> classOf[BillingCancel],
-//    "/contacnts/created" -> classOf[ContactsCreated],
-//    "/contacts/updated" -> classOf[ContactsUpdated],
+    "/services/done" -> classOf[ServiceResult],
+    "/services/email/send" -> classOf[EmailSend]
+    //    "/billing/upgrade" -> classOf[BillingUpgrade],
+    //    "/billing/cancel" -> classOf[BillingCancel],
+    //    "/contacnts/created" -> classOf[ContactsCreated],
+    //    "/contacts/updated" -> classOf[ContactsUpdated],
   )
 
   def unmarshal(req: HttpRequestData): Try[WebhookData] = {

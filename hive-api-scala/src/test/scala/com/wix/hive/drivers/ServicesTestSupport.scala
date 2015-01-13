@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.wix.hive.commands.services.{EmailContacts, SendEmail}
 import com.wix.hive.model.services.{ServiceData, ServiceRunData}
+import com.wix.hive.server.webhooks.Webhook
 
 /**
  * User: maximn

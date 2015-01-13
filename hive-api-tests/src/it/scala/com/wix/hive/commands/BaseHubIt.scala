@@ -1,8 +1,8 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.{HiveClient, HiveTestkit}
 import com.wix.hive.client.infrastructure.AppDef
-import org.specs2.mutable.{SpecificationWithJUnit, Specification}
+import com.wix.hive.client.{HiveClient, HiveTestkit}
+import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
 /**
@@ -26,3 +26,4 @@ trait BaseHiveCtx extends Scope {
 
   val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
 }
+
