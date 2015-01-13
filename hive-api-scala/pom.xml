@@ -146,11 +146,13 @@
             <groupId>com.twitter</groupId>
             <artifactId>finagle-http_${scala.dependencies.version}</artifactId>
             <version>${finagle-http.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
