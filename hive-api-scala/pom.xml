@@ -28,6 +28,7 @@
         <servlet.version>3.0.1</servlet.version>
         <commons-net.version>3.3</commons-net.version>
         <spring-test.version>4.1.1.RELEASE</spring-test.version>
+        <spray-client.version>1.2.0</spray-client.version>
     </properties>
 
     <repositories>
@@ -160,7 +161,8 @@
         <dependency>
             <groupId>io.spray</groupId>
             <artifactId>spray-client</artifactId>
-            <version>1.2.0</version>
+            <version>${spray-client.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
