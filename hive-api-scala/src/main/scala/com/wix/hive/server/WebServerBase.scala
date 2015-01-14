@@ -3,11 +3,12 @@ package com.wix.hive.server
 import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.util.{Duration, Future}
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.server.adapters.RequestConverterFrom
-import com.wix.hive.server.webhooks.{WebhookData, Webhook, WebhooksConverter}
-import org.jboss.netty.handler.codec.http._
-import scala.util.Try
 import com.wix.hive.server.adapters.Finagle.RequestConverterFromFinagle
+import com.wix.hive.server.adapters.RequestConverterFrom
+import com.wix.hive.server.webhooks.{Webhook, WebhookData, WebhooksConverter}
+import org.jboss.netty.handler.codec.http._
+
+import scala.util.Try
 
 /**
  * User: maximn

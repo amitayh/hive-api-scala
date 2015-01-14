@@ -5,7 +5,6 @@ import com.twitter.util.{Await, Duration}
 import com.wix.hive.client._
 import com.wix.hive.client.http._
 import com.wix.hive.matchers.HiveMatchers
-import com.wix.hive.server.adapters.RequestConverterFrom
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http.{HttpMethod, _}
 import org.specs2.matcher.Matcher

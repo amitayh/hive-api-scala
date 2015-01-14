@@ -1,8 +1,6 @@
 package com.wix.hive.server.adapters
 
-import com.wix.hive.client.http.HttpMethod
 import org.specs2.mutable.SpecificationWithJUnit
-import org.specs2.specification.Scope
 import org.springframework.mock.web.MockHttpServletRequest
 
 

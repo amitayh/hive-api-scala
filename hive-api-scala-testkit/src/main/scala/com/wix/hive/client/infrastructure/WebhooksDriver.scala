@@ -1,7 +1,7 @@
 package com.wix.hive.client.infrastructure
 
 import com.twitter.finagle.{Http, Service}
-import com.twitter.util.Await
+import com.twitter.util.{Await, Duration => TwitterDuration}
 import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.json.JacksonObjectMapper
@@ -9,7 +9,6 @@ import com.wix.hive.server.webhooks._
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
-import com.twitter.util.{Duration => TwitterDuration}
 
 import scala.concurrent.duration._
 

@@ -1,12 +1,9 @@
 package com.wix.hive.server
 
-import java.util.UUID
-
-import com.wix.hive.drivers.{WebhooksTestSupport, SigningTestSupport}
+import com.wix.hive.drivers.{SigningTestSupport, WebhooksTestSupport}
 import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks.exceptions.MissingHeaderException
 import com.wix.hive.server.webhooks.{Provision, Webhook, WebhooksConverter}
-import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
