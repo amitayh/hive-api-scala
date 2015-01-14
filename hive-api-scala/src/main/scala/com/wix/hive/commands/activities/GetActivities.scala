@@ -13,6 +13,6 @@ case class GetActivities(activityTypes: Seq[String] = Nil,
                          scope: ActivityScope = ActivityScope.site,
                          cursor: Option[String] = None,
                          pageSize: PageSizes = PageSizes.`25`)
-  extends BaseGetActivitiesCommand(activityTypes, until, from, scope, cursor, pageSize){
+  extends GetActivitiesCommand(activityTypes, until, from, scope, cursor, pageSize){
   override val url: String = "/activities"
 }

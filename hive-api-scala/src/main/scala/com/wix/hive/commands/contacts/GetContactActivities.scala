@@ -1,6 +1,6 @@
 package com.wix.hive.commands.contacts
 
-import com.wix.hive.commands.activities.BaseGetActivitiesCommand
+import com.wix.hive.commands.activities.GetActivitiesCommand
 import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.common.PageSizes._
 import com.wix.hive.model.activities.ActivityScope
@@ -13,7 +13,7 @@ case class GetContactActivities(contactId: String,
                                 from: Option[DateTime] = None,
                                 scope: ActivityScope = ActivityScope.site,
                                 cursor: Option[String] = None,
-                                pageSize: PageSizes = PageSizes.`25`) extends BaseGetActivitiesCommand(activityTypes, until, from, scope, cursor, pageSize) {
+                                pageSize: PageSizes = PageSizes.`25`) extends GetActivitiesCommand(activityTypes, until, from, scope, cursor, pageSize) {
   override val url: String = "/contacts"
   override val urlParams = s"/$contactId/activities"
 }

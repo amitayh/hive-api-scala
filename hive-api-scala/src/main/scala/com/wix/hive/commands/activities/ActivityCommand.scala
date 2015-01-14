@@ -1,7 +1,7 @@
 package com.wix.hive.commands.activities
 
-import com.wix.hive.commands.HiveBaseCommand
+import com.wix.hive.commands.HiveCommand
 
-trait ActivityCommand[TResponse] extends HiveBaseCommand[TResponse] {
+trait ActivityCommand[TResponse] extends HiveCommand[TResponse] {
   override val url: String = "/activities"
 }

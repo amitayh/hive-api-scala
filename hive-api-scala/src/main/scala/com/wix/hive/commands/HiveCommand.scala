@@ -4,7 +4,7 @@ import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 
 
-trait HiveBaseCommand[T] {
+trait HiveCommand[T] {
   def url: String
 
   def method: HttpMethod

@@ -8,10 +8,10 @@ import org.specs2.specification.Scope
  * User: maximn
  * Date: 11/19/14
  */
-class HiveBaseCommandTest extends SpecificationWithJUnit {
+class HiveCommandTest extends SpecificationWithJUnit {
 
   trait Context extends Scope {
-    val cmd = new HiveBaseCommand[AnyRef] {
+    val cmd = new HiveCommand[AnyRef] {
       override def url: String = ???
 
       override def method: HttpMethod = ???

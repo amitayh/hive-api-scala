@@ -2,7 +2,7 @@ package com.wix.hive.client
 
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
-import com.wix.hive.commands.HiveBaseCommand
+import com.wix.hive.commands.HiveCommand
 import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationWithJUnit
@@ -88,7 +88,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
   val commandHeaders = Map("h" -> "header")
   val commandBody = Some(AnyRef)
 
-  case class TestCommand() extends HiveBaseCommand[TestCommandResponse] {
+  case class TestCommand() extends HiveCommand[TestCommandResponse] {
     override def url: String = commandUrl
 
     override def urlParams: String = commandParams

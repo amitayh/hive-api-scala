@@ -2,7 +2,7 @@ package com.wix.hive.client
 
 import com.typesafe.config._
 import com.wix.hive.client.http._
-import com.wix.hive.commands.HiveBaseCommand
+import com.wix.hive.commands.HiveCommand
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
@@ -40,7 +40,7 @@ class HiveClient(val appId: String,
   val signer = new HiveSigner(secretKey)
 
 
-  def execute[TCommandResult: ClassTag](instanceId: String, command: HiveBaseCommand[TCommandResult]): Future[TCommandResult] = {
+  def execute[R: ClassTag](instanceId: String, command: HiveCommand[R]): Future[R] = {
     val httpDataFromCommand = command.createHttpRequestData
 
     val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
@@ -48,7 +48,7 @@ class HiveClient(val appId: String,
     httpClient.request(httpDataForRequest)
   }
 
-  def executeForInstance(instanceId: String): (HiveBaseCommand[_] => Future[_]) = this.execute(instanceId, _)
+  def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R] => Future[_ >: R]) = this.execute(instanceId, _)
 
 
   private def withSignature(httpData: HttpRequestData): HttpRequestData = {
@@ -68,7 +68,6 @@ class HiveClient(val appId: String,
   }
 
 
-  //TODO: url calculus is fucked up in case baseUrl has trailing '/'. Please do something smarter than this
   private[client] def withBaseUrl(httpData: HttpRequestData): HttpRequestData = httpData.copy(url = baseUrl + httpData.url)
 }
 
