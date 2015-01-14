@@ -5,6 +5,7 @@ import com.twitter.util.{Await, Duration}
 import com.wix.hive.client._
 import com.wix.hive.client.http._
 import com.wix.hive.matchers.HiveMatchers
+import com.wix.hive.server.adapters.RequestConverterFrom
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http.{HttpMethod, _}
 import org.specs2.matcher.Matcher
@@ -22,7 +23,7 @@ class FinagleWebServerTest extends SpecificationWithJUnit with Mockito {
   val func = mock[HttpRequestData => Unit]
 
   val srv = new FinagleWebServer(8000) {
-    override def process[T <% HttpRequestData](data: HttpRequestData): Unit = func(data)
+    override def process(data: HttpRequestData): Unit = func(data)
   }
 
   srv.start()

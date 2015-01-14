@@ -3,30 +3,39 @@ package com.wix.hive.server
 import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.util.{Duration, Future}
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.server.providers.FinagleProvider.finagleReq2myReq
+import com.wix.hive.server.adapters.RequestConverterFrom
 import com.wix.hive.server.webhooks.{WebhookData, Webhook, WebhooksConverter}
 import org.jboss.netty.handler.codec.http._
-
 import scala.util.Try
+import com.wix.hive.server.adapters.Finagle.RequestConverterFromFinagle
 
 /**
  * User: maximn
  * Date: 11/27/14
  */
-trait WebServerBase  {
+trait WebServerBase {
   def start(): ListeningServer
+
   def stop(after: Duration): Future[Unit]
-  protected def process[T <% HttpRequestData](data: HttpRequestData): Unit
+
+  protected def process[T: RequestConverterFrom](data: T): Unit
 }
 
 abstract class FinagleWebServer(port: Int) extends WebServerBase {
   val serviceDefinition = new Service[HttpRequest, HttpResponse] {
+
     def apply(req: HttpRequest): Future[HttpResponse] = {
-      val d: HttpRequestData = req
-      process(d)
+      process(req)
       Future.value(new DefaultHttpResponse(req.getProtocolVersion, HttpResponseStatus.OK))
     }
   }
+
+  override protected def process[T: RequestConverterFrom](data: T): Unit = {
+    val httpReqData = implicitly[RequestConverterFrom[T]].convert(data)
+    process(httpReqData)
+  }
+
+  def process(data: HttpRequestData): Unit
 
   private lazy val httpServer = Http.serve(s":$port", serviceDefinition)
 
@@ -38,12 +47,11 @@ abstract class FinagleWebServer(port: Int) extends WebServerBase {
 
 abstract class FinagleWebhooksWebServer(val port: Int, val secret: String) extends FinagleWebServer(port) with WebhooksConverter {
 
-  override def process[T <% HttpRequestData](req: HttpRequestData): Unit =
-  {
-    val webhook = this.convert(req)
+   def process(request: HttpRequestData): Unit = {
+    val webhook = this.convert(request)
     onReq(webhook)
   }
 
-  def onReq(webhook: Try[Webhook[_  <: WebhookData]]): Unit
+  def onReq(webhook: Try[Webhook[_ <: WebhookData]]): Unit
 }
 

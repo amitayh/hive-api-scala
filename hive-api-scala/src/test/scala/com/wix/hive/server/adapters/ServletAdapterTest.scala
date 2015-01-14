@@ -1,22 +1,15 @@
-package com.wix.hive.server.providers
+package com.wix.hive.server.adapters
 
 import com.wix.hive.client.http.HttpMethod
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 import org.springframework.mock.web.MockHttpServletRequest
 
-/**
- * User: maximn
- * Date: 12/7/14
- */
-class ServletProviderTest extends SpecificationWithJUnit {
 
-  trait ctx extends Scope {
-    val header = ("key", "val")
-    val content = "some-data"
-    val url = "http://wix.com/testurl"
-    val method = "POST"
-    val methodEnum = HttpMethod.POST
+
+class ServletAdapterTest extends SpecificationWithJUnit {
+
+  trait ctx extends BaseAdapterContext {
     val req = new MockHttpServletRequest(method, url)
     req.addHeader(header._1, header._2)
     req.setContent(content.getBytes)
@@ -24,7 +17,7 @@ class ServletProviderTest extends SpecificationWithJUnit {
 
 
   "convert the Servlet Req to Hive SDK request" in new ctx {
-    val converted = com.wix.hive.server.providers.ServletProvider.servletReq2myReq(req)
+    val converted = com.wix.hive.server.adapters.Servlet.RequestConverterFromServlet.convert(req)
 
     converted.url must be_===(url)
     converted.headers must havePair(header)
@@ -32,3 +25,4 @@ class ServletProviderTest extends SpecificationWithJUnit {
     converted.body must beSome(content)
   }
 }
+
