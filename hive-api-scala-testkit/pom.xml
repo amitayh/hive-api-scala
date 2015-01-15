@@ -7,6 +7,17 @@
     <version>1.4.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Hive Scala API - Testkit</name>
+    <description>Scala library to work with the HiveApi</description>
+
+    <developers>
+        <developer>
+            <name>Maxim Novak</name>
+            <email>maximn@wix.com</email>
+            <roles>
+                <role>owner</role>
+            </roles>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
