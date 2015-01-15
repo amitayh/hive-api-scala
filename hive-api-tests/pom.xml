@@ -4,7 +4,7 @@
 
     <groupId>com.wixpress</groupId>
     <artifactId>hive-api-scala-tests</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Hive Scala API - Tests</name>
     <description>Scala library to work with the HiveApi</description>
@@ -47,7 +47,7 @@
             <groupId>com.wixpress</groupId>
             <artifactId>hive-api-scala</artifactId>
             <type>test-jar</type>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>com.wixpress</groupId>
             <artifactId>hive-api-scala</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.wixpress</groupId>
             <artifactId>hive-api-scala-testkit</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
