@@ -15,7 +15,7 @@ trait ServicesTestSupport {
 
 
   val servicesCorrelationId = UUID.randomUUID().toString
-  val serviceRunData = ServiceRunData("success", None, None)
+  val serviceRunData = ServiceRunData("SUCCESS", None, None)
 
   def aServiceData(callerAppId: String = callerAppId) = ServiceData(callerAppId, servicesCorrelationId, serviceRunData)
   val serviceData = aServiceData()
