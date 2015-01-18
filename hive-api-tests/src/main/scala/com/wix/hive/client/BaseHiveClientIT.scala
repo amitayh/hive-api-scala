@@ -2,7 +2,6 @@ package com.wix.hive.client
 
 import com.wix.hive.client.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.commands.activities._
-import com.wix.hive.commands.common.PageSizes
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.services.ServiceDone
@@ -15,7 +14,6 @@ import com.wix.hive.model.notifications.{NotificationCreationData, NotificationT
 import org.joda.time.DateTime
 import org.specs2.mutable.Before
 
-import scala.concurrent.Await
 import scala.concurrent.duration._
 
 

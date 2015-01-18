@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.wix.hive.commands.services._
 import com.wix.hive.model.services.{ServiceData, ServiceRunData}
-import org.specs2.matcher.{MustMatchers, Matcher}
+import org.specs2.matcher.{Matcher, MustMatchers}
 
 /**
  * User: maximn

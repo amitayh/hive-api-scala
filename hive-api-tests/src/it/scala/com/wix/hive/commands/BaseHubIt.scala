@@ -1,6 +1,6 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.infrastructure.{WiremockSimplicator, AppDef}
+import com.wix.hive.client.infrastructure.{AppDef, WiremockSimplicator}
 import com.wix.hive.client.{HiveClient, HiveTestkit}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
