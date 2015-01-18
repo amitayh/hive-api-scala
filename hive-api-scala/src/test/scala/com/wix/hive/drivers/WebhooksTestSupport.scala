@@ -47,6 +47,4 @@ with HiveMatchers {
       redemptionToken ^^ {(_: EmailSend).redemptionToken aka "redemptionToken"} and
       contacts ^^ {(_: EmailSend).contacts aka "contacts"}
   }
-
-
 }

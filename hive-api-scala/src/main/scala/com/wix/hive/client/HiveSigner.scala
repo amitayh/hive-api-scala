@@ -13,8 +13,11 @@ class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
   private lazy val base64: Base64 = new Base64(true)
 
-  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id") map ("x-wix-" + _)
-  private val excludes = Set("x-wix-signature")
+  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id")
+  private val excludes = Set("signature")
+
+  private val headerPrefix = "x-wix-"
+  private def withHeaderPrefix(names: Set[String]) = names map (headerPrefix + _)
 
   private lazy val mac = {
     val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
@@ -30,22 +33,22 @@ class HiveSigner(key: String) {
     base64.encodeToString(result).trim
   }
 
-  private def generateStringToSign(data: HttpRequestData): String = {
+  private[client] def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
     val queryPart = queryString.toList
+      .filterNot {case (name, _) => excludes contains name.toLowerCase }
       .sortBy { case (name, _) => name }
       .map { case (_, value) => value }
 
     val headerPart = headers.toList
-      .filter {case (name, _) => includes contains name.toLowerCase }
-      .filterNot {case (name, _) => excludes contains name.toLowerCase }
+      .filter {case (name, _) => includes map(headerPrefix + _) contains name.toLowerCase }
+      .filterNot {case (name, _) => excludes map(headerPrefix + _) contains name.toLowerCase }
       .sortBy { case (name, _) => name }
       .map { case (_, value) => value }
 
     (Seq(method.toString, url) ++ queryPart ++ headerPart :+ data.bodyAsString)
       .filterNot(_.isEmpty)
       .mkString("\n")
-
   }
 }

@@ -1,7 +1,6 @@
 package com.wix.hive.server
 
 import com.wix.hive.drivers.{SigningTestSupport, WebhooksTestSupport}
-import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks.exceptions.MissingHeaderException
 import com.wix.hive.server.webhooks.{Provision, Webhook, WebhooksConverter}
 import org.specs2.mutable.SpecificationWithJUnit
@@ -14,7 +13,6 @@ import org.specs2.specification.Scope
 class WebhooksConverterTest extends SpecificationWithJUnit {
 
   trait ctx extends Scope
-  with HiveMatchers
   with WebhooksTestSupport
   with SigningTestSupport {
     val processor = new WebhooksConverter {
