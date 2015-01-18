@@ -8,7 +8,7 @@ import com.wix.hive.commands.HiveCommand
  * User: maximn
  * Date: 1/7/15
  */
-trait ServicesCommand extends HiveCommand[Unit] {
+trait ServicesCommand[T] extends HiveCommand[T] {
   override def url: String = "/services"
   override def method: HttpMethod = HttpMethod.POST
 }

@@ -23,3 +23,22 @@ trait WiremockEnvironment {
     WireMock.resetAllScenarios()
   }
 }
+
+object WiremockSimplicator {
+  val serverPort: Int = 9089
+
+  lazy val start: Unit = {
+    WireMock.configureFor("localhost", serverPort)
+    val wireMockServer = new WireMockServer(new WireMockConfiguration().port(serverPort))
+    wireMockServer.start()
+  }
+
+  def stop(): Unit = {
+    WireMock.shutdownServer()
+  }
+
+  def resetMocks(): Unit = {
+    WireMock.reset()
+    WireMock.resetAllScenarios()
+  }
+}

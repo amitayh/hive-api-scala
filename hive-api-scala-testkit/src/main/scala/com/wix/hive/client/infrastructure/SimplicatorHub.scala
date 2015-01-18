@@ -10,7 +10,7 @@ import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.contacts._
-import com.wix.hive.commands.services.SendEmail
+import com.wix.hive.commands.services.{Providers, SendEmail}
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts.{Contact, ContactName}
@@ -218,5 +218,9 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
   def givenSendEmail(app: AppDef, email: SendEmail): Unit ={
     givenThat(responseForUrl("/services/email", app, method = RequestMethod.POST ,statusCode = 202))
-  } 
+  }
+
+  def givenEmailProviders(app: AppDef)(responseWith: Providers): Unit = {
+    givenThat(responseForUrl("/services/email/providers", app, responseWith))
+  }
 }

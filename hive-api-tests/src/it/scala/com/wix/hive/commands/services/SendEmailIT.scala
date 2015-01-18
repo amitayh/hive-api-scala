@@ -9,17 +9,12 @@ class SendEmailIT extends BaseHubIt {
   class ctx extends BaseHiveCtx with ServicesTestSupport {
   }
 
-  step {
-    start()
-  }
+  "Executing SendEmail " should {
+    "send email without an exception" in new ctx {
+      givenSendEmail(app, emailCommand)
 
-  "send email" in new ctx {
-    givenSendEmail(app, emailCommand)
-
-    client.execute(instance, emailCommand) must not(throwA).await()
-  }
-
-  step {
-    stop()
+      client.execute(instance, emailCommand) must not(throwA).await()
+    }
   }
 }
+

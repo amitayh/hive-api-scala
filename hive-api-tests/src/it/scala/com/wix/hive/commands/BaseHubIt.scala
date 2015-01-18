@@ -1,6 +1,6 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.infrastructure.AppDef
+import com.wix.hive.client.infrastructure.{WiremockSimplicator, AppDef}
 import com.wix.hive.client.{HiveClient, HiveTestkit}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
@@ -15,7 +15,8 @@ class BaseHubIt extends SpecificationWithJUnit with HiveTestkit {
 }
 
 object BaseHubIt {
-  val serverPort: Int = 8089
+  val serverPort: Int = 9089
+
 }
 
 trait BaseHiveCtx extends Scope {
@@ -25,5 +26,7 @@ trait BaseHiveCtx extends Scope {
   val instance = app.instanceId
 
   val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
+
+  WiremockSimplicator.start
 }
 
