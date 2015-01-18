@@ -242,18 +242,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
       client.execute(instance, GetActivities()) must haveSameIds(activity).await
     }
 
-    "get all activities with paging" in new Context {
-      givenAppWithActivitiesBulk(app, pagingAllActivities: _*)
-
-      val firstPageResult = Await.result(client.execute(instance, GetActivities(pageSize = PageSizes.`25`)), Duration("1 second"))
-      firstPageResult must haveSameIds(pagingFirstPage: _*)
-
-      firstPageResult.nextPageCommand match {
-        case Some(cmd) => client.execute(instance, cmd) must haveSameIds(paigngSecondPage: _*).await()
-        case None => failure("Didn't get the second page")
-      }
-    }.pendingUntilFixed("PageSize is not implemented in the server")
-
     "get site's URL" in new Context {
       givenAppWithSite(app, url)
 
