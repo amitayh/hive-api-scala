@@ -6,7 +6,7 @@ import com.wix.hive.client.http.HttpMethod.HttpMethod
  * User: maximn
  * Date: 1/18/15
  */
-case class EmailProviders() extends ServicesCommand[Providers] {
+case object EmailProviders extends ServicesCommand[Providers] {
   override def method: HttpMethod = HttpMethod.GET
 
   override def url: String = super.url + "/email/providers"
