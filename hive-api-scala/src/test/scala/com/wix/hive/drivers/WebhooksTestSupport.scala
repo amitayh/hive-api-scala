@@ -2,7 +2,7 @@ package com.wix.hive.drivers
 
 import java.util.UUID
 
-import com.wix.hive.commands.services.EmailContacts
+import com.wix.hive.commands.services.{EmailContactMethod, EmailContacts}
 import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.server.webhooks._
 import org.joda.time.DateTime
@@ -21,7 +21,7 @@ with HiveMatchers {
     UUID.randomUUID().toString
   }
 
-  def anEmailSendWebhookData = EmailSend(randomId, randomId, randomId, EmailContacts("id", Seq(randomId)))
+  def anEmailSendWebhookData = EmailSend(randomId, randomId, randomId, EmailContacts(EmailContactMethod.Id, Seq(randomId)))
 
 
   def anEmailSendWebhook = new Webhook(instanceId, anEmailSendWebhookData, aWebhookParams())

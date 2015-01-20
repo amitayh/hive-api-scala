@@ -221,6 +221,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
     givenThat(responseForUrl("/services/email", app, method = RequestMethod.POST ,statusCode = 202))
   }
 
+
   def givenEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
     givenThat(responseForUrl("/services/email/providers", app, respondWith))
   }

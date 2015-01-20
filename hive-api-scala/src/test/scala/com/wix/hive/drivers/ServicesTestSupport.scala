@@ -28,7 +28,7 @@ trait ServicesTestSupport {
 
   val providerId = randomStringId
   val redemptionToken = UUID.randomUUID().toString
-  def anEmail(providerId: String = providerId, redemptionToken: String = redemptionToken) = SendEmail(providerId, None, redemptionToken, EmailContacts("id", Seq("id1", "id2")))
+  def anEmail(providerId: String = providerId, redemptionToken: String = redemptionToken) = SendEmail(providerId, None, redemptionToken, EmailContacts(EmailContactMethod.Id, Seq("id1", "id2")))
   val emailCommand = anEmail()
   val providersCommand = EmailProviders
 
