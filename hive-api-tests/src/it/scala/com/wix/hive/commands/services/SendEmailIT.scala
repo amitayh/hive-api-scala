@@ -11,9 +11,11 @@ class SendEmailIT extends BaseHubIt {
 
   "Executing SendEmail " should {
     "send email without an exception" in new ctx {
-      givenSendEmail(app, emailCommand)
+      expectSendEmail(app, emailCommand)
 
-      client.execute(instance, emailCommand) must not(throwA).await()
+      client.execute(instance, emailCommand) must not(throwA).await
+
+      verifySendEmail(app, emailCommand)
     }
   }
 }

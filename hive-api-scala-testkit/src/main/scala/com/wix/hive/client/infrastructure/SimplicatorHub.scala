@@ -18,20 +18,26 @@ import com.wix.hive.model.contacts.{Contact, ContactName}
 import com.wix.hive.model.insights.ActivitySummary
 import com.wix.hive.model.sites.{SiteData, SiteStatus}
 import org.joda.time.DateTime
+import org.skyscreamer.jsonassert.JSONCompareMode
 
 trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
 
   private def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url?.*")
 
+  private val appIdHeader = "x-wix-application-id"
+  private val instanceIdHeader = "x-wix-instance-id"
+
+
   implicit class MappingBuilderImplicits(builder: MappingBuilder) {
     val base64Regex = "[A-Za-z0-9+/_-]*"
 
-    def withStandardHeaders(app: AppDef): MappingBuilder =
-      builder.withHeader("x-wix-application-id", equalTo(app.appId)).
-        withHeader("x-wix-instance-id", equalTo(app.instanceId)).
+    def withStandardHeaders(app: AppDef): MappingBuilder = {
+      builder.withHeader(appIdHeader, equalTo(app.appId)).
+        withHeader(instanceIdHeader, equalTo(app.instanceId)).
         withHeader("x-wix-timestamp", matching(".*")).
         withHeader("x-wix-signature", matching(base64Regex))
+    }
   }
 
   val contactCreatedAt = new DateTime(2012, 1, 1, 1, 1)
@@ -216,17 +222,25 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
     givenThat(responseForUrl("/services/done", provider, "", RequestMethod.POST))
   }
 
+  val sendEmailUrl = "/services/email"
 
-  def givenSendEmail(app: AppDef, email: SendEmail): Unit ={
-    givenThat(responseForUrl("/services/email", app, method = RequestMethod.POST ,statusCode = 202))
+  def expectSendEmail(app: AppDef, email: SendEmail): Unit = {
+    givenThat(responseForUrl(sendEmailUrl, app, method = RequestMethod.POST, statusCode = 202))
+  }
+
+  def verifySendEmail(app: AppDef, email: SendEmail) = {
+    verify(postRequestedFor(versionedUrlMatcher(sendEmailUrl))
+      .withHeader(appIdHeader, equalTo(app.appId))
+      .withHeader(instanceIdHeader, equalTo(app.instanceId))
+      .withRequestBody(equalToJson(mapper.writeValueAsString(email.body), JSONCompareMode.LENIENT)))
   }
 
 
-  def givenEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
+  def expectEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
     givenThat(responseForUrl("/services/email/providers", app, respondWith))
   }
-  
-  def givenSiteWithPages(app: AppDef)(respondWith: SitePages): Unit = {
+
+  def expectSiteWithPages(app: AppDef)(respondWith: SitePages): Unit = {
     givenThat(responseForUrl("/sites/site/pages", app, respondWith))
   }
 }

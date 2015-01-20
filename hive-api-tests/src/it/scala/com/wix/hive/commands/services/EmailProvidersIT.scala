@@ -14,7 +14,7 @@ class EmailProvidersIT extends BaseHubIt {
 
   "Executing get email providers" should {
     "get providers" in new ctx {
-      givenEmailProviders(app)(providersResponse)
+      expectEmailProviders(app)(providersResponse)
 
       client.execute[Providers](instance, providersCommand) must haveOnlyProvider(be_===(provider)).await
     }

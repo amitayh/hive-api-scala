@@ -14,7 +14,7 @@ class GetSitePagesIT extends BaseHubIt {
 
   "Executing GetSitePages " should {
     "return the site pages" in new ctx {
-      givenSiteWithPages(app)(sitePages)
+      expectSiteWithPages(app)(sitePages)
 
       client.execute(instance, GetSitePages) must be_===(sitePages).await
     }
