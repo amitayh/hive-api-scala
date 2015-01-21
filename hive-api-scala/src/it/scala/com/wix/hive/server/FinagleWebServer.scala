@@ -3,25 +3,14 @@ package com.wix.hive.server
 import com.twitter.finagle.{Http, ListeningServer, Service}
 import com.twitter.util.{Duration, Future}
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.server.adapters.Finagle.RequestConverterFromFinagle
 import com.wix.hive.server.adapters.RequestConverterFrom
-import com.wix.hive.server.webhooks.{Webhook, WebhookData, WebhooksConverter}
-import org.jboss.netty.handler.codec.http._
-
-import scala.util.Try
+import org.jboss.netty.handler.codec.http.{DefaultHttpResponse, HttpRequest, HttpResponse, HttpResponseStatus}
+import com.wix.hive.server.adapters.Finagle.RequestConverterFromFinagle
 
 /**
  * User: maximn
- * Date: 11/27/14
+ * Date: 1/21/15
  */
-trait WebServerBase {
-  def start(): ListeningServer
-
-  def stop(after: Duration): Future[Unit]
-
-  protected def process[T: RequestConverterFrom](data: T): Unit
-}
-
 abstract class FinagleWebServer(port: Int) extends WebServerBase {
   val serviceDefinition = new Service[HttpRequest, HttpResponse] {
 
@@ -44,15 +33,3 @@ abstract class FinagleWebServer(port: Int) extends WebServerBase {
 
   def stop(after: Duration = Duration.fromSeconds(1)): Future[Unit] = httpServer.close(after)
 }
-
-
-abstract class FinagleWebhooksWebServer(val port: Int, val secret: String) extends FinagleWebServer(port) with WebhooksConverter {
-
-   def process(request: HttpRequestData): Unit = {
-    val webhook = this.convert(request)
-    onReq(webhook)
-  }
-
-  def onReq(webhook: Try[Webhook[_ <: WebhookData]]): Unit
-}
-
