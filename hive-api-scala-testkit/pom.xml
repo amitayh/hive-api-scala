@@ -23,11 +23,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <scala.version>2.10.4</scala.version>
-        <scala.dependencies.version>2.10</scala.dependencies.version>
+        <scala.version>2.11.5</scala.version>
+        <scala.dependencies.version>2.11</scala.dependencies.version>
 
         <wiremock.version>1.50</wiremock.version>
-        <finagle-http.version>6.22.0</finagle-http.version>
+        <finagle-http.version>6.24.0</finagle-http.version>
     </properties>
 
     <dependencies>
@@ -136,7 +136,7 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>3.1.5</version>
                 <configuration>
-                    <recompileMode>incremental</recompileMode>
+                    <!--<recompileMode>incremental</recompileMode>-->
                     <args>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
