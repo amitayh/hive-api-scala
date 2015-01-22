@@ -221,10 +221,10 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   case class PagingActivitiesResultAsInHubServer(pageSize: Int, previousCursor: Option[String], nextCursor: Option[String], results: Seq[ActivityAsInHubServer])
 
   override def givenServiceProviderAndCaller(caller: AppDef, provider: AppDef): Unit = {
-    givenThat(responseForUrl("/services/done", provider, "", RequestMethod.POST))
+    givenThat(responseForUrl("/services/actions/done", provider, "", RequestMethod.POST))
   }
 
-  val sendEmailUrl = "/services/email"
+  val sendEmailUrl = "/services/actions/email"
 
   def expectSendEmail(app: AppDef, email: SendEmail): Unit = {
     givenThat(responseForUrl(sendEmailUrl, app, method = RequestMethod.POST, statusCode = 202))
@@ -239,7 +239,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
 
   def expectEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
-    givenThat(responseForUrl("/services/email/providers", app, respondWith))
+    givenThat(responseForUrl("/services/actions/email/providers", app, respondWith))
   }
 
   def expectSiteWithPages(app: AppDef)(respondWith: SitePages): Unit = {
