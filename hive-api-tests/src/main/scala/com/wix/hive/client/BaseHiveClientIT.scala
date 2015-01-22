@@ -93,18 +93,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
   "Hive client" should {
 
-    "get contact by ID" in new Context {
-      givenContactFetchById(app, contact)
-
-      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await(3, FiniteDuration(3, "seconds"))
-    }
-
-    "get contacts" in new Context {
-      givenAppWithContacts(app, Seq(contact, anotherContact): _*)
-
-      client.execute(instance, GetContacts()) must beContactsWith(contain(allOf(beContactWithId(contactId), beContactWithId(anotherContactId)))).await
-    }.pendingUntilFixed( """The server doesn't comply with the protocol, returns an array of Contacts instead of aPagingContactsResult""")
-
     "create a contact" in new Context {
       givenContactCreatedById(app, contactData, contactId)
 

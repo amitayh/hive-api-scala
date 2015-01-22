@@ -1,4 +1,4 @@
-package com.wix.hive.client
+package com.wix.hive.drivers
 
 import com.wix.hive.commands.activities.PagingActivitiesResult
 import com.wix.hive.commands.contacts.{CreatedContact, UpsertContactResponse}

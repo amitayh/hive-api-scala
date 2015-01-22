@@ -20,7 +20,7 @@ class CreateContactTest extends SpecificationWithJUnit with HiveMatchers {
 
   class Context extends Scope {
     val contactName = ContactName(Some("Mr"), Some("First"), Some("Middle"), Some("Last"), Some("SUFFIX"))
-    val company = Company(Some("Role"), Some("Name"), Some("Middle"))
+    val company = Company(Some("Role"), Some("Name"))
     val tags = Seq("tag1", "tag2")
     val emails = Seq(ContactEmailDTO("emlTag1,Tag2", "eml1@google.com", EmailStatus.Recurring), ContactEmailDTO("TG_", "fir.lst@yahoo.co.il", EmailStatus.OptOut))
     val phones = Seq(ContactPhoneDTO("phnTag", "+972-54-5551234321"))

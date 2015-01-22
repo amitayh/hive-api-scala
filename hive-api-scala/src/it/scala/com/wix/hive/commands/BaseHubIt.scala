@@ -1,7 +1,7 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.infrastructure.{AppDef, WiremockSimplicator}
-import com.wix.hive.client.{HiveClient, HiveTestkit}
+import com.wix.hive.client.{HiveClient}
+import com.wix.hive.infrastructure.{SimplicatorHub, WiremockSimplicator, AppDef}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
@@ -10,7 +10,7 @@ import org.specs2.specification.Scope
  * Date: 1/13/15
  */
 
-class BaseHubIt extends SpecificationWithJUnit with HiveTestkit {
+class BaseHubIt extends SpecificationWithJUnit with SimplicatorHub {
   override val serverPort = BaseHubIt.serverPort
 }
 
@@ -29,4 +29,3 @@ trait BaseHiveCtx extends Scope {
 
   WiremockSimplicator.start
 }
-
