@@ -14,7 +14,6 @@ import com.wix.hive.model.notifications.{NotificationCreationData, NotificationT
 import org.joda.time.DateTime
 import org.specs2.mutable.Before
 
-import scala.concurrent.duration._
 
 
 abstract class BaseHiveClientIT extends BaseIT  {
@@ -49,7 +48,7 @@ abstract class BaseHiveClientIT extends BaseIT  {
     val contactName = ContactName(first = Some("First"), last = Some("Last"))
 
     val emailId = "48d21810-1a8a-4b69-ba25-8272f598667b"
-    val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
+    val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = Some(EmailStatus.OptOut))
 
     val dateId = "e1157acc-41aa-460e-87e9-7cee90778b06"
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
@@ -92,12 +91,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
   }
 
   "Hive client" should {
-
-    "create a contact" in new Context {
-      givenContactCreatedById(app, contactData, contactId)
-
-      client.execute(instance, CreateContact(name = Some(contactName), emails = Seq(contactEmail))) must beCreatedContactWithId(contactId).await
-    }
 
     "upsert a contact" in new Context {
       givenContactUpsertByPhoneAndEmail(app, Some(phone), Some(email), contactId)

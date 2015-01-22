@@ -23,7 +23,7 @@ trait ContactsTestSupport {
   val name = ContactName(first = Some("First"), last = Some("Last"))
 
   val emailId = "48d21810-1a8a-4b69-ba25-8272f598667b"
-  val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = EmailStatus.OptOut)
+  val contactEmail = ContactEmailDTO(email = "maximn@wix.com", tag = "emailtag", emailStatus = Some(EmailStatus.OptOut))
 
   val dateId = "e1157acc-41aa-460e-87e9-7cee90778b06"
   val contactData = ContactData(name = Some(name), emails = Seq(contactEmail))

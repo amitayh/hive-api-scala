@@ -9,7 +9,7 @@ class UpdateEmailTest extends SpecificationWithJUnit with HiveMatchers {
 
   class Context extends ContextForModification {
     val emailId = "222163d7-7d97-49aa-8ee2-e1af48db4241"
-    val email = ContactEmailDTO("tag-address", "some@wix.com", EmailStatus.OptOut)
+    val email = ContactEmailDTO("tag-address", "some@wix.com", Some(EmailStatus.OptOut))
 
     val cmd = UpdateEmail(contactId, modifiedAt, emailId, email)
   }
