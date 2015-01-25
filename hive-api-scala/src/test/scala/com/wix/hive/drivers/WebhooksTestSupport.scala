@@ -47,4 +47,13 @@ with HiveMatchers {
       redemptionToken ^^ {(_: EmailSend).redemptionToken aka "redemptionToken"} and
       contacts ^^ {(_: EmailSend).contacts aka "contacts"}
   }
+
+  def beServiceRunResult(providerId: Matcher[String] = not(be(empty)),
+                         correlationId: Matcher[String] = not(be(empty)),
+                         data: Matcher[ServiceRunData] = anything): Matcher[ServiceResult] = {
+    providerId ^^ {(_: ServiceResult).providerId aka "providerId"} and
+    correlationId ^^ { (_: ServiceResult).correlationId aka "correlationId" } and
+    data ^^ { (_: ServiceResult).data aka "data" }
+  }
+
 }

@@ -6,11 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.github.tomakehurst.wiremock.client.MappingBuilder
+import com.github.tomakehurst.wiremock.client.{ValueMatchingStrategy, MappingBuilder}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.RequestMethod
+import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.contacts._
-import com.wix.hive.commands.services.{Providers, SendEmail}
+import com.wix.hive.commands.services.{ServiceDone, Providers, SendEmail}
 import com.wix.hive.commands.sites.SitePages
 import com.wix.hive.model.activities.ActivityType.ActivityType
 import com.wix.hive.model.activities._
@@ -226,16 +227,31 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
   val sendEmailUrl = "/services/actions/email"
 
-  def expectSendEmail(app: AppDef, email: SendEmail): Unit = {
+  def expectSendEmail(app: AppDef): Unit = {
     givenThat(responseForUrl(sendEmailUrl, app, method = RequestMethod.POST, statusCode = 202))
   }
 
   def verifySendEmail(app: AppDef, email: SendEmail) = {
-    verify(postRequestedFor(versionedUrlMatcher(sendEmailUrl))
+    verifyCommand(sendEmailUrl, app, email)
+  }
+
+  val serviceDoneUrl = "/services/actions/done"
+
+  def expectServiceDone(app: AppDef) = {
+    givenThat(responseForUrl(serviceDoneUrl, app, method = RequestMethod.POST))
+  }
+
+  def verifyServiceDone(app: AppDef, done: ServiceDone) = {
+    verifyCommand(serviceDoneUrl, app, done)
+  }
+  
+  private def verifyCommand(url: String, app: AppDef, cmd: HiveCommand[_]) = {
+    verify(postRequestedFor(versionedUrlMatcher(url))
       .withHeader(appIdHeader, equalTo(app.appId))
       .withHeader(instanceIdHeader, equalTo(app.instanceId))
-      .withRequestBody(equalToJson(mapper.writeValueAsString(email.body), JSONCompareMode.LENIENT)))
+      .withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT)))
   }
+
 
 
   def expectEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
