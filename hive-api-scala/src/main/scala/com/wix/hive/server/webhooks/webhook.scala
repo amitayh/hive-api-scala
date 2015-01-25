@@ -29,6 +29,8 @@ case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @J
 case class ActivitiesPosted(activityId: String, activityType: String, contactId: Option[String] = None) extends WebhookData
 
 case class ServiceResult(providerId: String, correlationId: String, data: ServiceRunData) extends WebhookData
+//TODO: status -> enum
+//TODO: errorType -> enum [UNKNOWN_TOKEN' or 'MISSING_PARAMETERS' or 'INTERNAL_ERROR' or 'LIMIT_REACHED' or 'MISSING_PREMIUM']]
 case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])
 
 case class EmailSend(originId: String, correlationId: String, redemptionToken: String, contacts: EmailContacts) extends WebhookData
