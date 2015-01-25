@@ -92,12 +92,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
   "Hive client" should {
 
-    "upsert a contact" in new Context {
-      givenContactUpsertByPhoneAndEmail(app, Some(phone), Some(email), contactId)
-
-      client.execute(instance, UpsertContact(Some(phone), Some(email))) must haveUpsertContactId(contactId).await
-    }
-
     "add address to contact" in new Context {
       givenContactAddAddress(app, contactId, modifiedAt, address)
 

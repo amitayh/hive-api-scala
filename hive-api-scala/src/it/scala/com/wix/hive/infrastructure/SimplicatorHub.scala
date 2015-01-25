@@ -64,6 +64,16 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withRequestBody(containing(contact.emails.head.email)))
   }
 
+  def expectUpsertContact(app: AppDef, command: UpsertContact)(respondWith: UpsertContactResponse): Unit = {
+    val expectation =responseForUrl("/contacts", app, respondWith, RequestMethod.PUT)
+
+    val defined = (command.email :: command.phone :: Nil).collect { case Some(t) => t}
+    defined.foreach(t => expectation.withRequestBody(containing(t)))
+
+    givenThat(expectation)
+  }
+
+  @deprecated
   override def givenContactUpsertByPhoneAndEmail(app: AppDef, phone: Option[String], email: Option[String], contactId: String): Unit = {
     givenThat(responseForUrl("/contacts", app, UpsertContactResponse(contactId), RequestMethod.PUT).
       withRequestBody(containing(phone.get))

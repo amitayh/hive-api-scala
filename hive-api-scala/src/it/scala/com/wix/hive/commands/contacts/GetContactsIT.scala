@@ -11,7 +11,6 @@ import com.wix.hive.model.contacts.PagingContactsResult
  * Date: 1/22/15
  */
 class GetContactsIT extends BaseHubIt {
-
     class ctx extends BaseHiveCtx with ContactsTestSupport {
     }
 
@@ -23,3 +22,4 @@ class GetContactsIT extends BaseHubIt {
       }
     }
   }
+

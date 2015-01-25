@@ -49,4 +49,8 @@ trait ContactsTestSupport {
   val contactCompany = CompanyDTO(Some("role-comp"), name.first)
   val contactPicture = PictureDTO("some-pic")
   val contactAddress = AddressDTO("tag-address-contact")
+
+  val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
 }
+
+object ContactsTestSupport extends ContactsTestSupport
