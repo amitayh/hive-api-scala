@@ -72,13 +72,6 @@ abstract class BaseWebhooksIT
         contactId ^^ {(_: ActivitiesPosted).contactId aka "contactId"}
     }
 
-    def beServiceRunResult(providerId: Matcher[String] = not(be(empty)),
-                           correlationId: Matcher[String] = not(be(empty)),
-                            data: Matcher[ServiceRunData] = anything): Matcher[ServiceResult] = {
-      providerId ^^ {(_: ServiceResult).providerId aka "providerId"} and
-      correlationId ^^ { (_: ServiceResult).correlationId aka "correlationId" } and
-      data ^^ { (_: ServiceResult).data aka "data" }
-    }
 
     def beProvisionDisabled(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[ProvisionDisabled] = {
       instanceId ^^ {(_: ProvisionDisabled).instanceId aka "instanceId"} and

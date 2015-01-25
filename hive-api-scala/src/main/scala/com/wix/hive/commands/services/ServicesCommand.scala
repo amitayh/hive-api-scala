@@ -9,6 +9,6 @@ import com.wix.hive.commands.HiveCommand
  * Date: 1/7/15
  */
 trait ServicesCommand[T] extends HiveCommand[T] {
-  override def url: String = "/services"
+  override def url: String = "/services/actions"
   override def method: HttpMethod = HttpMethod.POST
 }

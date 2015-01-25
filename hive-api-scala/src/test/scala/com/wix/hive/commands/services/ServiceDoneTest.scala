@@ -15,7 +15,7 @@ class ServiceDoneTest extends Specification with HiveMatchers {
   "services done" should {
     "create HttpRequestData with all parameters" in new Context {
       command.createHttpRequestData must httpRequestDataWith(
-        url = be_===("/services/done"),
+        url = be_===("/services/actions/done"),
         method = be_===(HttpMethod.POST),
         body = beSome(serviceData))
     }

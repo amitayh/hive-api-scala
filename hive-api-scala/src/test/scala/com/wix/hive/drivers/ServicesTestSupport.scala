@@ -6,6 +6,7 @@ import com.wix.hive.commands.services._
 import com.wix.hive.commands.sites.{Page, SitePages}
 import com.wix.hive.model.services.{ServiceData, ServiceRunData}
 import com.wix.hive.model.sites.{SiteStatus, SiteData}
+import com.wix.hive.server.webhooks
 import org.specs2.matcher.{Matcher, MustMatchers}
 import MustMatchers._
 /**
@@ -21,6 +22,7 @@ trait ServicesTestSupport {
 
   val servicesCorrelationId = randomStringId
   val serviceRunData = ServiceRunData("SUCCESS", None, None)
+  val webhookServiceRunData = webhooks.ServiceRunData("SUCCESS", None, None)
 
   def aServiceData(callerAppId: String = callerAppId) = ServiceData(callerAppId, servicesCorrelationId, serviceRunData)
   val serviceData = aServiceData()
@@ -39,5 +41,7 @@ trait ServicesTestSupport {
   val providersResponse = Providers(Seq(provider))
 
   def haveOnlyProvider(provider: Matcher[Provider]): Matcher[Providers] = (_: Providers).providers must contain(provider).exactly(1)
+
+  val serviceDoneCommand = ServiceDone(serviceData)
 }
 

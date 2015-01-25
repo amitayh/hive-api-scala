@@ -245,12 +245,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
       client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
     }
-
-    "signal service done" in new Context {
-      givenServiceProviderAndCaller(callerApp, providerApp)
-
-      client.execute(instance, ServiceDone(aServiceData(callerApp.appId))) must not(throwA).await
-    }
   }
 
   step(shutdownEnv())
