@@ -4,8 +4,8 @@ import java.util.UUID
 
 import com.twitter.finagle.{Http, Service}
 import com.twitter.util.Duration
-import com.wix.hive.client.infrastructure.WebhooksDriver
 import com.wix.hive.drivers.WebhooksTestSupport
+import com.wix.hive.infrastructure.WebhooksDriver
 import com.wix.hive.server.webhooks._
 import org.jboss.netty.handler.codec.http.{HttpRequest, HttpResponse}
 import org.mockito.Mockito._

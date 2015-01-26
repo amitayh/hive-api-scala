@@ -1,6 +1,6 @@
 package com.wix.hive.client
 
-import com.wix.hive.client.infrastructure.SimplicatorWebhooksDriver
+import com.wix.hive.infrastructure.SimplicatorWebhooksDriver
 
 /**
  * User: maximn

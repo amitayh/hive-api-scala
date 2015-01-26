@@ -1,12 +1,12 @@
 package com.wix.hive.client
 
-import com.wix.hive.client.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.services.ServiceDone
 import com.wix.hive.commands.sites.Site
 import com.wix.hive.drivers.ServicesTestSupport
+import com.wix.hive.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.model.activities._
 import com.wix.hive.model.contacts._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}

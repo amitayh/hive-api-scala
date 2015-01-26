@@ -1,6 +1,7 @@
 package com.wix.hive.client
 
-import com.wix.hive.client.infrastructure.SimplicatorHub
+import com.wix.hive.infrastructure.SimplicatorHub
+
 
 /**
  * User: maximn

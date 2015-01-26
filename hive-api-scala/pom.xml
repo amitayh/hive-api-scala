@@ -343,6 +343,7 @@
                             <includes>
                                 <include>**/drivers/*</include>
                                 <include>**/matchers/*</include>
+                                <include>**/infrastructure/*</include>
                             </includes>
                         </configuration>
                     </execution>
