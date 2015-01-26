@@ -75,11 +75,11 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   }
 
   override def callServicesDone(webhook: Webhook[ServiceResult]) = {
-    callWebhook(webhook, "/services/done")
+    callWebhook(webhook, "/services/actions/done")
   }
 
   def callEmailSend(webhook: Webhook[EmailSend]) = {
-    callWebhook(webhook, "/services/email/send")
+    callWebhook(webhook, "/services/actions/email/send")
   }
 
 

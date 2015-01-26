@@ -19,8 +19,8 @@ class WebhooksMarshaller extends HttpRequestHelpers {
     "/provision/provision" -> classOf[Provision],
     "/provision/disabled" -> classOf[ProvisionDisabled],
     "/activities/posted" -> classOf[ActivitiesPosted],
-    "/services/done" -> classOf[ServiceResult],
-    "/services/email/send" -> classOf[EmailSend]
+    "/services/actions/done" -> classOf[ServiceResult],
+    "/services/actions/email/send" -> classOf[EmailSend]
     //    "/billing/upgrade" -> classOf[BillingUpgrade],
     //    "/billing/cancel" -> classOf[BillingCancel],
     //    "/contacnts/created" -> classOf[ContactsCreated],

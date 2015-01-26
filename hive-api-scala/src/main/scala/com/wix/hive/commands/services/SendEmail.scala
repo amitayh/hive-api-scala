@@ -8,7 +8,8 @@ import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
  * User: maximn
  * Date: 1/7/15
  */
-case class SendEmail(providerId: String, redemptionToken: Option[String], correlationId: String, contacts: EmailContacts) extends ServicesCommand[Unit] {
+case class
+SendEmail(providerId: String, redemptionToken: Option[String], correlationId: String, contacts: EmailContacts) extends ServicesCommand[Unit] {
   override def url: String = super.url + "/email"
 
   override def body: Option[AnyRef] = Some(EmailServiceData(providerId, redemptionToken, correlationId, contacts))

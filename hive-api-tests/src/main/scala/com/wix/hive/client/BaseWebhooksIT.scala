@@ -63,7 +63,7 @@ abstract class BaseWebhooksIT
     val activityType = "auth/register"
 
     def anActivityPostedWebhook(instanceId: String = instanceId) = Webhook(instanceId, ActivitiesPosted(activityId, activityType, None), aWebhookParams())
-    def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("success", None, None)), aWebhookParams(appId))
+    def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("SUCCESS", None, None)), aWebhookParams(appId))
 
     def beActivity(activityId: Matcher[String], activityType: Matcher[String], contactId: Matcher[Option[String]] = beNone): Matcher[ActivitiesPosted] = {
       activityId ^^ {(_: ActivitiesPosted).activityId aka "activityId"} and
@@ -76,7 +76,6 @@ abstract class BaseWebhooksIT
       instanceId ^^ {(_: ProvisionDisabled).instanceId aka "instanceId"} and
         originInstanceId ^^ {(_: ProvisionDisabled).originInstanceId aka "originInstanceId"}
     }
-
   }
 
 

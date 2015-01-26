@@ -10,6 +10,7 @@ import com.wix.hive.drivers.HiveCommandsMatchers._
  */
 class UpsertContactIT extends BaseHubIt {
     class ctx extends BaseHiveCtx with ContactsTestSupport {
+
     }
 
     "Executing upsert contact" should {
