@@ -13,9 +13,9 @@ class AddAddressIT extends BaseHubIt {
   class ctx extends BaseHiveCtx with ContactsTestSupport {
   }
 
-  "Executing get contact by id" should {
+  "Executing add address" should {
     "return the contact" in new ctx {
-      expectAddAddress(app, addAddressCommand)(contact.copy(id = addAddressCommand.contactId))
+      expectAddAddress(app, addAddressCommand)(contact)
 
       client.execute(instance, addAddressCommand) must beContactWithId(contactId).await
     }

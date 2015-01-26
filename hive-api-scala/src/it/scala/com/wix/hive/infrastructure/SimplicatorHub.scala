@@ -91,16 +91,28 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   }
 
 
-  def expectAddAddress(app: AppDef, command: AddAddress)(respondWith: Contact) = {
-    import command._
+  def expectAddAddress(app: AppDef, cmd: AddAddress)(respondWith: Contact) = {
+    import cmd._
     val expected = responseForUrl(s"/contacts/$contactId/address.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.POST)
 
     Seq(address.address, address.city, address.country, address.neighborhood, address.postalCode, address.region, address.tag)
-      .collect { case Some(f) => containing(f.toString)} foreach { m => expected.withRequestBody(m)}
+      .collect { case Some(f) => expected.withRequestBody(containing(f.toString))}
 
     givenThat(expected)
   }
 
+  def expectAddEmail(app: AppDef, cmd: AddEmail)(respondWith: Contact): Unit = {
+    import cmd._
+
+    val expected = responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+
+    Seq(email.email, email.tag)
+      .collect { case value: String => expected.withRequestBody(containing(value))}
+
+    givenThat(expected)
+  }
+
+  @deprecated
   override def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(email.email)))
