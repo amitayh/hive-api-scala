@@ -51,6 +51,7 @@ trait ContactsTestSupport {
   val contactAddress = AddressDTO("tag-address-contact")
 
   val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
+  val addAddressCommand = AddAddress(contactId, modifiedAt, address)
 }
 
 object ContactsTestSupport extends ContactsTestSupport

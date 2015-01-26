@@ -91,13 +91,6 @@ abstract class BaseHiveClientIT extends BaseIT  {
   }
 
   "Hive client" should {
-
-    "add address to contact" in new Context {
-      givenContactAddAddress(app, contactId, modifiedAt, address)
-
-      client.execute(instance, AddAddress(contactId, modifiedAt, address)) must beContactWithId(contactId).await
-    }
-
     "add email to contact" in new Context {
       givenContactAddEmail(app, contactId, modifiedAt, contactEmail)
 

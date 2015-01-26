@@ -11,6 +11,5 @@ case class UpdateEmailSubscription(contactId: String, modifiedAt: DateTime, emai
   override def body: Option[AnyRef] = Some(ContactResult(subscription))
 }
 
-//TODO : the name of this class should be changed but this is how it's defined in the spec
 case class ContactResult(@JsonScalaEnumeration(classOf[EmailStatusRef]) status: EmailStatus)
 

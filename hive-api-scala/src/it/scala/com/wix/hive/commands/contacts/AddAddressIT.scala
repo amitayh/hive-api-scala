@@ -6,19 +6,18 @@ import com.wix.hive.drivers.HiveCommandsMatchers._
 
 /**
  * User: maximn
- * Date: 1/21/15
+ * Date: 1/26/15
  */
-class GetContactByIdIT extends BaseHubIt {
+class AddAddressIT extends BaseHubIt {
 
   class ctx extends BaseHiveCtx with ContactsTestSupport {
   }
 
   "Executing get contact by id" should {
     "return the contact" in new ctx {
-      givenContactFetchById(app, contact)
+      expectAddAddress(app, addAddressCommand)(contact.copy(id = addAddressCommand.contactId))
 
-      client.execute(instance, GetContactById(contactId)) must beContactWithId(contactId).await
+      client.execute(instance, addAddressCommand) must beContactWithId(contactId).await
     }
   }
 }
-

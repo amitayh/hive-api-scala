@@ -65,7 +65,7 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   }
 
   def expectUpsertContact(app: AppDef, command: UpsertContact)(respondWith: UpsertContactResponse): Unit = {
-    val expectation =responseForUrl("/contacts", app, respondWith, RequestMethod.PUT)
+    val expectation = responseForUrl("/contacts", app, respondWith, RequestMethod.PUT)
 
     val defined = (command.email :: command.phone :: Nil).collect { case Some(t) => t}
     defined.foreach(t => expectation.withRequestBody(containing(t)))
@@ -84,9 +84,21 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
     URLEncoder.encode(str, "UTF-8")
   }
 
+  @deprecated
   override def givenContactAddAddress(app: AppDef, contactId: String, modifiedAt: DateTime, address: AddressDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/address.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(address.tag)))
+  }
+
+
+  def expectAddAddress(app: AppDef, command: AddAddress)(respondWith: Contact) = {
+    import command._
+    val expected = responseForUrl(s"/contacts/$contactId/address.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.POST)
+
+    Seq(address.address, address.city, address.country, address.neighborhood, address.postalCode, address.region, address.tag)
+      .collect { case Some(f) => containing(f.toString)} foreach { m => expected.withRequestBody(m)}
+
+    givenThat(expected)
   }
 
   override def givenContactAddEmail(app: AppDef, contactId: String, modifiedAt: DateTime, email: ContactEmailDTO): Unit = {
@@ -254,14 +266,13 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   def verifyServiceDone(app: AppDef, done: ServiceDone) = {
     verifyCommand(serviceDoneUrl, app, done)
   }
-  
+
   private def verifyCommand(url: String, app: AppDef, cmd: HiveCommand[_]) = {
     verify(postRequestedFor(versionedUrlMatcher(url))
       .withHeader(appIdHeader, equalTo(app.appId))
       .withHeader(instanceIdHeader, equalTo(app.instanceId))
       .withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT)))
   }
-
 
 
   def expectEmailProviders(app: AppDef)(respondWith: Providers): Unit = {
