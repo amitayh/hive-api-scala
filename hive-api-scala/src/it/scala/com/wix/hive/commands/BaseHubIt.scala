@@ -2,7 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.client.{HiveClient}
 import com.wix.hive.infrastructure.{SimplicatorHub, WiremockSimplicator, AppDef}
-import org.specs2.mutable.SpecificationWithJUnit
+import org.specs2.mutable.{Before, SpecificationWithJUnit}
 import org.specs2.specification.Scope
 
 /**
@@ -19,7 +19,10 @@ object BaseHubIt {
 
 }
 
-trait BaseHiveCtx extends Scope {
+trait BaseHiveCtx extends Before {
+
+  override def before: Any = WiremockSimplicator.resetMocks()
+
   val baseUrl = s"http://localhost:${BaseHubIt.serverPort}"
 
   val app = AppDef.random
