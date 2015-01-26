@@ -92,35 +92,35 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
   "Hive client" should {
 
-    "add phone to contact" in new Context {
-      givenContactAddPhone(app, contactId, modifiedAt, contactPhone)
+//    "add phone to contact" in new Context {
+//      givenContactAddPhone(app, contactId, modifiedAt, contactPhone)
+//
+//      client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
+//    }
 
-      client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
-    }
+//    "add URL to contact" in new Context {
+//      givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
+//
+//      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
+//    }
 
-    "add URL to contact" in new Context {
-      givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
+//    "add date to contact" in new Context {
+//      givenContactAddDate(app, contactId, modifiedAt, contactDate)
+//
+//      client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
+//    }
 
-      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
-    }
-
-    "add date to contact" in new Context {
-      givenContactAddDate(app, contactId, modifiedAt, contactDate)
-
-      client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
-    }
-
-    "update contact's name" in new Context {
-      givenContactUpdateName(app, contactId, modifiedAt, contactName)
-
-      client.execute(instance, UpdateName(contactId, modifiedAt, contactName)) must beContactWithId(contactId).await
-    }
-
-    "update contact's company" in new Context {
-      givenContactUpdateCompany(app, contactId, modifiedAt, contactCompany)
-
-      client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
-    }
+//    "update contact's name" in new Context {
+//      givenContactUpdateName(app, contactId, modifiedAt, contactName)
+//
+//      client.execute(instance, UpdateName(contactId, modifiedAt, contactName)) must beContactWithId(contactId).await
+//    }
+//
+//    "update contact's company" in new Context {
+//      givenContactUpdateCompany(app, contactId, modifiedAt, contactCompany)
+//
+//      client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
+//    }
 
     "update contact's picture" in new Context {
       givenContactUpdatePicture(app, contactId, modifiedAt, contactPicture)
@@ -128,11 +128,11 @@ abstract class BaseHiveClientIT extends BaseIT  {
       client.execute(instance, UpdatePicture(contactId, modifiedAt, contactPicture)) must beContactWithId(contactId).await
     }.pendingUntilFixed("Documentation states PictureDTO but server expects string")
 
-    "update contact's address" in new Context {
-      givenContactUpdateAddress(app, contactId, modifiedAt, addressId, contactAddress)
-
-      client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
-    }
+//    "update contact's address" in new Context {
+//      givenContactUpdateAddress(app, contactId, modifiedAt, addressId, contactAddress)
+//
+//      client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
+//    }
 
     "update contact's email" in new Context {
       givenContactUpdateEmail(app, contactId, modifiedAt, emailId, contactEmail)

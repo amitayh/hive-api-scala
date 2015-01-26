@@ -45,6 +45,11 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
   private def aContact(id: String) = Contact(id, createdAt = contactCreatedAt)
 
+  def expectGetContactById(app: AppDef)(respondsWith: Contact): Unit = {
+    givenThat(responseForUrl(s"/contacts/${respondsWith.id}", app, respondsWith))
+  }
+
+  @deprecated
   override def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit = {
     val contactJson = mapper.writeValueAsString(respondsWith)
 
@@ -55,9 +60,15 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
 
   def givenAppWithContacts(app: AppDef, respondsWith: Contact*): Unit = ???
 
+  @deprecated
   def givenAppWithContacts(app: AppDef)(respondWith: PagingContactsResult): Unit = {
     givenThat(responseForUrl("/contacts", app, respondWith))
   }
+
+  def expectGetContacts(app: AppDef)(respondWith: PagingContactsResult): Unit = {
+    givenThat(responseForUrl("/contacts", app, respondWith))
+  }
+
 
   def givenContactCreatedById(app: AppDef, contact: ContactData, respondWithContactId: String): Unit = {
     givenThat(responseForUrl("/contacts", app, CreatedContact(respondWithContactId), RequestMethod.POST)
@@ -65,12 +76,12 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   }
 
   def expectUpsertContact(app: AppDef, command: UpsertContact)(respondWith: UpsertContactResponse): Unit = {
-    val expectation = responseForUrl("/contacts", app, respondWith, RequestMethod.PUT)
+    val rule = responseForUrl("/contacts", app, respondWith, RequestMethod.PUT)
 
-    val defined = (command.email :: command.phone :: Nil).collect { case Some(t) => t}
-    defined.foreach(t => expectation.withRequestBody(containing(t)))
+    Seq(command.email, command.phone)
+      .collect { case Some(t) => rule.withRequestBody(containing(t))}
 
-    givenThat(expectation)
+    givenThat(rule)
   }
 
   @deprecated
@@ -104,12 +115,12 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
   def expectAddEmail(app: AppDef, cmd: AddEmail)(respondWith: Contact): Unit = {
     import cmd._
 
-    val expected = responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
+    val rule = responseForUrl(s"/contacts/$contactId/email.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
 
     Seq(email.email, email.tag)
-      .collect { case value: String => expected.withRequestBody(containing(value))}
+      .collect { case value: String => rule.withRequestBody(containing(value))}
 
-    givenThat(expected)
+    givenThat(rule)
   }
 
   @deprecated
@@ -118,29 +129,85 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withRequestBody(containing(email.email)))
   }
 
+  @deprecated
   override def givenContactAddPhone(app: AppDef, contactId: String, modifiedAt: DateTime, phone: ContactPhoneDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/phone.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(phone.phone)))
   }
 
+  def expectAddPhone(app: AppDef, cmd: AddPhone)(respondWith: Contact): Unit = {
+    import cmd._
+    val rule = responseForUrl(s"/contacts/$contactId/phone.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.POST)
+
+    Seq(phone.phone, phone.tag) foreach { v => rule.withRequestBody(containing(v))}
+
+    givenThat(rule)
+  }
+
+
+  @deprecated
   override def givenContactAddUrl(app: AppDef, contactId: String, modifiedAt: DateTime, url: ContactUrlDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(url.url)))
   }
 
+  def expectedAddUrl(app: AppDef, cmd: AddUrl)(respondWith: Contact): Unit = {
+    import cmd._
+    val rule = responseForUrl(s"/contacts/$contactId/url.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.POST)
+
+    Seq(urlToAdd.tag, urlToAdd.url) foreach { s => rule.withRequestBody(containing(s))}
+
+    givenThat(rule)
+  }
+
+  @deprecated
   override def givenContactAddDate(app: AppDef, contactId: String, modifiedAt: DateTime, date: ContactDateDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.POST)
       .withRequestBody(containing(ISO8601Utils.format(date.date.toDate, true))))
   }
 
+  def expectAddDate(app: AppDef, cmd: AddDate)(respondWith: Contact): Unit = {
+    import cmd._
+
+    val rule = responseForUrl(s"/contacts/$contactId/date.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.POST)
+
+    Seq(cmd.date.tag, ISO8601Utils.format(date.date.toDate, true)) foreach { s => rule.withRequestBody(containing(s))}
+
+    givenThat(rule)
+  }
+
+
+  @deprecated
   override def givenContactUpdateName(app: AppDef, contactId: String, modifiedAt: DateTime, name: ContactName): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(name.first.get)))
   }
 
+  def expectUpdateName(app: AppDef, cmd: UpdateName)(respondWith: Contact): Unit = {
+    import cmd._
+
+    val rule = responseForUrl(s"/contacts/$contactId/name.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.PUT)
+
+    Seq(name.first, name.last, name.middle, name.prefix, name.suffix)
+      .collect { case Some(s) => rule.withRequestBody(containing(s))}
+
+    givenThat(rule)
+  }
+
+  @deprecated
   override def givenContactUpdateCompany(app: AppDef, contactId: String, modifiedAt: DateTime, company: CompanyDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(company.role.get)))
+  }
+
+  def expectUpdateCompany(app: AppDef, cmd: UpdateCompany)(respondWith: Contact): Unit = {
+    import cmd._
+
+    val rule = responseForUrl(s"/contacts/$contactId/company.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.PUT)
+
+    Seq(company.name, company.role) collect { case Some(s) => rule.withRequestBody(containing(s))}
+
+    givenThat(rule)
   }
 
   override def givenContactUpdatePicture(app: AppDef, contactId: String, modifiedAt: DateTime, picture: PictureDTO): Unit = {
@@ -149,9 +216,20 @@ trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
       .withRequestBody(containing(picture.picture)))
   }
 
+  @deprecated
   override def givenContactUpdateAddress(app: AppDef, contactId: String, modifiedAt: DateTime, addressId: String, address: AddressDTO): Unit = {
     givenThat(responseForUrl(s"/contacts/$contactId/address/$addressId.*${urlEncode(modifiedAt.toString)}", app, aContact(contactId), RequestMethod.PUT)
       .withRequestBody(containing(address.tag)))
+  }
+
+  def expectUpdateAddress(app: AppDef, cmd: UpdateAddress)(respondWith: Contact): Unit = {
+    import cmd._
+
+    val rule = responseForUrl(s"/contacts/$contactId/address/$addressId.*${urlEncode(modifiedAt.toString)}", app, respondWith, RequestMethod.PUT)
+    Seq(address.address, address.city, address.country, address.neighborhood, address.postalCode, address.region, address.tag)
+      .collect { case Some(s) => rule.withRequestBody(containing(s.toString))}
+
+    givenThat(rule)
   }
 
   override def givenContactUpdateEmail(app: AppDef, contactId: String, modifiedAt: DateTime, emailId: String, email: ContactEmailDTO): Unit = {

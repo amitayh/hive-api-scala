@@ -53,6 +53,12 @@ trait ContactsTestSupport {
   val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
   val addAddressCommand = AddAddress(contactId, modifiedAt, address)
   val addEmailCommand = AddEmail(contactId, modifiedAt, contactEmail)
+  val addPhoneCommand = AddPhone(contactId, modifiedAt, contactPhone)
+  val addUrlCommand = AddUrl(contactId, modifiedAt, contactUrl)
+  val addDateCommand = AddDate(contactId, modifiedAt, contactDate)
+  val updateNameCommand = UpdateName(contactId, modifiedAt, name)
+  val updateCompanyCommand = UpdateCompany(contactId, modifiedAt, contactCompany)
+  val updateAddressCommand = UpdateAddress(contactId, modifiedAt, addressId, contactAddress)
 }
 
 object ContactsTestSupport extends ContactsTestSupport
