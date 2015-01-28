@@ -56,6 +56,28 @@ with HiveMatchers {
     data ^^ { (_: ServiceResult).data aka "data" }
   }
 
+  def aProvisionWebhook(instanceId: String = instanceId) = Webhook(instanceId, Provision(instanceId, None), aWebhookParams())
+
+  def aProvisionDisabledWebhook(instanceId: String = instanceId) = Webhook(instanceId, ProvisionDisabled(instanceId, None), aWebhookParams())
+
+  val activityId = "someActivityId"
+  val activityType = "auth/register"
+
+  def anActivityPostedWebhook(instanceId: String = instanceId) = Webhook(instanceId, ActivitiesPosted(activityId, activityType, None), aWebhookParams())
+  def aServicesDoneWebhook(providerAppId: String = UUID.randomUUID().toString, instanceId: String = instanceId) = Webhook(instanceId, ServiceResult(providerAppId, "af142114-f616-4594-9fb8-1253d317541e", ServiceRunData("SUCCESS", None, None)), aWebhookParams(appId))
+
+  def beActivity(activityId: Matcher[String], activityType: Matcher[String], contactId: Matcher[Option[String]] = beNone): Matcher[ActivitiesPosted] = {
+    activityId ^^ {(_: ActivitiesPosted).activityId aka "activityId"} and
+      activityType ^^ {(_: ActivitiesPosted).activityType aka "activityType"} and
+      contactId ^^ {(_: ActivitiesPosted).contactId aka "contactId"}
+  }
+
+
+  def beProvisionDisabled(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[ProvisionDisabled] = {
+    instanceId ^^ {(_: ProvisionDisabled).instanceId aka "instanceId"} and
+      originInstanceId ^^ {(_: ProvisionDisabled).originInstanceId aka "originInstanceId"}
+  }
+
 }
 
 object WebhooksTestSupport extends WebhooksTestSupport

@@ -24,7 +24,6 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   val webhookPort = WiremockSimplicator.serverPort
   private val timeout = new org.specs2.time.Duration(3000)
 
-  val mockFunc = mock[Try[Webhook[_]] => Unit]
 
   val converter = new WebhooksConverter {
     override def secret: String = webhookSecret
@@ -32,14 +31,14 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
 
   givenThat(WireMock.post(urlMatching(webhookPath)).willReturn(aResponse().withStatus(200)))
 
-  WiremockSimplicator.server.addMockServiceRequestListener(new RequestListener {
-    override def requestReceived(request: Request, response: Response): Unit = {
-      val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
-      mockFunc(webhook)
-    }
-  })
-
-  def webhookWith[T <: WebhookData](matcher: Matcher[Webhook[T]]): Unit = {
-    there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook[T]].withValue(matcher))
+  def subscribeFunc(f: (Try[Webhook[_]]) => Unit) = {
+    WiremockSimplicator.server.addMockServiceRequestListener(new RequestListener {
+      override def requestReceived(request: Request, response: Response): Unit = {
+        val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
+        f(webhook)
+      }
+    })
   }
+
+
 }
