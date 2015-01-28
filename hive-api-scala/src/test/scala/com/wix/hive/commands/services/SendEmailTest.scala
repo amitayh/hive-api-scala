@@ -19,7 +19,7 @@ class SendEmailTest extends Specification with HiveMatchers {
   "services email" should {
     "create HttpRequestData with all parameters" in new Context {
       command.createHttpRequestData must httpRequestDataWith(
-        url = be_===("/services/email"),
+        url = be_===("/services/actions/email"),
         method = be_===(HttpMethod.POST),
         body = beSome(EmailServiceData(command.providerId, command.redemptionToken, command.correlationId, command.contacts)))
     }

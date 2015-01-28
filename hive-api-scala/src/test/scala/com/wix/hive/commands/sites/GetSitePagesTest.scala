@@ -1,8 +1,8 @@
 package com.wix.hive.commands.sites
 
-import org.specs2.mutable.SpecificationWithJUnit
-import com.wix.hive.matchers.HiveMatchers._
 import com.wix.hive.client.http.HttpMethod._
+import com.wix.hive.matchers.HiveMatchers._
+import org.specs2.mutable.SpecificationWithJUnit
 /**
  * User: maximn
  * Date: 1/19/15

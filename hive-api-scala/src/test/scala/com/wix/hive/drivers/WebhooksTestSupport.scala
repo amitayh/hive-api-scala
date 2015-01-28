@@ -57,3 +57,5 @@ with HiveMatchers {
   }
 
 }
+
+object WebhooksTestSupport extends WebhooksTestSupport

@@ -1,10 +1,6 @@
 package com.wix.hive.client
 
-import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
-import com.wix.hive.commands.insights.InsightActivitySummary
-import com.wix.hive.commands.services.ServiceDone
-import com.wix.hive.commands.sites.Site
 import com.wix.hive.drivers.ServicesTestSupport
 import com.wix.hive.infrastructure.{AppDef, HiveApiDrivers}
 import com.wix.hive.model.activities._
@@ -15,8 +11,7 @@ import org.joda.time.DateTime
 import org.specs2.mutable.Before
 
 
-
-abstract class BaseHiveClientIT extends BaseIT  {
+abstract class BaseHiveClientIT extends BaseIT {
   this: HiveApiDrivers =>
 
   val baseUrl: String
@@ -53,7 +48,7 @@ abstract class BaseHiveClientIT extends BaseIT  {
     val dateId = "e1157acc-41aa-460e-87e9-7cee90778b06"
     val contactData = ContactData(name = Some(contactName), emails = Seq(contactEmail))
 
-    val date = new DateTime(2013, 1, 2, 2 ,3)
+    val date = new DateTime(2013, 1, 2, 2, 3)
     val contactDate = ContactDateDTO(tag = "date-tag", date)
 
     val addressId = "9a9cf711-d537-44a5-97e3-d45b7e7ffe53"
@@ -92,35 +87,35 @@ abstract class BaseHiveClientIT extends BaseIT  {
 
   "Hive client" should {
 
-//    "add phone to contact" in new Context {
-//      givenContactAddPhone(app, contactId, modifiedAt, contactPhone)
-//
-//      client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
-//    }
+    //    "add phone to contact" in new Context {
+    //      givenContactAddPhone(app, contactId, modifiedAt, contactPhone)
+    //
+    //      client.execute(instance, AddPhone(contactId, modifiedAt, contactPhone)) must beContactWithId(contactId).await
+    //    }
 
-//    "add URL to contact" in new Context {
-//      givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
-//
-//      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
-//    }
+    //    "add URL to contact" in new Context {
+    //      givenContactAddUrl(app, contactId, modifiedAt, contactUrl)
+    //
+    //      client.execute(instance, AddUrl(contactId, modifiedAt, contactUrl)) must beContactWithId(contactId).await
+    //    }
 
-//    "add date to contact" in new Context {
-//      givenContactAddDate(app, contactId, modifiedAt, contactDate)
-//
-//      client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
-//    }
+    //    "add date to contact" in new Context {
+    //      givenContactAddDate(app, contactId, modifiedAt, contactDate)
+    //
+    //      client.execute(instance, AddDate(contactId, modifiedAt, contactDate)) must beContactWithId(contactId).await
+    //    }
 
-//    "update contact's name" in new Context {
-//      givenContactUpdateName(app, contactId, modifiedAt, contactName)
-//
-//      client.execute(instance, UpdateName(contactId, modifiedAt, contactName)) must beContactWithId(contactId).await
-//    }
-//
-//    "update contact's company" in new Context {
-//      givenContactUpdateCompany(app, contactId, modifiedAt, contactCompany)
-//
-//      client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
-//    }
+    //    "update contact's name" in new Context {
+    //      givenContactUpdateName(app, contactId, modifiedAt, contactName)
+    //
+    //      client.execute(instance, UpdateName(contactId, modifiedAt, contactName)) must beContactWithId(contactId).await
+    //    }
+    //
+    //    "update contact's company" in new Context {
+    //      givenContactUpdateCompany(app, contactId, modifiedAt, contactCompany)
+    //
+    //      client.execute(instance, UpdateCompany(contactId, modifiedAt, contactCompany)) must beContactWithId(contactId).await
+    //    }
 
     "update contact's picture" in new Context {
       givenContactUpdatePicture(app, contactId, modifiedAt, contactPicture)
@@ -128,86 +123,86 @@ abstract class BaseHiveClientIT extends BaseIT  {
       client.execute(instance, UpdatePicture(contactId, modifiedAt, contactPicture)) must beContactWithId(contactId).await
     }.pendingUntilFixed("Documentation states PictureDTO but server expects string")
 
-//    "update contact's address" in new Context {
-//      givenContactUpdateAddress(app, contactId, modifiedAt, addressId, contactAddress)
-//
-//      client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
-//    }
+    //    "update contact's address" in new Context {
+    //      givenContactUpdateAddress(app, contactId, modifiedAt, addressId, contactAddress)
+    //
+    //      client.execute(instance, UpdateAddress(contactId, modifiedAt, addressId, contactAddress)) must beContactWithId(contactId).await
+    //    }
 
-    "update contact's email" in new Context {
-      givenContactUpdateEmail(app, contactId, modifiedAt, emailId, contactEmail)
+    //    "update contact's email" in new Context {
+    //      givenContactUpdateEmail(app, contactId, modifiedAt, emailId, contactEmail)
+    //
+    //      client.execute(instance, UpdateEmail(contactId, modifiedAt, emailId, contactEmail)) must beContactWithId(contactId).await
+    //    }
 
-      client.execute(instance, UpdateEmail(contactId, modifiedAt, emailId, contactEmail)) must beContactWithId(contactId).await
-    }
+    //    "update cotnact's phone" in new Context {
+    //      givenContactUpdatePhone(app, contactId, modifiedAt, phoneId, contactPhone)
+    //
+    //      client.execute(instance, UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)) must beContactWithId(contactId).await
+    //    }
 
-    "update cotnact's phone" in new Context {
-      givenContactUpdatePhone(app, contactId, modifiedAt, phoneId, contactPhone)
+    //    "update contact's url" in new Context {
+    //      givenContactUpdateUrl(app, contactId, modifiedAt, urlId, contactUrl)
+    //
+    //      client.execute(instance, UpdateUrl(contactId, modifiedAt, urlId, contactUrl)) must beContactWithId(contactId).await
+    //    }
 
-      client.execute(instance, UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)) must beContactWithId(contactId).await
-    }
-
-    "update contact's url" in new Context {
-      givenContactUpdateUrl(app, contactId, modifiedAt, urlId, contactUrl)
-
-      client.execute(instance, UpdateUrl(contactId, modifiedAt, urlId, contactUrl)) must beContactWithId(contactId).await
-    }
-
-    "update contact's date" in new Context {
-      givenContactUpdateDate(app, contactId, modifiedAt, dateId, contactDate)
-
-      client.execute(instance, UpdateDate(contactId, modifiedAt, dateId, contactDate)) must beContactWithId(contactId).await
-    }
+    //    "update contact's date" in new Context {
+    //      givenContactUpdateDate(app, contactId, modifiedAt, dateId, contactDate)
+    //
+    //      client.execute(instance, UpdateDate(contactId, modifiedAt, dateId, contactDate)) must beContactWithId(contactId).await
+    //    }
 
     "update contact's email subscription" in new Context {
       failure("Not implemented in the HUB")
     }.pendingUntilFixed
 
-    "get activities for a given contact" in new Context {
-      givenActivitiesForContact(app, contactId, cursor, activity)
+    //    "get activities for a given contact" in new Context {
+    //      givenActivitiesForContact(app, contactId, cursor, activity)
+    //
+    //      client.execute(instance, GetContactActivities(contactId, cursor = Some(cursor))) must haveSameIds(activity).await
+    //    }
 
-      client.execute(instance, GetContactActivities(contactId, cursor = Some(cursor))) must haveSameIds(activity).await
-    }
+    //    "create activity for contact" in new Context {
+    //      givenAppWithContactExist(app, contactId)
+    //
+    //      import activity._
+    //      client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
+    //    }
 
-    "create activity for contact" in new Context {
-      givenAppWithContactExist(app, contactId)
+    //    "get activity by ID" in new Context {
+    //      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
+    //
+    //      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(activityId).await
+    //    }
 
-      import activity._
-      client.execute(instance, CreateContactActivity(contactId, createdAt, activityLocationUrl, activityDetails, activityInfo)) must haveActivityResult.await
-    }
+    //    "get list of all activity types" in new Context {
+    //      val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
+    //      givenAppActivityTypes(app, types: _*)
+    //
+    //      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
+    //    }
 
-    "get activity by ID" in new Context {
-      givenAppWithActivitiesById(app, Activity(id = activityId, createdAt = now, activityInfo = authRegister))
+    //    "create activity for contact using contact's user session" in new Context {
+    //      givenAppWithContactExist(app, "dac62df7-7852-41fc-af0a-6b443745a5ab")
+    //      val userSessionToken = getValidUserSessionToken
+    //
+    //      val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
+    //
+    //      client.execute(instance, command) must haveActivityResult.await
+    //    }
 
-      client.execute(app.instanceId, GetActivityById(activityId)) must beAnActivityWith(activityId).await
-    }
+    //    "get all activities" in new Context {
+    //      givenAppWithActivitiesBulk(app, activity)
+    //
+    //      client.execute(instance, GetActivities()) must haveSameIds(activity).await
+    //    }
 
-    "get list of all activity types" in new Context {
-      val types = Seq(ActivityType.`auth/login`, ActivityType.`music/album-fan`)
-      givenAppActivityTypes(app, types: _*)
-
-      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types).await
-    }
-
-    "create activity for contact using contact's user session" in new Context {
-      givenAppWithContactExist(app, "dac62df7-7852-41fc-af0a-6b443745a5ab")
-      val userSessionToken = getValidUserSessionToken
-
-      val command = CreateActivity(userSessionToken, ActivityCreationData(createdAt = now, activityInfo = AuthRegister("iunt", "preAc", "ACTIVE")))
-
-      client.execute(instance, command) must haveActivityResult.await
-    }
-
-    "get all activities" in new Context {
-      givenAppWithActivitiesBulk(app, activity)
-
-      client.execute(instance, GetActivities()) must haveSameIds(activity).await
-    }
-
-    "get site's URL" in new Context {
-      givenAppWithSite(app, url)
-
-      client.execute(instance, Site) must haveSiteUrl(url).await
-    }
+    //    "get site's URL" in new Context {
+    //      givenAppWithSite(app, url)
+    //
+    //      client.execute(instance, Site) must haveSiteUrl(url).await
+    //    }
 
     "create 'Notification' message to all users of the application" in new Context {
       val notification = new NotificationCreationData("title", "content", NotificationType.BusinessTips)
@@ -216,17 +211,11 @@ abstract class BaseHiveClientIT extends BaseIT  {
     }.pendingUntilFixed
 
 
-    "get insights (activity summary) for a contact" in new Context {
-      givenAppWithUserActivities(app, contactId, summary)
-
-      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
-    }
-
-    "get insights (activity summary) for all contacts" in new Context {
-      givenAppWithActivities(app, summary)
-
-      client.execute(instance, InsightActivitySummary()) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
-    }
+    //    "get insights (activity summary) for a contact" in new Context {
+    //      givenAppWithUserActivities(app, contactId, summary)
+    //
+    //      client.execute(instance, InsightActivitySummary(Some(contactId))) must haveActivityOfType(typ = summaryAactivityType, total = 1).await
+    //    }
   }
 
   step(shutdownEnv())

@@ -11,8 +11,8 @@ import org.joda.time.DateTime
 trait SigningTestSupport {
   val key = "e5f5250a-dbd0-42a1-baf9-c61ea20c401b"
   val ts = "2014-10-08T10:20:51.036+03:00"
-  private val app = "e37bd20e-a4a3-4cf8-b392-03269add8b69"
-  private val instance = "d0f9764d-d255-490c-95da-d16e0efaf423"
+  val app = "e37bd20e-a4a3-4cf8-b392-03269add8b69"
+  val instance = "d0f9764d-d255-490c-95da-d16e0efaf423"
 
   val headers = Map("X-Wix-Instance-Id" -> instance,
     "X-Wix-Application-Id" -> app,
@@ -44,7 +44,7 @@ trait SigningTestSupport {
 
   val provisioningWebhook = Webhook(instance, provisioningData, webhookParameters)
 
-  val provisiningSignature = "54tx1k6LA-jMCSGN0kSde3nOa7oVupBzvSwn0YNCyRM"
+  val provisiningSignature = "ZGgqWxYS_JaGv8EcCrzTw8koI8gKC-ByCr-19pO6PzY"
 
   val provisioningWebhookRequest = HttpRequestData(HttpMethod.POST,
   "/callback-url",
@@ -52,3 +52,5 @@ trait SigningTestSupport {
   headers = headers.map { case(key,value) => key.toLowerCase -> value} + ("x-wix-signature" -> provisiningSignature) + ("x-wix-event-type" -> "/provision/provision"),
   body = Some(provisioningData))
 }
+
+object SigningTestSupport extends SigningTestSupport

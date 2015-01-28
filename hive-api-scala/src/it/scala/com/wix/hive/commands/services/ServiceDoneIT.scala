@@ -14,7 +14,7 @@ class ServiceDoneIT extends BaseHubIt {
 
   "Executing ServiceDone " should {
     "send done signal to the hub" in new ctx {
-      expectServiceDone(app)
+      expect(app, serviceDoneCommand)()
 
       client.execute(instance, serviceDoneCommand) must not(throwA).await
 

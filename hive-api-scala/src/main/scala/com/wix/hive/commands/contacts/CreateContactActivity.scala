@@ -5,7 +5,7 @@ import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.model.activities.{ActivityCreatedResult, ActivityDetails, ActivityInfo}
 import org.joda.time.DateTime
 
-case class CreateContactActivity(contactID: String,
+case class CreateContactActivity(contactId: String,
                                  createdAt: DateTime,
                                  activityLocationUrl: Option[String] = None,
                                  activityDetails: Option[ActivityDetails] = None,
@@ -13,7 +13,7 @@ case class CreateContactActivity(contactID: String,
   override def method: HttpMethod = HttpMethod.POST
 
 
-  override def urlParams: String = super.urlParams + s"/$contactID/activities"
+  override def urlParams: String = super.urlParams + s"/$contactId/activities"
 
   override def body: Option[AnyRef] = Some(ContactActivityDate(createdAt, activityLocationUrl, activityDetails, activityInfo))
 }

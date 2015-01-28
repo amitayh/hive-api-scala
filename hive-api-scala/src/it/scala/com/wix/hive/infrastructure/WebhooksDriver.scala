@@ -1,9 +1,11 @@
 package com.wix.hive.infrastructure
 
 import com.twitter.finagle.{Http, Service}
+import com.twitter.io.Charsets
 import com.twitter.util.{Await, Duration => TwitterDuration}
-import com.wix.hive.client.HiveSigner
+import com.wix.hive.client.{HiveClient, HiveSigner}
 import com.wix.hive.client.http.HttpRequestData
+import com.wix.hive.commands.contacts.GetContactById
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.server.webhooks._
 import org.jboss.netty.buffer.ChannelBuffers
@@ -82,12 +84,10 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     callWebhook(webhook, "/services/actions/email/send")
   }
 
-
-
   private def callWebhook(webhook: Webhook[_], eventType: String) {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 
-    Await.ready(client(request), TwitterDuration(timeout.length, timeout.unit))
+    val res = Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
   }
 }

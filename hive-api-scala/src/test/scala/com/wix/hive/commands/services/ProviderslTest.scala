@@ -16,10 +16,10 @@ class ProviderslTest extends Specification with HiveMatchers {
     val command = providersCommand
   }
 
-  "GET /services/email/providers" should {
+  "GET /services/actions/email/providers" should {
     "create HttpRequestData with all parameters" in new Context {
       command.createHttpRequestData must httpRequestDataWith(
-        url = be_===("/services/email/providers"),
+        url = be_===("/services/actions/email/providers"),
         method = be_===(HttpMethod.GET))
     }
   }

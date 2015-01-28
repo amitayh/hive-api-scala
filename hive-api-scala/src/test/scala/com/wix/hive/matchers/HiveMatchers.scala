@@ -8,7 +8,7 @@ import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 import org.joda.time.DateTime
 import org.specs2.matcher._
 
-trait HiveMatchers extends Matchers with MustExpectations {
+trait HiveMatchers extends Matchers with MustThrownExpectations {
   val appId = UUID.randomUUID().toString
   val instanceId = UUID.randomUUID().toString
   val timestamp = new DateTime(2014, 2, 11, 1, 2)

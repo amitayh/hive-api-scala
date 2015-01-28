@@ -1,9 +1,8 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.{HiveClient}
-import com.wix.hive.infrastructure.{SimplicatorHub, WiremockSimplicator, AppDef}
+import com.wix.hive.client.HiveClient
+import com.wix.hive.infrastructure.{AppDef, SimplicatorHub, WiremockSimplicator}
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.specification.Scope
 
 /**
  * User: maximn
@@ -11,7 +10,9 @@ import org.specs2.specification.Scope
  */
 
 class BaseHubIt extends SpecificationWithJUnit with SimplicatorHub {
+  sequential
   override val serverPort = BaseHubIt.serverPort
+  WiremockSimplicator.start
 }
 
 object BaseHubIt {
@@ -30,5 +31,4 @@ trait BaseHiveCtx extends Before {
 
   val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
 
-  WiremockSimplicator.start
 }

@@ -1,10 +1,10 @@
 package com.wix.hive.drivers
 
 import com.wix.hive.commands.contacts._
-import com.wix.hive.model.contacts.{PagingContactsResult, EmailStatus, ContactName, Contact}
+import com.wix.hive.model.contacts.{Contact, ContactName, EmailStatus, PagingContactsResult}
 import org.joda.time.DateTime
-import org.specs2.matcher.Matchers._
 import org.specs2.matcher.Matcher
+import org.specs2.matcher.Matchers._
 
 /**
  * User: maximn
@@ -52,6 +52,8 @@ trait ContactsTestSupport {
 
   val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
   val addAddressCommand = AddAddress(contactId, modifiedAt, address)
+  val getContactByIdCommand = GetContactById(contactId)
+  val getContactsCommand =GetContacts()
   val addEmailCommand = AddEmail(contactId, modifiedAt, contactEmail)
   val addPhoneCommand = AddPhone(contactId, modifiedAt, contactPhone)
   val addUrlCommand = AddUrl(contactId, modifiedAt, contactUrl)
@@ -59,6 +61,10 @@ trait ContactsTestSupport {
   val updateNameCommand = UpdateName(contactId, modifiedAt, name)
   val updateCompanyCommand = UpdateCompany(contactId, modifiedAt, contactCompany)
   val updateAddressCommand = UpdateAddress(contactId, modifiedAt, addressId, contactAddress)
+  val updateEmailCommand = UpdateEmail(contactId, modifiedAt, emailId, contactEmail)
+  val updatePhoneCommand = UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)
+  val updateUrlCommand = UpdateUrl(contactId, modifiedAt, urlId, contactUrl)
+  val updateDateCommand = UpdateDate(contactId, modifiedAt, dateId, contactDate)
 }
 
 object ContactsTestSupport extends ContactsTestSupport

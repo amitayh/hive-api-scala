@@ -3,12 +3,10 @@ package com.wix.hive.drivers
 import java.util.UUID
 
 import com.wix.hive.commands.services._
-import com.wix.hive.commands.sites.{Page, SitePages}
 import com.wix.hive.model.services.{ServiceData, ServiceRunData}
-import com.wix.hive.model.sites.{SiteStatus, SiteData}
 import com.wix.hive.server.webhooks
+import org.specs2.matcher.MustMatchers._
 import org.specs2.matcher.{Matcher, MustMatchers}
-import MustMatchers._
 /**
  * User: maximn
  * Date: 1/6/15
