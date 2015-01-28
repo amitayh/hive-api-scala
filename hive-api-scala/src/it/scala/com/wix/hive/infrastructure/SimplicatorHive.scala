@@ -25,7 +25,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode
 
 import scala.runtime.BoxedUnit
 
-trait SimplicatorHub extends WiremockEnvironment with HiveApiDrivers {
+trait SimplicatorHive extends HiveApiDrivers {
   private val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
 
   private def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url?.*")

@@ -13,9 +13,9 @@ import org.specs2.matcher.{Matcher, Matchers}
  * User: maximn
  * Date: 1/27/15
  */
-class InsightsIT extends BaseHubIt {
+class InsightsIT extends HiveSimplicatorIT {
 
-  class ctx extends BaseHiveCtx with SitesTestSupport with Matchers {
+  class clientContext extends HiveClientContext with SitesTestSupport with Matchers {
     def haveActivityOfType(typ: ActivityType): Matcher[Seq[ActivityTypesSummary]] = (_: Seq[ActivityTypesSummary]).exists(_.activityType == Some(typ))
 
     def haveActivityOfType(typ: ActivityType, total: Int): Matcher[ActivitySummary] = {
@@ -31,7 +31,7 @@ class InsightsIT extends BaseHubIt {
   }
 
   "Insights APIs" should {
-    "get insights (activity summary) for a contact" in new ctx {
+    "get insights (activity summary) for a contact" in new clientContext {
       val cmd = anInsightActivitySummaryCommand(contactId)
 
       expect(app, cmd)(summary)

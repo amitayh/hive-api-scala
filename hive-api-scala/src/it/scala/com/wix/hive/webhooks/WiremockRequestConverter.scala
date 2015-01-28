@@ -27,6 +27,5 @@ object WiremockRequestConverter {
 
         HttpRequestData(method, url, headers = headers.toMap, body = body)
     }
-
   }
 }

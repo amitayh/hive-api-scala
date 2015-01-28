@@ -7,7 +7,7 @@
     <version>1.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Hive Scala API - Modules</name>
-    <description>Scala library to work with the HiveApi</description>
+    <description>Scala library to work with the Hive Api</description>
 
     <developers>
         <developer>
@@ -22,8 +22,6 @@
 
     <modules>
         <module>hive-api-scala</module>
-        <module>hive-api-contract-tests</module>
-        <module>hive-api-tests</module>
         <module>hive-api-scala-testkit</module>
     </modules>
 </project>

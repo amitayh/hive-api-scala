@@ -11,6 +11,7 @@ import org.joda.time.DateTime
  * User: maximn
  * Date: 11/17/14
  */
+@deprecated
 trait HiveApiDrivers {
   def givenContactFetchById(myself: AppDef, respondsWith: Contact): Unit
 
