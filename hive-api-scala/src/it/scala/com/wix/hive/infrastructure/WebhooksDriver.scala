@@ -88,6 +88,6 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 
-    val res = Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
+    Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
   }
 }

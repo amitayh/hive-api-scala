@@ -3,9 +3,8 @@ package com.wix.hive.infrastructure
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.http.{Response, Request, RequestListener}
 
-object WiremockEnvironment {
+trait WiremockEnvironment {
   val serverPort: Int = 9089
 
   lazy val server: WireMockServer = {
@@ -27,3 +26,5 @@ object WiremockEnvironment {
     WireMock.resetAllScenarios()
   }
 }
+
+object WiremockEnvironment extends WiremockEnvironment
