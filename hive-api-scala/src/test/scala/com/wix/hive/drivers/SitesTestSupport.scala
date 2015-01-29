@@ -13,5 +13,5 @@ trait SitesTestSupport extends Matchers {
 
   val sitePages = SitePages(SiteData("http://somesite.com", SiteStatus.published), Seq(Page("/path", None, None)))
   val url = "http://wix.com/somesite"
-
+  val siteData = SiteData(url, SiteStatus.published)
 }
