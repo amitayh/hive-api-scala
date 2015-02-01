@@ -1,11 +1,15 @@
-package com.wix.hive.commands.contacts
+package com.wix.hive.commands.labels
 
+import com.wix.hive.commands.contacts.GetContactById
+import org.specs2.mutable.SpecificationWithJUnit
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.matchers.HiveMatchers
-import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-class GetContactByIdTest extends SpecificationWithJUnit with HiveMatchers {
+/**
+ * Created by karenc on 2/1/15.
+ */
+class GetLabelByIdTest extends SpecificationWithJUnit with HiveMatchers {
 
     "createHttpRequestData" should {
 
@@ -23,4 +27,3 @@ class GetContactByIdTest extends SpecificationWithJUnit with HiveMatchers {
         val command = GetContactById(id)
     }
 }
-

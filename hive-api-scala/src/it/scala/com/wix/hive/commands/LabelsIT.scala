@@ -23,7 +23,7 @@ class LabelsIT extends HiveSimplicatorIT {
     }
 
     "get labels with filtering" in new clientContext {
-      expect(app, getLabelsCommand)(PagingLabelsResult(total = 2, pageSize = 25, previous = None, next = None, results = Seq(label, anotherLabel)))
+      expect(app, getLabelsCommand)(PagingLabelsResult(total = 2, pageSize = 25, previousCursor = None, nextCursor = None, results = Seq(label, anotherLabel)))
 
       client.execute(instance, getLabelsCommand) must beLabelsWith(contain(allOf(beLabelWithId(labelId), beLabelWithId(anotherLabelId)))).await
     }
