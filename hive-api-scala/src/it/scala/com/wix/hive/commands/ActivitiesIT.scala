@@ -3,6 +3,7 @@ package com.wix.hive.commands
 import com.wix.hive.commands.activities.GetActivityTypes
 import com.wix.hive.drivers.ActivitiesTestSupport._
 import com.wix.hive.drivers.ContactsTestSupport._
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.matchers.HiveMatchers._
 
 /**

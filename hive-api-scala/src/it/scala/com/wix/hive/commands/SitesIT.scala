@@ -2,6 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.commands.sites.{GetSitePages, Site}
 import com.wix.hive.drivers.SitesTestSupport
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.model.sites.SiteData
 
 /**

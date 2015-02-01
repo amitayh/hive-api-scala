@@ -1,7 +1,7 @@
 package com.wix.hive.webhooks
 
 import com.wix.hive.drivers.WebhooksTestSupport
-import com.wix.hive.infrastructure.SimplicatorWebhooksDriver
+import com.wix.hive.infrastructure.{WebhookSimplicatorIT, SimplicatorWebhooksDriver}
 import com.wix.hive.server.webhooks.{Webhook, WebhookData}
 import org.mockito.Mockito
 import org.specs2.matcher.Matcher

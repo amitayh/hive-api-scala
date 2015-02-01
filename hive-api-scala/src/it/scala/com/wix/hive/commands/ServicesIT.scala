@@ -2,6 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.commands.services.Providers
 import com.wix.hive.drivers.ServicesTestSupport
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 
 /**
  * User: maximn

@@ -1,13 +1,13 @@
-package com.wix.hive.webhooks
+package com.wix.hive.infrastructure
 
 import java.util.UUID
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.http.{Response, Request, RequestListener}
-import com.wix.hive.infrastructure.WiremockEnvironment
-import com.wix.hive.server.webhooks.{WebhookData, WebhooksConverter, Webhook}
-import org.specs2.matcher.{Matchers, Matcher}
+import com.github.tomakehurst.wiremock.http.{Request, Response}
+import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
+import com.wix.hive.webhooks.WiremockRequestConverter
+import org.specs2.matcher.Matchers
 import org.specs2.mock.Mockito
 
 import scala.util.Try

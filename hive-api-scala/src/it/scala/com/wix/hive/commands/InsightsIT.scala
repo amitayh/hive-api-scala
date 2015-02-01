@@ -3,6 +3,7 @@ package com.wix.hive.commands
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.drivers.ContactsTestSupport._
 import com.wix.hive.drivers.SitesTestSupport
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.model.activities.ActivityType
 import com.wix.hive.model.activities.ActivityType._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}

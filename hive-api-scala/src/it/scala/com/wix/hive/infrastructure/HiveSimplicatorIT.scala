@@ -1,6 +1,5 @@
-package com.wix.hive.commands
+package com.wix.hive.infrastructure
 
-import com.wix.hive.infrastructure.{SimplicatorHive, WiremockEnvironment}
 import org.specs2.mutable.SpecificationWithJUnit
 
 /**
