@@ -13,6 +13,7 @@ import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
+import com.wix.hive.commands.labels.{GetLabels, GetLabelById}
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.{Site, GetSitePages}
 import org.joda.time.DateTime
@@ -92,6 +93,8 @@ trait SimplicatorHive {
       case c: EmailProviders.type => Match("/services/actions/email/providers")
       case c: GetSitePages.type => Match("/sites/site/pages")
       case c: Site.type => Match("/sites/site")
+      case c: GetLabelById => Match(s"/labels/${c.id}")
+      case c: GetLabels => Match("/labels")
     }
   }
 
