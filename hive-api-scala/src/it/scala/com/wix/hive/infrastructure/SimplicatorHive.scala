@@ -13,6 +13,7 @@ import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
+import com.wix.hive.commands.labels.{GetLabels, GetLabelById}
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.GetSitePages
 import com.wix.hive.model.activities.ActivityType.ActivityType
@@ -117,6 +118,8 @@ trait SimplicatorHive extends HiveApiDrivers {
       case c: ServiceDone => Match(serviceDoneUrl, method = RequestMethod.POST)
       case c: EmailProviders.type => Match("/services/actions/email/providers")
       case c: GetSitePages.type => Match("/sites/site/pages")
+      case c: GetLabelById => Match(s"/labels/${c.id}")
+      case c: GetLabels => Match("/labels")
     }
   }
 
