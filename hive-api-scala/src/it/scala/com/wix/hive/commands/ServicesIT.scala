@@ -25,7 +25,7 @@ class ServicesIT extends HiveSimplicatorIT {
 
       client.execute(instance, serviceDoneCommand) must not(throwA).await
 
-      verifyServiceDone(app, serviceDoneCommand)
+      verify(app, serviceDoneCommand)
     }
 
     "send email without an exception" in new clientContext {
@@ -33,7 +33,7 @@ class ServicesIT extends HiveSimplicatorIT {
 
       client.execute(instance, emailCommand) must not(throwA).await
 
-      verifySendEmail(app, emailCommand)
+      verify(app, emailCommand)
     }
   }
 }
