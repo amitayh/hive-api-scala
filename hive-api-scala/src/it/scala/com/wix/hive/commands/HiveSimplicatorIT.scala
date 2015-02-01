@@ -13,8 +13,3 @@ class HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   WiremockEnvironment.start
 }
 
-object HiveSimplicatorIT {
-  val serverPort: Int = 9089
-
-}
-

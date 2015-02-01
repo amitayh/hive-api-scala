@@ -12,7 +12,7 @@ trait HiveClientContext extends Before {
 
   override def before: Any = WiremockEnvironment.resetMocks()
 
-  val baseUrl = s"http://localhost:${HiveSimplicatorIT.serverPort}"
+  val baseUrl = s"http://localhost:${WiremockEnvironment.serverPort}"
 
   val app = AppDef.random
   val instance = app.instanceId
