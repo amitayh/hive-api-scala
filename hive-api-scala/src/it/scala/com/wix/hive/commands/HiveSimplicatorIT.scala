@@ -1,8 +1,7 @@
 package com.wix.hive.commands
 
-import com.wix.hive.client.HiveClient
-import com.wix.hive.infrastructure.{AppDef, SimplicatorHive, WiremockEnvironment}
-import org.specs2.mutable.{Before, SpecificationWithJUnit}
+import com.wix.hive.infrastructure.{SimplicatorHive, WiremockEnvironment}
+import org.specs2.mutable.SpecificationWithJUnit
 
 /**
  * User: maximn
@@ -12,10 +11,5 @@ import org.specs2.mutable.{Before, SpecificationWithJUnit}
 class HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   sequential
   WiremockEnvironment.start
-}
-
-object HiveSimplicatorIT {
-  val serverPort: Int = 9089
-
 }
 

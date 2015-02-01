@@ -61,4 +61,6 @@ trait ActivitiesTestSupport extends Matchers {
   val getActivitiesCommand = GetActivities()
 }
 
-object ActivitiesTestSupport extends ActivitiesTestSupport
+object ActivitiesTestSupport extends ActivitiesTestSupport{
+
+}

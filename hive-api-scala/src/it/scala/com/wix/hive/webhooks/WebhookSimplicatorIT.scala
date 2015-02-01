@@ -32,13 +32,9 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   givenThat(WireMock.post(urlMatching(webhookPath)).willReturn(aResponse().withStatus(200)))
 
   def subscribeFunc(f: (Try[Webhook[_]]) => Unit) = {
-    WiremockEnvironment.server.addMockServiceRequestListener(new RequestListener {
-      override def requestReceived(request: Request, response: Response): Unit = {
-        val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
-        f(webhook)
-      }
+    WiremockEnvironment.addEventListener((request: Request, response: Response) => {
+      val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
+      f(webhook)
     })
   }
-
-
 }

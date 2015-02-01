@@ -9,11 +9,11 @@ import com.wix.hive.model.contacts.PagingContactsResult
  * User: maximn
  * Date: 1/26/15
  */
-class ContactsIT extends HiveSimplicatorIT {
+class ContactsIT extends HiveSimplicatorIT with ContactsTestSupport {
 
 
-  class clientContext extends HiveClientContext with ContactsTestSupport {
-  }
+  class clientContext extends HiveClientContext
+
 
   "Contacts operations" should {
     "add address to contact" in new clientContext {
