@@ -43,10 +43,10 @@ trait SimplicatorHive {
   }
 
 
-  def verify[T](app: AppDef, cmd: HiveCommand[T]): Unit = {
+  def verify[T](app: AppDef, cmd: HiveCommand[T], times: Int = 1): Unit = {
     val url = getMatchParameters(cmd).url
 
-    wiremockVerify(postRequestedFor(versionedUrlMatcher(url))
+    wiremockVerify(times, postRequestedFor(versionedUrlMatcher(url))
       .withHeader(appIdHeader, equalTo(app.appId))
       .withHeader(instanceIdHeader, equalTo(app.instanceId))
       .withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT)))
