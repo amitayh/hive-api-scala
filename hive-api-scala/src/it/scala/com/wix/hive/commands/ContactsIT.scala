@@ -23,6 +23,12 @@ class ContactsIT extends HiveSimplicatorIT with ContactsTestSupport {
       client.execute(instance, addAddressCommand) must beContactWithId(contactId).await
     }
 
+    "create contact" in new clientContext {
+      expect(app, createContactCommand)(createContactResult)
+
+      client.execute(instance, createContactCommand) must beCreatedContactWithId(contactId).await
+    }
+
 
     "add an email to contact" in new clientContext {
       expect(app, addEmailCommand)(contact)

@@ -7,7 +7,7 @@ import org.specs2.mutable.SpecificationWithJUnit
  * Date: 1/13/15
  */
 
-class HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
+trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   sequential
   WiremockEnvironment.start
 }

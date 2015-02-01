@@ -50,6 +50,8 @@ trait ContactsTestSupport {
   val contactPicture = PictureDTO("some-pic")
   val contactAddress = AddressDTO("tag-address-contact")
 
+  val createContactResult = CreatedContact(contactId)
+
   val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
   val addAddressCommand = AddAddress(contactId, modifiedAt, address)
   val getContactByIdCommand = GetContactById(contactId)
@@ -65,6 +67,7 @@ trait ContactsTestSupport {
   val updatePhoneCommand = UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)
   val updateUrlCommand = UpdateUrl(contactId, modifiedAt, urlId, contactUrl)
   val updateDateCommand = UpdateDate(contactId, modifiedAt, dateId, contactDate)
+  val createContactCommand = CreateContact()
 }
 
 object ContactsTestSupport extends ContactsTestSupport
