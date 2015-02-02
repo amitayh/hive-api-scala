@@ -15,8 +15,8 @@ trait LabelsTestSupport {
 
   val labelId = "contacts_server/new"
   val anotherLabelId = "contacts_server/contacted_me"
-  val label = Label(labelId, None, "New", None, 0, LabelTypes.`system`)
-  val anotherLabel = Label(anotherLabelId, None, "Contacted Me", None, 1, LabelTypes.`system`)
+  val label = Label(labelId, None, "New", None, 0, LabelTypes.`userDefined`)
+  val anotherLabel = Label(anotherLabelId, None, "Contacted Me", None, 1, LabelTypes.`userDefined`)
 
   val getLabelByIdCommand = GetLabelById(labelId)
   val getLabelsCommand = GetLabels()
