@@ -2,6 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.drivers.LabelsTestSupport
 import com.wix.hive.drivers.HiveCommandsMatchers._
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.model.labels.PagingLabelsResult
 
 /**

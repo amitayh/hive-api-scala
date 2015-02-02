@@ -65,7 +65,6 @@ trait SimplicatorHive {
   private def getMatchParameters[T](cmd: HiveCommand[T]): Match = {
     cmd match {
       case c: CreateContact => Match("/contacts", method = RequestMethod.POST)
-      case c: GetContactById => Match(s"/contacts/${c.id}")
       case c: AddAddress => Match(s"/contacts/${c.contactId}/address.*${urlEncode(c.modifiedAt.toString)}", Seq(c.address.address, c.address.city, c.address.country, c.address.neighborhood, c.address.postalCode, c.address.region, c.address.tag), method = RequestMethod.POST)
       case c: AddEmail => Match(s"/contacts/${c.contactId}/email.*${urlEncode(c.modifiedAt.toString)}", Seq(c.email.email, c.email.tag), method = RequestMethod.POST)
       case c: GetContactById => Match(s"/contacts/${c.id}")
