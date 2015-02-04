@@ -52,9 +52,11 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       override def apply[S <: Future[_]](t: Expectable[S]): MatchResult[S] = {
         val f = t.value
         Await.ready(f, 1.second).value match {
-          case Some(Failure(ex)) =>
-            val res = exception(createExpectable(ex.getCause.asInstanceOf[WixAPIErrorException]))
+          case Some(Failure(ex: WixAPIErrorException)) => {
+            val res = exception(createExpectable(ex))
             result(res.isSuccess, "", s"Future failed however ${res.message}", t)
+          }
+          case Some(Failure(ex)) => result(test = false, "", "Not a WixAPIErrorException", t)
           case _ => result(test = false, "", "Future didn't fail", t)
         }
       }
@@ -114,7 +116,9 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
                                                     withStatus(400).
                                                     withBody("""{"errorCode":400,"message":"some msg","wixErrorCode":-23001}""")))
 
-      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
+      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test"))
+
+      res must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
     }
 
     "handle failure - no server listening" in new ctx {

@@ -1,5 +1,7 @@
 package com.wix.hive.client.http
 
+import java.util.concurrent.ExecutionException
+
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -22,16 +24,17 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
 
     val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
 
-    Http(req > handle[T] _)(executionContext)
+    Http(req > handle[T] _)(executionContext).recover {
+      case e: ExecutionException => throw e.getCause
+    }
   }
+
 
   def handle[T: ClassTag](r: Response): T = {
     r.getStatusCode match {
       case `2XX`() => asT[T](r)
       case 404 => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
-      case _ =>
-        val err = JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
-        throw err
+      case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
     }
   }
 

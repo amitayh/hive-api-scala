@@ -16,6 +16,7 @@ import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.labels.{GetLabels, GetLabelById}
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.{Site, GetSitePages}
+import com.wix.hive.model.WixAPIErrorException
 import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
 
@@ -30,19 +31,13 @@ trait SimplicatorHive {
 
   case class Match(url: String, containInBody: Seq[_] = Nil, method: RequestMethod = RequestMethod.GET, statusCode: Option[Int] = None)
 
-  def expect[T](app: AppDef, cmd: HiveCommand[T])(respondWith: T = ()): Unit = {
-    val matchParams = getMatchParameters(cmd)
-
-    val statusCode: Int = matchParams.statusCode.getOrElse(200)
-    val response = responseConverter.convertToDeserializableByHiveClient(respondWith)
-
-    val rule = responseForUrl(matchParams.url, app, response, method = matchParams.method, statusCode)
-
-    addBodyContainingToRule(rule, matchParams)
-
-    givenThat(rule)
+  def expectError(app: AppDef, cmd: HiveCommand[_])(respondWith: WixAPIErrorException): Unit = {
+    nonTypedExpect(app, cmd)(respondWith)
   }
 
+  def expect[T](app: AppDef, cmd: HiveCommand[T])(respondWith: T = ()): Unit = {
+    nonTypedExpect(app, cmd)(respondWith)
+  }
 
   def verify[T](app: AppDef, cmd: HiveCommand[T], times: Int = 1): Unit = {
     val url = getMatchParameters(cmd).url
@@ -52,6 +47,23 @@ trait SimplicatorHive {
       .withHeader(instanceIdHeader, equalTo(app.instanceId))
       .withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT)))
   }
+
+  private def nonTypedExpect(app: AppDef, cmd: HiveCommand[_])(respondWith: Any = ()): Unit = {
+    val matchParams = getMatchParameters(cmd)
+
+    val response = responseConverter.convertToDeserializableByHiveClient(respondWith)
+    val statusCode: Int = respondWith match {
+      case e: WixAPIErrorException => e.errorCode
+      case _ => matchParams.statusCode.getOrElse(200)
+    }
+
+    val rule = responseForUrl(matchParams.url, app, response, method = matchParams.method, statusCode)
+
+    addBodyContainingToRule(rule, matchParams)
+
+    givenThat(rule)
+  }
+
 
   private def addBodyContainingToRule[T](rule: MappingBuilder, matchParams: Match) {
     matchParams.containInBody.collect {
@@ -65,7 +77,6 @@ trait SimplicatorHive {
   private def getMatchParameters[T](cmd: HiveCommand[T]): Match = {
     cmd match {
       case c: CreateContact => Match("/contacts", method = RequestMethod.POST)
-      case c: AddAddress => Match(s"/contacts/${c.contactId}/address.*${urlEncode(c.modifiedAt.toString)}", Seq(c.address.address, c.address.city, c.address.country, c.address.neighborhood, c.address.postalCode, c.address.region, c.address.tag), method = RequestMethod.POST)
       case c: AddEmail => Match(s"/contacts/${c.contactId}/email.*${urlEncode(c.modifiedAt.toString)}", Seq(c.email.email, c.email.tag), method = RequestMethod.POST)
       case c: GetContactById => Match(s"/contacts/${c.id}")
       case c: GetContacts => Match("/contacts")
@@ -123,14 +134,4 @@ trait SimplicatorHive {
   }
 
   private def urlEncode(str: String): String = URLEncoder.encode(str, "UTF-8")
-
-  @deprecated("Use `verify`")
-  def verifyServiceDone(app: AppDef, done: ServiceDone) = {
-    this.verify(app, done)
-  }
-
-  @deprecated("Use `verify`")
-  def verifySendEmail(app: AppDef, email: SendEmail) = {
-    this.verify(app, email)
-  }
 }
