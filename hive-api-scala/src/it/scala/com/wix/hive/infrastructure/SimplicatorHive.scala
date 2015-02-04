@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.github.tomakehurst.wiremock.client.MappingBuilder
+import com.github.tomakehurst.wiremock.client.{VerificationException, MappingBuilder}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching, postRequestedFor, urlMatching, verify => wiremockVerify}
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.HiveCommand
@@ -39,6 +39,7 @@ trait SimplicatorHive {
     nonTypedExpect(app, cmd)(respondWith)
   }
 
+  @throws[VerificationException]
   def verify[T](app: AppDef, cmd: HiveCommand[T], times: Int = 1): Unit = {
     val url = getMatchParameters(cmd).url
 
