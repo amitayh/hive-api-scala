@@ -1,11 +1,10 @@
 package com.wix.hive.webhooks
 
 import com.wix.hive.drivers.WebhooksTestSupport
-import com.wix.hive.infrastructure.{WebhookSimplicatorIT, SimplicatorWebhooksDriver}
+import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicatorIT}
 import com.wix.hive.server.webhooks.{Webhook, WebhookData}
-import org.mockito.Mockito
 import org.specs2.matcher.Matcher
-import org.specs2.mutable.{Before, SpecificationWithJUnit}
+import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
 import scala.util.Try

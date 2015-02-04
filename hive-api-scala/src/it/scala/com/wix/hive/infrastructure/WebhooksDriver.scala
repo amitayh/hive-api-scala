@@ -1,11 +1,9 @@
 package com.wix.hive.infrastructure
 
 import com.twitter.finagle.{Http, Service}
-import com.twitter.io.Charsets
 import com.twitter.util.{Await, Duration => TwitterDuration}
-import com.wix.hive.client.{HiveClient, HiveSigner}
+import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.commands.contacts.GetContactById
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.server.webhooks._
 import org.jboss.netty.buffer.ChannelBuffers

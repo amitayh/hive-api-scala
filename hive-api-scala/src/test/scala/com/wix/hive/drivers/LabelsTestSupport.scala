@@ -1,7 +1,7 @@
 package com.wix.hive.drivers
 
 import com.wix.hive.commands.labels._
-import com.wix.hive.model.labels.{LabelTypes, PagingLabelsResult, Label}
+import com.wix.hive.model.labels.{Label, LabelTypes, PagingLabelsResult}
 import org.specs2.matcher.Matcher
 import org.specs2.matcher.Matchers._
 

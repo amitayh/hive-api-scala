@@ -3,8 +3,7 @@ package com.wix.hive.infrastructure
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.github.tomakehurst.wiremock.http.{RequestListener, Response, Request}
-import com.wix.hive.webhooks.WiremockRequestConverter
+import com.github.tomakehurst.wiremock.http.{Request, RequestListener, Response}
 
 trait WiremockEnvironment {
   val serverPort: Int

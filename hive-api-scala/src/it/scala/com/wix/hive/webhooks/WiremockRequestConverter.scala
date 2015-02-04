@@ -3,6 +3,7 @@ package com.wix.hive.webhooks
 import com.github.tomakehurst.wiremock.http.Request
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.server.adapters.RequestConverterFrom
+
 import scala.collection.JavaConversions._
 
 /**

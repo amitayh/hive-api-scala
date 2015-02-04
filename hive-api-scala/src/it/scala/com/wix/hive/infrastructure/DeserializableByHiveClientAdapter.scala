@@ -1,7 +1,7 @@
 package com.wix.hive.infrastructure
 
 import com.wix.hive.commands.activities.PagingActivitiesResult
-import com.wix.hive.model.activities.{ActivityDetails, ActivityInfo, Activity}
+import com.wix.hive.model.activities.{Activity, ActivityDetails, ActivityInfo}
 import org.joda.time.DateTime
 
 /**

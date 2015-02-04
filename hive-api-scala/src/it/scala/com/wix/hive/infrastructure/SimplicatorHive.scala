@@ -13,9 +13,9 @@ import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
-import com.wix.hive.commands.labels.{GetLabels, GetLabelById}
+import com.wix.hive.commands.labels.{GetLabelById, GetLabels}
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
-import com.wix.hive.commands.sites.{Site, GetSitePages}
+import com.wix.hive.commands.sites.{GetSitePages, Site}
 import com.wix.hive.model.WixAPIErrorException
 import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
