@@ -15,6 +15,7 @@ import scala.util.Try
  * Date: 1/13/15
  */
 class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT {
+  skipAll
   sequential
 
   trait ctx extends Scope
