@@ -18,6 +18,7 @@ import scala.util.Try
  */
 trait WebhookSimplicatorIT extends Mockito with Matchers {
   WiremockEnvironment.start()
+  WiremockEnvironment.resetMocks()
 
   val webhookSecret = UUID.randomUUID().toString
   val webhookPath: String = "/localhost/webhook-url"

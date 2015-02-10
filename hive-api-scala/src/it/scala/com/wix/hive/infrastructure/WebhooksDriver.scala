@@ -74,11 +74,10 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     callWebhook(webhook, "/services/actions/email/send")
   }
 
-  private def callWebhook(webhook: Webhook[_], eventType: String) {
+  private def callWebhook(webhook: Webhook[_], eventType: String): Unit = {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 
-    //Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
-    Await.result(Http(request OK as.String), Duration(5, "seconds"))
+    Await.ready(Http(request OK as.String), Duration(5, "seconds"))
   }
 }

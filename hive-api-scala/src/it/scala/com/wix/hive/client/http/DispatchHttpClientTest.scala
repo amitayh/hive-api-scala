@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.wix.hive.infrastructure.WiremockEnvironment
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.Future
 import org.specs2.matcher.{Expectable, MatchResult, Matcher}
@@ -19,19 +20,16 @@ import scala.util.{Failure, Try}
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
   sequential
 
-  val wireMockServer = new WireMockServer(new WireMockConfiguration().port(8089))
-
   step {
-    WireMock.configureFor("localhost", 8089)
-    wireMockServer.start()
+    WiremockEnvironment.start()
   }
 
   trait ctx extends Before {
-    def before = WireMock.reset()
+    def before = WiremockEnvironment.resetMocks()
 
     val client = new DispatchHttpClient()
 
-    val baseUrl = "http://localhost:8089"
+    val baseUrl = s"http://localhost:${WiremockEnvironment.serverPort}"
 
     val httpRequestData = HttpRequestData(HttpMethod.GET, s"$baseUrl/test")
 
@@ -130,10 +128,6 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
       there was one(executor).execute(any[Runnable])
     }
-  }
-
-  step {
-    wireMockServer.shutdown()
   }
 }
 
