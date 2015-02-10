@@ -32,10 +32,14 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
 
 
   def handle[T: ClassTag](r: Response): T = {
-    r.getStatusCode match {
-      case `2XX`() => asT[T](r)
-      case 404 => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
-      case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
+    try {
+      r.getStatusCode match {
+        case `2XX`() => asT[T](r)
+        case 404 => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
+        case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
+      }
+    } catch {
+      case e: JsonParseException => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response: ${r.getResponseBody}"))
     }
   }
 
@@ -43,12 +47,7 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
     val classOfT = classTag.runtimeClass.asInstanceOf[Class[T]]
 
     if (classOf[scala.runtime.Nothing$] == classOfT || classOf[Unit] == classOfT) null.asInstanceOf[T]
-    else
-      try {
-        JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
-      } catch {
-        case e: JsonParseException => throw new WixAPIErrorException(500, Some(s"Couldn't parse response: ${r.getResponseBody}"))
-      }
+    else JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
   }
 }
 
