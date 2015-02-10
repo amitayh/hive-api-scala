@@ -9,6 +9,8 @@ import com.wix.hive.model.WixAPIErrorException
  * Date: 2/3/15
  */
 class FailuresIT extends HiveSimplicatorIT with ContactsTestSupport {
+  skipAll
+
   class clientContext extends HiveClientContext
 
   "When no server listening" should {
