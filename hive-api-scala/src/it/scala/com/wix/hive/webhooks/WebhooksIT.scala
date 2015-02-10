@@ -37,12 +37,12 @@ with WebhooksTestSupport {
   }
 
   "Webhooks" should {
-    "receive email send webhook" in new ctx {
-      val webhook = anEmailSendWebhook
-      callEmailSend(webhook)
-
-      verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(webhook.data.originId, webhook.data.correlationId, webhook.data.redemptionToken, webhook.data.contacts)))
-    }
+//    "receive email send webhook" in new ctx {
+//      val webhook = anEmailSendWebhook
+//      callEmailSend(webhook)
+//
+//      verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(webhook.data.originId, webhook.data.correlationId, webhook.data.redemptionToken, webhook.data.contacts)))
+//    }
 //
 //    "provision" in new ctx {
 //      callProvisionWebhook(aProvisionWebhook())
