@@ -1,5 +1,7 @@
 package com.wix.hive.infrastructure
 
+import java.util.concurrent.atomic.AtomicReference
+
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -22,18 +24,19 @@ private[infrastructure] trait WiremockEnvironment {
 
   def stop(): Unit = WireMock.shutdownServer()
 
-  val emptyListener: ((Request, Response) => Unit) = (req, res) => {}
 
-  @volatile var listener: ((Request, Response) => Unit) = emptyListener
+  val emptyListener: (Request, Response) => Unit = (req: Request, res: Response) => {}
 
-  def setListener(f: (Request, Response) => Unit): Unit = listener = f
+  val listener = new AtomicReference[(Request, Response) => Unit](emptyListener)
 
-  def removeListener(): Unit = listener = emptyListener
+  def setListener(f: (Request, Response) => Unit): Unit = listener.set(f)
+
+  def removeListener(): Unit = listener.set(emptyListener)
 
   private def subscribeEventListenerToRequests(server: WireMockServer): Unit =
     server.addMockServiceRequestListener(new RequestListener {
       override def requestReceived(request: Request, response: Response): Unit =
-        listener(request, response)
+        listener.get().apply(request, response)
     })
 
 
