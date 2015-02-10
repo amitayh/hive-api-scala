@@ -14,16 +14,17 @@ import scala.util.Try
  * User: maximn
  * Date: 1/13/15
  */
-class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT {
+class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
+with SimplicatorWebhooksDriver
+with WebhooksTestSupport {
   sequential
 
-  trait ctx extends Scope
-  with WebhooksTestSupport
-  with SimplicatorWebhooksDriver {
-    val path: String = webhookPath
-    val secret: String = webhookSecret
-    val port: Int = webhookPort
+  val path: String = webhookPath
+  val secret: String = webhookSecret
+  val port: Int = webhookPort
 
+
+  trait ctx extends Scope {
     val mockFunc = mock[Try[Webhook[_]] => Unit]
 
     subscribeFunc(mockFunc)
@@ -37,9 +38,7 @@ class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT {
     val webhook = anEmailSendWebhook
     callEmailSend(webhook)
 
-    import webhook._
-
-    verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(data.originId, data.correlationId, data.redemptionToken, data.contacts)))
+    verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(webhook.data.originId, webhook.data.correlationId, webhook.data.redemptionToken, webhook.data.contacts)))
   }
 
   "provision" in new ctx {
@@ -70,7 +69,6 @@ class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT {
     val webhook = anEmailSendWebhook
     callEmailSend(webhook)
 
-    import webhook._
-    verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(data.originId, data.correlationId, data.redemptionToken, data.contacts)))
+    verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(webhook.data.originId, webhook.data.correlationId, webhook.data.redemptionToken, webhook.data.contacts)))
   }
 }
