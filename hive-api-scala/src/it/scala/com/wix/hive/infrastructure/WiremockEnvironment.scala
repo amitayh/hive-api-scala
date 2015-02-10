@@ -20,13 +20,11 @@ private[infrastructure] trait WiremockEnvironment {
 
   def start(): Unit = server
 
-  def stop(): Unit = {
-    WireMock.shutdownServer()
-  }
+  def stop(): Unit = WireMock.shutdownServer()
 
-  val emptyListener:((Request, Response) => Unit) = (req, res) => {}
+  val emptyListener: ((Request, Response) => Unit) = (req, res) => {}
 
-  var listener: ((Request, Response) => Unit) = emptyListener
+  @volatile var listener: ((Request, Response) => Unit) = emptyListener
 
   def setListener(f: (Request, Response) => Unit): Unit = listener = f
 

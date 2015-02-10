@@ -16,7 +16,7 @@ import scala.util.Try
  */
 class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
 with SimplicatorWebhooksDriver
-with WebhooksTestSupport with ThrownExpectations {
+with WebhooksTestSupport  {
   sequential
 
   val path: String = webhookPath
@@ -24,7 +24,7 @@ with WebhooksTestSupport with ThrownExpectations {
   val port: Int = webhookPort
 
   class ctx extends After {
-    lazy val mockFunc = mock[Try[Webhook[_]] => Unit]
+    val mockFunc = mock[Try[Webhook[_]] => Unit]
     subscribeFunc(mockFunc)
 
     override def after: Any = clearListener()

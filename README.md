@@ -124,7 +124,7 @@ Here's a code sample that independent of testing framework. For a full example s
 
 ``` scala
 class HiveTestsSample extends HiveTestkit {
-  override val serverPort: Int = 8089
+  override val serverPort: Int = 9089
 
   def beforeEveryTest = resetMocks()
 
