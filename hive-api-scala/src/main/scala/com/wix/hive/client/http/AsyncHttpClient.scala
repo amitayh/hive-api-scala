@@ -2,6 +2,7 @@ package com.wix.hive.client.http
 
 import java.util.concurrent.ExecutionException
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -42,7 +43,12 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
     val classOfT = classTag.runtimeClass.asInstanceOf[Class[T]]
 
     if (classOf[scala.runtime.Nothing$] == classOfT || classOf[Unit] == classOfT) null.asInstanceOf[T]
-    else JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
+    else
+      try {
+        JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
+      } catch {
+        case e: JsonParseException => throw new WixAPIErrorException(500, Some(s"Couldn't parse response: ${r.getResponseBody}"))
+      }
   }
 }
 

@@ -35,6 +35,10 @@ trait SimplicatorHive {
     nonTypedExpect(app, cmd)(respondWith)
   }
 
+  def expectCustom(app: AppDef, cmd: HiveCommand[_])(respondWith: String): Unit = {
+    nonTypedExpect(app, cmd)(respondWith)
+  }
+
   def expect[T](app: AppDef, cmd: HiveCommand[T])(respondWith: T = ()): Unit = {
     nonTypedExpect(app, cmd)(respondWith)
   }
@@ -125,6 +129,7 @@ trait SimplicatorHive {
 
   private def responseForUrl(url: String, app: AppDef, response: Any = "", method: RequestMethod = RequestMethod.GET, statusCode: Int = 200) = {
     val body = response match {
+      case s: String => s
       case b: BoxedUnit => ""
       case other => mapper.writeValueAsString(other)
     }

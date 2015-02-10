@@ -37,8 +37,13 @@ class FailuresIT extends HiveSimplicatorIT with ContactsTestSupport {
 
       client.execute(instance, addAddressCommand) must throwA[WixAPIErrorException].await
     }
-
-
   }
 
+  "Status code 200 but non-json response" should{
+    "throw WixApiErrorException(500)" in new clientContext {
+      expectCustom(app, addAddressCommand)("<test>fmejwklf7e89wf632g1$#@#^%&^%*</test>")
+
+      client.execute(instance, addAddressCommand) must throwA[WixAPIErrorException].await
+    }
+  }
 }
