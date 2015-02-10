@@ -22,6 +22,7 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   val webhookSecret = UUID.randomUUID().toString
   val webhookPath: String = "/localhost/webhook-url"
   val webhookPort = WiremockEnvironment.serverPort
+
   private val timeout = new org.specs2.time.Duration(3000)
 
 
@@ -32,9 +33,11 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   givenThat(WireMock.post(urlMatching(webhookPath)).willReturn(aResponse().withStatus(200)))
 
   def subscribeFunc(f: (Try[Webhook[_]]) => Unit) = {
-    WiremockEnvironment.addEventListener((request: Request, response: Response) => {
+    WiremockEnvironment.setListener((request: Request, response: Response) => {
       val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
       f(webhook)
     })
   }
+
+  def clearListener(): Unit = WiremockEnvironment.removeListener()
 }

@@ -3,9 +3,9 @@ package com.wix.hive.webhooks
 import com.wix.hive.drivers.WebhooksTestSupport
 import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicatorIT}
 import com.wix.hive.server.webhooks.{Webhook, WebhookData}
-import org.specs2.matcher.Matcher
+import org.specs2.matcher.{Matcher, ThrownExpectations}
 import org.specs2.mutable.SpecificationWithJUnit
-import org.specs2.specification.Scope
+import org.specs2.specification.After
 
 import scala.util.Try
 
@@ -16,21 +16,23 @@ import scala.util.Try
  */
 class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
 with SimplicatorWebhooksDriver
-with WebhooksTestSupport {
+with WebhooksTestSupport with ThrownExpectations {
   sequential
 
   val path: String = webhookPath
   val secret: String = webhookSecret
   val port: Int = webhookPort
 
-
-  trait ctx extends Scope {
-    val mockFunc = mock[Try[Webhook[_]] => Unit]
-
+  class ctx extends After {
+    lazy val mockFunc = mock[Try[Webhook[_]] => Unit]
     subscribeFunc(mockFunc)
 
+    override def after: Any = clearListener()
+
     def verifyWebhookWith[T <: WebhookData](matcher: Matcher[Webhook[T]]): Unit = {
-      there was after(timeout).one(mockFunc).apply(beSuccessfulTry[Webhook[T]].withValue(matcher))
+      eventually {
+        there was one(mockFunc).apply(beSuccessfulTry[Webhook[T]].withValue(matcher))
+      }
     }
   }
 

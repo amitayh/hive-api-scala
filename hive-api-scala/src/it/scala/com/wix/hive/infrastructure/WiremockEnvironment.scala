@@ -5,13 +5,15 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.{Request, RequestListener, Response}
 
-trait WiremockEnvironment {
+private[infrastructure] trait WiremockEnvironment {
   val serverPort: Int
 
   private lazy val server: WireMockServer = {
     WireMock.configureFor("localhost", serverPort)
     val wireMockServer = new WireMockServer(new WireMockConfiguration().port(serverPort))
     wireMockServer.start()
+
+    subscribeEventListenerToRequests(wireMockServer)
 
     wireMockServer
   }
@@ -22,11 +24,18 @@ trait WiremockEnvironment {
     WireMock.shutdownServer()
   }
 
+  val emptyListener:((Request, Response) => Unit) = (req, res) => {}
 
-  def addEventListener(f: (Request, Response) => Unit): Unit =
+  var listener: ((Request, Response) => Unit) = emptyListener
+
+  def setListener(f: (Request, Response) => Unit): Unit = listener = f
+
+  def removeListener(): Unit = listener = emptyListener
+
+  private def subscribeEventListenerToRequests(server: WireMockServer): Unit =
     server.addMockServiceRequestListener(new RequestListener {
       override def requestReceived(request: Request, response: Response): Unit =
-        f(request, response)
+        listener(request, response)
     })
 
 
