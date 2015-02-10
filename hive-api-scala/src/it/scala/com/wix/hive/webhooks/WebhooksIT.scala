@@ -17,6 +17,7 @@ import scala.util.Try
 class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
 with SimplicatorWebhooksDriver
 with WebhooksTestSupport  {
+  skipAll
   sequential
 
   val path: String = webhookPath
