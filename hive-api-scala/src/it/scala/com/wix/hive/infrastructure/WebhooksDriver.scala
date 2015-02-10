@@ -1,15 +1,15 @@
 package com.wix.hive.infrastructure
 
-import com.twitter.finagle.{Http, Service}
-import com.twitter.util.{Await, Duration => TwitterDuration}
+import scala.concurrent.Await
+
 import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.server.webhooks._
-import org.jboss.netty.buffer.ChannelBuffers
+import dispatch.{Req, url, _}
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 /**
@@ -34,10 +34,9 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   val timeout = 5.seconds
 
   lazy val host = s"localhost:$port"
-  lazy val client: Service[HttpRequest, HttpResponse] = Http.newService(host)
   lazy val signer = new HiveSigner(secret)
 
-  def aReq(instanceId: String, parameters: WebhookParameters, eventType: String, content: String): HttpRequest = {
+  def aReq(instanceId: String, parameters: WebhookParameters, eventType: String, content: String): Req = {
     def getSignature(headers: Map[String, String], content: String): String = {
       val request = HttpRequestData(com.wix.hive.client.http.HttpMethod.POST, "", headers = headers, body = Some(content))
       signer.getSignature(request)
@@ -50,16 +49,9 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
       "x-wix-event-type" -> eventType,
       HttpHeaders.Names.HOST -> host)
 
-    val req = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, path)
-    req.setContent(ChannelBuffers.wrappedBuffer(content.getBytes("UTF8")))
-
     val signatureHeader = "x-wix-signature" -> getSignature(headers, content)
 
-    (headers + signatureHeader) foreach { case (k: String, v: String) =>
-      req.headers.add(k, v)
-    }
-
-    req
+    (url("http://" + host + path) << content <:< (headers + signatureHeader)).setMethod("POST")
   }
 
   override def callProvisionWebhook(webhook: Webhook[Provision]) = {
@@ -86,6 +78,7 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 
-    Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
+    //Await.result(client(request), TwitterDuration(timeout.length, timeout.unit))
+    Await.result(Http(request OK as.String), Duration(5, "seconds"))
   }
 }
