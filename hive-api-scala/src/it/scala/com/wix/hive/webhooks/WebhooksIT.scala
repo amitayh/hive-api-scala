@@ -18,7 +18,7 @@ class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
 with SimplicatorWebhooksDriver
 with WebhooksTestSupport {
   sequential
-  skipAll
+//  skipAll
 
   val path: String = webhookPath
   val secret: String = webhookSecret

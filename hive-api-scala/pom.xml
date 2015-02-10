@@ -262,16 +262,18 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>3.1.5</version>
+                <version>3.2.0</version>
                 <configuration>
+                    <scalaCompatVersion>${scala.dependencies.version}</scalaCompatVersion>
+                    <scalaVersion>${scala.version}</scalaVersion>
                     <!--<recompileMode>incremental</recompileMode>-->
                     <args>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                     </args>
                     <addJavacArgs>-deprecation</addJavacArgs>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
                 <executions>
                     <execution>
