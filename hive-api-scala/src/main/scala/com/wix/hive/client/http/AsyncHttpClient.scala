@@ -3,6 +3,7 @@ package com.wix.hive.client.http
 import java.util.concurrent.ExecutionException
 
 import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.ning.http.client.Response
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -39,7 +40,7 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
         case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
       }
     } catch {
-      case e: JsonParseException => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response: ${r.getResponseBody}"))
+      case e@(_: JsonParseException |_: JsonMappingException) => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response because of ${e.getClass.getName}: ${r.getResponseBody}"))
     }
   }
 

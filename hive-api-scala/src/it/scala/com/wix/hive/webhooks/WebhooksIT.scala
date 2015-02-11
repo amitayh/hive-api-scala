@@ -5,7 +5,7 @@ import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicato
 import com.wix.hive.server.webhooks.{Webhook, WebhookData}
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit
-import org.specs2.specification.After
+import org.specs2.mutable.After
 
 import scala.util.Try
 
@@ -18,17 +18,17 @@ class WebhooksIT extends SpecificationWithJUnit with WebhookSimplicatorIT
 with SimplicatorWebhooksDriver
 with WebhooksTestSupport {
   sequential
-  skipAll
 
   val path: String = webhookPath
   val secret: String = webhookSecret
   val port: Int = webhookPort
 
-  class ctx extends After {
+  trait ctx extends After {
     val mockFunc = mock[Try[Webhook[_]] => Unit]
     subscribeFunc(mockFunc)
 
     override def after: Any = clearListener()
+
 
     def verifyWebhookWith[T <: WebhookData](matcher: Matcher[Webhook[T]]): Unit = {
       eventually {
