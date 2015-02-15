@@ -14,6 +14,7 @@ import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.labels.{GetLabelById, GetLabels}
+import com.wix.hive.commands.services.email.SendSingle
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.{GetSitePages, Site}
 import com.wix.hive.model.WixAPIErrorException
@@ -105,6 +106,7 @@ trait SimplicatorHive {
       case c: CreateActivity => Match(s"/activities.*userSessionToken=${c.userSessionToken}", Seq(c.activity.activityLocationUrl, c.activity.activityDetails, c.activity), RequestMethod.POST)
       case c: InsightActivitySummary => val contactIdPortion = c.contactId.fold("")(con => s"/$con"); Match(s"/insights/contacts$contactIdPortion/activities/summary")
       case c: SendEmail => Match("/services/actions/email", method = RequestMethod.POST, statusCode = Some(202))
+      case c: SendSingle => Match("/services/actions/email/single", method = RequestMethod.POST, statusCode = Some(202))
       case c: ServiceDone => Match("/services/actions/done", method = RequestMethod.POST)
       case c: EmailProviders.type => Match("/services/actions/email/providers")
       case c: GetSitePages.type => Match("/sites/site/pages")

@@ -1,6 +1,7 @@
 package com.wix.hive.commands.services
 
 import com.wix.hive.client.http.HttpMethod
+import com.wix.hive.commands.services.email.SendSingleData
 import com.wix.hive.drivers.ServicesTestSupport
 import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mutable.Specification

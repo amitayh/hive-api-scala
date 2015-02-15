@@ -23,7 +23,7 @@ class ServicesIT extends HiveSimplicatorIT {
     "send done signal to the hub" in new clientContext {
       expect(app, serviceDoneCommand)()
 
-      client.execute(instance, serviceDoneCommand) must not(throwA).await
+      client.execute(instance, serviceDoneCommand)
 
       verify(app, serviceDoneCommand)
     }
@@ -31,9 +31,17 @@ class ServicesIT extends HiveSimplicatorIT {
     "send email without an exception" in new clientContext {
       expect(app, emailCommand)()
 
-      client.execute(instance, emailCommand) must not(throwA).await
+      client.execute(instance, emailCommand)
 
       verify(app, emailCommand)
+    }
+
+    "send single email" in new clientContext {
+      expect(app, singleEmailCommand)()
+
+      client.execute(instance, singleEmailCommand)
+
+      verify(app, singleEmailCommand)
     }
   }
 }

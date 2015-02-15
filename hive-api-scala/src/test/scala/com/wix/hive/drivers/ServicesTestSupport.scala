@@ -3,6 +3,7 @@ package com.wix.hive.drivers
 import java.util.UUID
 
 import com.wix.hive.commands.services._
+import com.wix.hive.commands.services.email._
 import com.wix.hive.model.services.{ServiceData, ServiceRunData}
 import com.wix.hive.server.webhooks
 import org.specs2.matcher.Matcher
@@ -17,7 +18,6 @@ trait ServicesTestSupport {
   val callerAppId = randomStringId
   val providerAppId = randomStringId
 
-
   val servicesCorrelationId = randomStringId
   val serviceRunData = ServiceRunData("SUCCESS", None, None)
   val webhookServiceRunData = webhooks.ServiceRunData("SUCCESS", None, None)
@@ -28,9 +28,18 @@ trait ServicesTestSupport {
 
   val providerId = randomStringId
   val redemptionToken = UUID.randomUUID().toString
-  def anEmail(providerId: String = providerId, redemptionToken: String = redemptionToken) = SendEmail(providerId, None, redemptionToken, EmailContacts(EmailContactMethod.Id, Seq("id1", "id2")))
+  def anEmail(providerId: String = providerId, redemptionToken: String = redemptionToken) = SendEmail(providerId, None, servicesCorrelationId, EmailContacts(EmailContactMethod.Id, Seq("id1", "id2")))
   val emailCommand = anEmail()
   val providersCommand = EmailProviders
+
+  val to = ToMailRecipient("to@wix.com", None, RecipientType.To)
+  val from = FromMailRecipient("from@wix.com", None)
+
+  val mailHeaders = MailHeaders(None)
+  val subject = "subj"
+  val text = "text"
+  val html = s"<html>$text</html"
+  val singleEmailCommand = SendSingle(servicesCorrelationId, Seq(to), mailHeaders, from, subject, html, text)
 
   val displayName = "display name"
   val image = "img.jpg"
