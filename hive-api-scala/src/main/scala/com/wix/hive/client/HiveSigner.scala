@@ -9,9 +9,7 @@ import org.apache.commons.net.util.Base64
 
 
 class HiveSigner(key: String) {
-
   private val encryptionMethod = "HMACSHA256"
-  private lazy val base64: Base64 = new Base64(true)
 
   private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id")
   private val excludes = Set("signature")
@@ -19,7 +17,9 @@ class HiveSigner(key: String) {
   private val headerPrefix = "x-wix-"
   private def withHeaderPrefix(names: Set[String]) = names map (headerPrefix + _)
 
-  private lazy val mac = {
+  // base64 & mac are NOT THREAD SAFE
+  def base64: Base64 = new Base64(true)
+  def mac = {
     val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
     val instance = Mac.getInstance(encryptionMethod)
     instance.init(secret)
