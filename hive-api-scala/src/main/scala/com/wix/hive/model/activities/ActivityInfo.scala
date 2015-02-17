@@ -2,6 +2,7 @@ package com.wix.hive.model.activities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wix.hive.model.activities.ActivityType._
+import com.wix.hive.model.contacts.ContactName
 
 sealed trait ActivityInfo {
   @JsonIgnore
@@ -26,6 +27,10 @@ case class NameValuePair(name: String, value: String)
 
 case class ContactContactForm(fields: Seq[NameValuePair]) extends ActivityInfo {
   override val activityType = `contact/contact-form`
+}
+
+case class ContactSubscriptionForm(email: String, name: Option[ContactName], phone: Option[String], fields: Seq[NameValuePair]) extends ActivityInfo {
+  override val activityType = `contact/subscription-form`
 }
 
 case class Media(thumbnail: String)
