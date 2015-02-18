@@ -48,7 +48,6 @@ class HiveSignerTest extends SpecificationWithJUnit {
   "Thread safety" should {
     "be observed" in new threadsCtx {
       (1 until times).par.map { _ =>
-        val s = new HiveSigner(key)
         signer.getSignature(dataWithBody) must beEqualTo(dataWithBodySignature)
       }
     }
