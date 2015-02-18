@@ -5,7 +5,7 @@ import com.wix.hive.server.webhooks.{Provision, Webhook, WebhookParameters}
 import org.joda.time.DateTime
 
 /**
-  * User: maximn
+ * User: maximn
  * Date: 11/30/14
  */
 trait SigningTestSupport {
@@ -23,20 +23,17 @@ trait SigningTestSupport {
   val dataWithNoBody = HttpRequestData(HttpMethod.GET,
     "/v1/contacts/2c4436a4-13be-4581-99b2-69ed2781c7c9",
     queryString = query,
-    headers = Map("X-Wix-Instance-Id" -> instance,
-      "X-Wix-Application-Id" -> app,
-      "X-Wix-Timestamp" -> "2014-10-08T10:20:52.320+03:00"))
+    headers = headers)
 
-  val dataWithNoBodySignature  = "l9exAT3viZ0HKGHREISVJl9OVGHKB85TENX9jewCHaA"
+  val dataWithBody = dataWithNoBody.copy(url = "/v1/contacts",
+    body = Some( """{"name":{"first":"Wix","last":"Cool"},"company":{},"emails":[{"email":"maximn@wix.com","tag":"work"}],"phones":[{"phone":"123456789","tag":"work"}],"addresses":[],"urls":[],"dates":[],"notes":[],"custom":[]}"""))
 
-  val dataWithBody = HttpRequestData(HttpMethod.POST,
-    "/v1/contacts",
-    queryString = query,
-    headers = headers,
-    body = Some( """{"name":{"first":"Wix","last":"Cool"},"company":{},"emails":[{"email":"alext@wix.com","tag":"work"}],"phones":[{"phone":"123456789","tag":"work"}],"addresses":[],"urls":[],"dates":[],"notes":[],"custom":[]}"""))
+  val dataWithNonEnglishBody = dataWithNoBody.copy(body = Some( """{"name":{"тест":"Wix","last":"Cool"},"company":{},"emails":[{"email":"maximn@wix.com","tag":"work"}],"phones":[{"phone":"123456789","tag":"work"}],"addresses":[],"urls":[],"dates":[],"notes":[],"custom":[]}"""))
 
-  var dataWithBodySignature = "lZy2orr_9V05StuWgVfYxoMQfFtXV8iC02xFK8BoLhM"
-  var dataWithBodyNoUrlSignature = "VkMKi7yuFifbO3wslpdiv68ZMQF-05NQGHaP8A7Xpi0"
+  val dataWithNoBodySignature = "UrFBeoY-aLEDS9IROTUCN0hfb049OliHkXaoTHiFsBA"
+  var dataWithBodySignature = "t9dpXkcld8c9yhDglJSDnTuaxEnEnNTLhj_-L7sruUA"
+  var dataWithNonEnglishBodySignature = "liUr8dLoKEfe7f8mqEdJgXy4InJCimE0UR5I-YvJ5SM"
+  var dataWithBodyNoUrlSignature = "vLdzbN5naHFzeoOMuGlBJT6OzRCt3OKoU_njObzWNpY"
 
   val provisioningData = Provision(instance, None)
 
@@ -47,10 +44,10 @@ trait SigningTestSupport {
   val provisiningSignature = "ZGgqWxYS_JaGv8EcCrzTw8koI8gKC-ByCr-19pO6PzY"
 
   val provisioningWebhookRequest = HttpRequestData(HttpMethod.POST,
-  "/callback-url",
-  queryString = Map.empty,
-  headers = headers.map { case(key,value) => key.toLowerCase -> value} + ("x-wix-signature" -> provisiningSignature) + ("x-wix-event-type" -> "/provision/provision"),
-  body = Some(provisioningData))
+    "/callback-url",
+    queryString = Map.empty,
+    headers = headers.map { case (key, value) => key.toLowerCase -> value} + ("x-wix-signature" -> provisiningSignature) + ("x-wix-event-type" -> "/provision/provision"),
+    body = Some(provisioningData))
 }
 
 object SigningTestSupport extends SigningTestSupport

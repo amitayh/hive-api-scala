@@ -3,6 +3,7 @@ package com.wix.hive.client
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
+import com.google.common.base.Charsets
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
 import org.apache.commons.net.util.Base64
@@ -29,7 +30,7 @@ class HiveSigner(key: String) {
   def getSignature(data: HttpRequestData): String = {
     val stringToSign = generateStringToSign(data)
 
-    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes)
+    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(Charsets.US_ASCII))
     base64.encodeToString(result).trim
   }
 

@@ -23,6 +23,11 @@ class HiveSignerTest extends SpecificationWithJUnit {
       signer.getSignature(dataWithBody) must beEqualTo(dataWithBodySignature)
     }
 
+    "Sign HttpRequestData with non English characters" in new ctx {
+      signer.getSignature(dataWithNonEnglishBody) must beEqualTo(dataWithNonEnglishBodySignature)
+    }
+
+
     "properly filter-out generic wix headers" in new ctx {
       val data = dataWithBody.copy(headers = dataWithBody.headers + ("X-Wix-Country-Code" -> "NL"))
 
@@ -44,6 +49,7 @@ class HiveSignerTest extends SpecificationWithJUnit {
   trait threadsCtx extends ctx {
     val times = 20
   }
+
 
   "Thread safety" should {
     "be observed" in new threadsCtx {
