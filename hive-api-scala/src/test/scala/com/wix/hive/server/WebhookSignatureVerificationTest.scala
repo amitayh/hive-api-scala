@@ -23,7 +23,7 @@ class WebhookSignatureVerificationTest extends SpecificationWithJUnit {
       val signedRequest = dataWithBody.copy(headers = dataWithBody.headers + ("x-wix-signature" -> dataWithBodyNoUrlSignature))
 
       verifier.verify(signedRequest) must beSuccessfulTry(signedRequest)
-    }.pendingUntilFixed
+    }
 
     "be false if no signature" in new ctx {
       verifier.verify(dataWithBody) must beFailedTry[HttpRequestData].withThrowable[MissingHeaderException]

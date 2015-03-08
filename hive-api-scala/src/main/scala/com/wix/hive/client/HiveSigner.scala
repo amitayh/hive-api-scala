@@ -39,16 +39,12 @@ class HiveSigner(key: String) {
 
     val queryPart = queryString.toList
       .filterNot {case (name, _) => excludes contains name.toLowerCase }
-//      .sortBy { case (name, _) => name }
-//      .map { case (_, value) => value }
-
+    
     val headerPart = headers.toList
-      .filter {case (name, _) => includes map(headerPrefix + _) contains name.toLowerCase } //TODO: Why so? Any x-wix-XXX header is valid for the signature (except the signature of cause)
+      .filter {case (name, _) => includes map(headerPrefix + _) contains name.toLowerCase }
       .filterNot {case (name, _) => excludes map(headerPrefix + _) contains name.toLowerCase }
-//      .sortBy { case (name, _) => name }
-//      .map { case (_, value) => value }
 
-    val paramsAndHeaders = (queryPart ++ headerPart).sortBy(_._1).map(_._2)
+    val paramsAndHeaders = (queryPart ++ headerPart).sortBy { case (name, _) => name }.map { case (_, value) => value }
 
     (Seq(method.toString, url) ++ paramsAndHeaders :+ data.bodyAsString)
       .filterNot(_.isEmpty)
