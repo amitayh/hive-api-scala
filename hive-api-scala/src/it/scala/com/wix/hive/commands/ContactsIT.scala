@@ -46,6 +46,8 @@ class ContactsIT extends HiveSimplicatorIT with ContactsTestSupport {
       expect(app, getContactsCommand)(PagingContactsResult(total = 2, pageSize = 25, previous = None, next = None, results = Seq(contact, anotherContact)))
 
       client.execute(instance, getContactsCommand) must beContactsWith(contain(allOf(beContactWithId(contactId), beContactWithId(anotherContactId)))).await
+
+      verify(app, getContactsCommand)
     }
 
     "upsert the contact" in new clientContext {

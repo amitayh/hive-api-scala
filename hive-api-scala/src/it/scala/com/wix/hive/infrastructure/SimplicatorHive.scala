@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.github.tomakehurst.wiremock.client.{VerificationException, MappingBuilder}
+import com.github.tomakehurst.wiremock.client.{RequestPatternBuilder, VerificationException, MappingBuilder}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching, postRequestedFor, urlMatching, verify => wiremockVerify}
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.HiveCommand
@@ -22,6 +22,8 @@ import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
 
 import scala.runtime.BoxedUnit
+import scala.tools
+import scala.tools.cmd
 
 trait SimplicatorHive {
   private val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
@@ -46,12 +48,18 @@ trait SimplicatorHive {
 
   @throws[VerificationException]
   def verify[T](app: AppDef, cmd: HiveCommand[T], times: Int = 1): Unit = {
-    val url = getMatchParameters(cmd).url
+    val params = getMatchParameters(cmd)
+    val url = params.url
+    val method = params.method
 
-    wiremockVerify(times, postRequestedFor(versionedUrlMatcher(url))
+    val patternBuilder = new RequestPatternBuilder(method, versionedUrlMatcher(url))
       .withHeader(appIdHeader, equalTo(app.appId))
       .withHeader(instanceIdHeader, equalTo(app.instanceId))
-      .withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT)))
+
+    if (method == RequestMethod.POST || method == RequestMethod.PUT)
+      patternBuilder.withRequestBody(equalToJson(mapper.writeValueAsString(cmd.body), JSONCompareMode.LENIENT))
+
+    wiremockVerify(times, patternBuilder)
   }
 
   private def nonTypedExpect(app: AppDef, cmd: HiveCommand[_])(respondWith: Any = ()): Unit = {

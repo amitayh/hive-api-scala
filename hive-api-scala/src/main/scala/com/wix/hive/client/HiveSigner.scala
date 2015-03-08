@@ -39,7 +39,7 @@ class HiveSigner(key: String) {
 
     val queryPart = queryString.toList
       .filterNot {case (name, _) => excludes contains name.toLowerCase }
-    
+
     val headerPart = headers.toList
       .filter {case (name, _) => includes map(headerPrefix + _) contains name.toLowerCase }
       .filterNot {case (name, _) => excludes map(headerPrefix + _) contains name.toLowerCase }
