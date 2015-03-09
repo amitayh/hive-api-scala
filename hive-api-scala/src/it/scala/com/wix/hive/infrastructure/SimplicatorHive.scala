@@ -6,14 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.ISO8601Utils
 import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.github.tomakehurst.wiremock.client.{RequestPatternBuilder, VerificationException, MappingBuilder}
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching, postRequestedFor, urlMatching, verify => wiremockVerify}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching, urlMatching, verify => wiremockVerify}
+import com.github.tomakehurst.wiremock.client.{MappingBuilder, RequestPatternBuilder, VerificationException}
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities._
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.labels.{GetLabelById, GetLabels}
+import com.wix.hive.commands.redirects.GetRedirects
 import com.wix.hive.commands.services.email.SendSingle
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.{GetSitePages, Site}
@@ -22,8 +23,6 @@ import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
 
 import scala.runtime.BoxedUnit
-import scala.tools
-import scala.tools.cmd
 
 trait SimplicatorHive {
   private val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
@@ -121,6 +120,7 @@ trait SimplicatorHive {
       case c: Site.type => Match("/sites/site")
       case c: GetLabelById => Match(s"/labels/${c.id}")
       case c: GetLabels => Match("/labels")
+      case c: GetRedirects.type => Match("/redirects")
     }
   }
 

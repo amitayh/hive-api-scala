@@ -149,7 +149,7 @@ We use the GitHub issue tracker to track bugs and features. Before submitting a 
 1. Fork it ( https://github.com/[my-github-username]/wix-hive-scala/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Add specs for your unimplemented feature or bug fix. (**Note:** When developing a new API a `e2e` test is mandatory.)
-4. Run `mnv clean install`. If your specs pass, return to step 3.
+4. Run `mvn clean install`. If your specs pass, return to step 3.
 5. Implement your feature or bug fix.
 6. Run `mvn clean install`. If your specs fail, return to step 5.
 7. Commit your changes (`git commit -am 'Add some feature'`)
