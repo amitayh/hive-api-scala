@@ -92,7 +92,7 @@ trait SimplicatorHive {
       case c: CreateContact => Match("/contacts", method = RequestMethod.POST)
       case c: AddEmail => Match(s"/contacts/${c.contactId}/email.*${urlEncode(c.modifiedAt.toString)}", Seq(c.email.email, c.email.tag), method = RequestMethod.POST)
       case c: GetContactById => Match(s"/contacts/${c.id}")
-      case c: GetContacts => Match("/contacts")
+      case c: GetContacts => Match("/contacts\\?")
       case c: UpsertContact => Match("/contacts", containInBody = Seq(c.email, c.phone), method = RequestMethod.PUT)
       case c: AddAddress => Match(s"/contacts/${c.contactId}/address.*${urlEncode(c.modifiedAt.toString)}", Seq(c.address.address, c.address.city, c.address.country, c.address.neighborhood, c.address.postalCode, c.address.region, c.address.tag), RequestMethod.POST)
       case c: AddPhone => Match(s"/contacts/${c.contactId}/phone.*${urlEncode(c.modifiedAt.toString)}", Seq(c.phone.phone, c.phone.tag), RequestMethod.POST)
@@ -124,7 +124,7 @@ trait SimplicatorHive {
     }
   }
 
-  private def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url?.*")
+  private def versionedUrlMatcher(url: String) = urlMatching(s"/v1$url.*")
 
   private implicit class MappingBuilderImplicits(builder: MappingBuilder) {
     val base64Regex = "[A-Za-z0-9+/_-]*"
