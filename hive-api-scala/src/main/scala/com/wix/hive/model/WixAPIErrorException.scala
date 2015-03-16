@@ -1,7 +1,7 @@
 package com.wix.hive.model
 
 case class WixAPIErrorException(errorCode: Int, message: Option[String] = None, wixErrorCode: Option[Int] = None)
-  extends Exception(s"Wix API Error with StatusCode: '$errorCode', message: '${message.getOrElse("")}', Wix code: '${wixErrorCode.getOrElse("")}'") {
+  extends RuntimeException(s"Wix API Error with StatusCode: '$errorCode', message: '${message.getOrElse("")}', Wix code: '${wixErrorCode.getOrElse("")}'") {
   
   def errorCodeString(): Option[String] = WixAPIErrorException.ErrorCodeStringRepresentation.get(errorCode)
 }
