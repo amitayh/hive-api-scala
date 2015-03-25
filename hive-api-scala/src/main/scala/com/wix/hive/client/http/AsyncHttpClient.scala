@@ -40,7 +40,7 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
         case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
       }
     } catch {
-      case e@(_: JsonParseException |_: JsonMappingException) => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response because of ${e.getClass.getName}: ${r.getResponseBody}"))
+      case e @ (_: JsonParseException |_: JsonMappingException) => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response because of ${e.getClass.getName}: ${r.getResponseBody}"))
     }
   }
 
@@ -70,10 +70,10 @@ case class HttpRequestData(method: HttpMethod,
 object HttpRequestDataImplicits {
 
   implicit class HttpRequestDataStringify(val data: HttpRequestData) extends AnyVal {
-    def bodyAsString: String = data.body match {
-      case Some(body: String) => body
-      case Some(body: AnyRef) => JacksonObjectMapper.mapper.writeValueAsString(body)
-      case None => ""
+
+    def bodyAsString: String = data.body.fold("") {
+      case s: String => s
+      case other: AnyRef => JacksonObjectMapper.mapper.writeValueAsString(other)
     }
   }
 
