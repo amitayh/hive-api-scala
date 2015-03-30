@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.{Request, Response}
 import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
-import com.wix.hive.webhooks.WiremockRequestConverter
+import com.wix.hive.webhooks.WiremockRequestConverter.RequestConverterFromWiremock
 import org.specs2.matcher.Matchers
 import org.specs2.mock.Mockito
 
@@ -35,7 +35,7 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
 
   def subscribeFunc(f: (Try[Webhook[_]]) => Unit) = {
     WiremockEnvironment.setListener((request: Request, response: Response) => {
-      val webhook = converter.convert(request)(WiremockRequestConverter.RequestConverterFromWiremock)
+      val webhook = converter.convert(request)
       f(webhook)
     })
   }
