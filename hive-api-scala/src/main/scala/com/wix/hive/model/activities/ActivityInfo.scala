@@ -51,7 +51,9 @@ case class CartAddress(firstName: String, lastName: String, email: String, phone
 
 case class CartItem(id: String, sku: Option[String], title: String, quantity: Int, price: BigDecimal, formattedPrice: Option[String],
                     currency: String, productLink: Option[String], weight: BigDecimal, formattedWeight: Option[String],
-                    media: Media, variants: Seq[Variant])
+                    media: Media, variants: Seq[Variant], categories: Seq[String], metadata: Seq[ItemMetadata])
+
+case class ItemMetadata(name: String, value: String)
 
 case class ECommercePurchase(cartId: String,
                              storeId: String,
