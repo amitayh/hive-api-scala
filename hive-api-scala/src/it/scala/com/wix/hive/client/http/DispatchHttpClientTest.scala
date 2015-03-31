@@ -1,9 +1,7 @@
 package com.wix.hive.client.http
 
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
 import com.wix.hive.infrastructure.WiremockEnvironment
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
@@ -17,7 +15,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.util.{Failure, Try}
-import WireMock.{equalTo => equalToString}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
   sequential
@@ -32,15 +29,23 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     val client = new DispatchHttpClient()
 
     val baseUrl = s"http://localhost:${WiremockEnvironment.serverPort}"
+    val relativeTestUrl = "/test"
+    val absoluteTestUrl = baseUrl + relativeTestUrl
 
-    val httpRequestData = HttpRequestData(HttpMethod.GET, s"$baseUrl/test")
+    val nonEnglishBodyData = Dummy("גוף")
+
+
+    val httpRequestData = HttpRequestData(HttpMethod.GET, absoluteTestUrl)
 
     val executor = mock[ExecutionContextExecutor]
     val clientWithCustomExecutor = new DispatchHttpClient()(executor)
 
+    
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
     def haveDataForDummy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
+
+    def asString(obj: AnyRef): String = JacksonObjectMapper.mapper.writeValueAsString(obj)
 
     def isWixApiErrorException(errorCode: Matcher[Int], message: Matcher[Option[String]], wixErrorCode: Matcher[Option[Int]]): Matcher[WixAPIErrorException] = {
       errorCode ^^ { (_: WixAPIErrorException).errorCode aka "errorCode" } and
@@ -67,62 +72,62 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
   "request" should {
 
     "parse response to an Object" in new ctx {
-      givenThat(get(urlMatching("/test"))
+      givenThat(get(urlMatching(relativeTestUrl))
         .willReturn(aResponse().withBody( """{"data":"some info"}""")))
 
       client.request[Dummy](httpRequestData) must be_===(Dummy("some info")).await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
-      givenThat(get(urlMatching("/test?.*"))
+      givenThat(get(urlMatching(s"$relativeTestUrl?.*"))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test", queryString = Map("a" -> "b"))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl, queryString = Map("a" -> "b"))) must beSuccess
 
-      verify(getRequestedFor(urlEqualTo("/test?a=b")))
+      verify(getRequestedFor(urlEqualTo(s"$relativeTestUrl?a=b")))
     }
 
     "pass headers" in new ctx {
-      givenThat(get(urlMatching("/test"))
+      givenThat(get(urlMatching(relativeTestUrl))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test", headers = Map("c" -> "d"))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl, headers = Map("c" -> "d"))) must beSuccess
 
-      verify(getRequestedFor(urlEqualTo("/test")).withHeader("c", WireMock.equalTo("d")))
+      verify(getRequestedFor(urlEqualTo(relativeTestUrl)).withHeader("c", WireMock.equalTo("d")))
     }
 
     "pass body" in new ctx {
-      givenThat(post(urlMatching("/test"))
+      givenThat(post(urlMatching(relativeTestUrl))
         .willReturn(aResponse()))
 
-      client.request(HttpRequestData(HttpMethod.POST, s"$baseUrl/test", body = Some(Dummy("body text")))) must beSuccess
+      client.request(HttpRequestData(HttpMethod.POST, absoluteTestUrl, body = Some(Dummy("body text")))) must beSuccess
 
-      verify(postRequestedFor(urlEqualTo("/test")).withRequestBody(equalToJson( """{"data":"body text"}""")))
+      verify(postRequestedFor(urlEqualTo(relativeTestUrl)).withRequestBody(equalToJson( """{"data":"body text"}""")))
     }
 
     "work with all method types" in new ctx {
-      givenThat(get(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"GET"}""")))
-      givenThat(post(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"POST"}""")))
-      givenThat(put(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"PUT"}""")))
-      givenThat(delete(urlEqualTo("/test")).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
+      givenThat(get(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"GET"}""")))
+      givenThat(post(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"POST"}""")))
+      givenThat(put(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"PUT"}""")))
+      givenThat(delete(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
 
       HttpMethod.values foreach { method =>
-        client.request[Dummy](HttpRequestData(method, s"$baseUrl/test")) must haveDataForDummy(method.toString).await
+        client.request[Dummy](HttpRequestData(method, absoluteTestUrl)) must haveDataForDummy(method.toString).await
       }
     }
 
     "handle error returned from the server" in new ctx {
-      givenThat(get(urlEqualTo("/test")).willReturn(aResponse().
+      givenThat(get(urlEqualTo(relativeTestUrl)).willReturn(aResponse().
                                                     withStatus(400).
-                                                    withBody("""{"errorCode":400,"message":"some msg","wixErrorCode":-23001}""")))
+                                                    withBody(asString(WixAPIErrorException(400, Some("some msg"), Some(-23001))))))
 
-      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test"))
+      val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl))
 
       res must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
     }
 
     "handle failure - no server listening" in new ctx {
-      val res = client.request(HttpRequestData(HttpMethod.GET, s"$baseUrl/test")) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
+      val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl)) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
     }
 
     "provide other execution context" in new ctx with Mockito {
@@ -132,16 +137,14 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     }
 
     "pass non-English characters in body" in new ctx {
-      val nonEnglishBodyData = Dummy("גוף")
-
-      givenThat(post(urlEqualTo("/test")).willReturn(aResponse()))
+      givenThat(post(urlEqualTo(relativeTestUrl)).willReturn(aResponse()))
 
       client.request(HttpRequestData(HttpMethod.POST,
-        s"$baseUrl/test",
+        absoluteTestUrl,
         body = Some(nonEnglishBodyData))) must beSuccess
 
-      verify(postRequestedFor(urlEqualTo("/test"))
-        .withRequestBody(equalToJson(JacksonObjectMapper.mapper.writeValueAsString(nonEnglishBodyData))))
+      verify(postRequestedFor(urlEqualTo(relativeTestUrl))
+        .withRequestBody(equalToJson(asString(nonEnglishBodyData))))
     }
   }
 }
