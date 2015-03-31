@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.wix.hive.infrastructure.WiremockEnvironment
+import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.Future
 import org.specs2.matcher.{Expectable, MatchResult, Matcher}
@@ -16,6 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.util.{Failure, Try}
+import WireMock.{equalTo => equalToString}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
   sequential
@@ -127,6 +129,19 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       clientWithCustomExecutor.request(httpRequestData)
 
       there was one(executor).execute(any[Runnable])
+    }
+
+    "pass non-English characters in body" in new ctx {
+      val nonEnglishBodyData = Dummy("גוף")
+
+      givenThat(post(urlEqualTo("/test")).willReturn(aResponse()))
+
+      client.request(HttpRequestData(HttpMethod.POST,
+        s"$baseUrl/test",
+        body = Some(nonEnglishBodyData))) must beSuccess
+
+      verify(postRequestedFor(urlEqualTo("/test"))
+        .withRequestBody(equalToJson(JacksonObjectMapper.mapper.writeValueAsString(nonEnglishBodyData))))
     }
   }
 }
