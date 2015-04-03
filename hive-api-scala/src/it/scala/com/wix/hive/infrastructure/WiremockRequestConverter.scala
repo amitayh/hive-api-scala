@@ -1,4 +1,4 @@
-package com.wix.hive.webhooks
+package com.wix.hive.infrastructure
 
 import com.github.tomakehurst.wiremock.http.Request
 import com.wix.hive.client.http.HttpRequestData

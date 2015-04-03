@@ -6,7 +6,7 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.http.{Request, Response}
 import com.wix.hive.server.webhooks.{Webhook, WebhooksConverter}
-import com.wix.hive.webhooks.WiremockRequestConverter.RequestConverterFromWiremock
+import WiremockRequestConverter.RequestConverterFromWiremock
 import org.specs2.matcher.Matchers
 import org.specs2.mock.Mockito
 
@@ -23,9 +23,6 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   val webhookSecret = UUID.randomUUID().toString
   val webhookPath: String = "/localhost/webhook-url"
   val webhookPort = WiremockEnvironment.serverPort
-
-  private val timeout = new org.specs2.time.Duration(3000)
-
 
   val converter = new WebhooksConverter {
     override def secret: String = webhookSecret

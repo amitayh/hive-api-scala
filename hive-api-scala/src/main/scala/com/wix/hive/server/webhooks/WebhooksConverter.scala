@@ -17,6 +17,7 @@ object WebhooksConverter {
   val timestampKey = "x-wix-timestamp"
 }
 
+//TODO: why trait and not class? Why extends HttpReqHelpers and not import?
 trait WebhooksConverter extends HttpRequestHelpers {
   def secret: String
 
@@ -38,7 +39,12 @@ trait WebhooksConverter extends HttpRequestHelpers {
       data <- marshaller.unmarshal(validRequest)
     } yield {
       val parameters = WebhookParameters(appId, new DateTime(timestamp))
-      Webhook(instanceId, data, parameters)
+      new Webhook(instanceId, data, parameters)
+        with OriginalRequestStorage {override def request: HttpRequestData = req}
     }
   }
+}
+
+trait OriginalRequestStorage {
+  def request: HttpRequestData
 }
