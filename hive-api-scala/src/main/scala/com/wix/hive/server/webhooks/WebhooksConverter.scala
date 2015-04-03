@@ -38,7 +38,7 @@ trait WebhooksConverter extends HttpRequestHelpers {
       timestamp <- tryHeaderForReq(timestampKey)
       data <- marshaller.unmarshal(validRequest)
     } yield {
-      val parameters = WebhookParameters(appId, new DateTime(timestamp))
+      val parameters = GenericWebhookParameters(appId, new DateTime(timestamp))
       new Webhook(instanceId, data, parameters)
         with OriginalRequestStorage {override def request: HttpRequestData = req}
     }

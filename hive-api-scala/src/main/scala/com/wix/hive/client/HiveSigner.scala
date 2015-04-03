@@ -12,7 +12,7 @@ import org.apache.commons.net.util.Base64
 class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
 
-  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id")
+  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id", "bi-token")
   private val excludes = Set("signature")
 
   private val headerPrefix = "x-wix-"

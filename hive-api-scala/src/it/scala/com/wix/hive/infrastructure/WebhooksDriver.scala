@@ -43,11 +43,9 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     }
 
     val headers = Map(
-      "x-wix-application-id" -> parameters.appId,
       "x-wix-instance-id" -> instanceId,
-      "x-wix-timestamp" -> ISODateTimeFormat.dateTime().print(parameters.timestamp),
       "x-wix-event-type" -> eventType,
-      HttpHeaders.Names.HOST -> host)
+      HttpHeaders.Names.HOST -> host) ++ parameters.asHeaders
 
     val signatureHeader = "x-wix-signature" -> getSignature(headers, content)
 

@@ -1,7 +1,7 @@
 package com.wix.hive.drivers
 
 import com.wix.hive.client.http.{HttpMethod, HttpRequestData}
-import com.wix.hive.server.webhooks.{Provision, Webhook, WebhookParameters}
+import com.wix.hive.server.webhooks.{GenericWebhookParameters, Provision, Webhook, WebhookParameters}
 import org.joda.time.DateTime
 
 /**
@@ -37,7 +37,7 @@ trait SigningTestSupport {
 
   val provisioningData = Provision(instance, None)
 
-  private val webhookParameters = WebhookParameters(app, new DateTime(ts))
+  private val webhookParameters = GenericWebhookParameters(app, new DateTime(ts))
 
   val provisioningWebhook = Webhook(instance, provisioningData, webhookParameters)
 

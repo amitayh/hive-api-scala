@@ -3,6 +3,7 @@ package com.wix.hive.server.webhooks
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wix.hive.commands.services.EmailContacts
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 
 /**
  * User: maximn
@@ -10,8 +11,18 @@ import org.joda.time.DateTime
  */
 case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters)
 
+trait WebhookParameters {
+  def appId: String
+  def timestamp: DateTime
 
-case class WebhookParameters(appId: String, timestamp: DateTime)
+  def asHeaders: Map[String, String]
+}
+
+case class GenericWebhookParameters(val appId: String, val timestamp: DateTime) extends WebhookParameters {
+  def asHeaders : Map[String, String] = Map(
+    "x-wix-application-id" -> appId,
+    "x-wix-timestamp" -> ISODateTimeFormat.dateTime.print(timestamp))
+}
 
 sealed trait WebhookData
 
