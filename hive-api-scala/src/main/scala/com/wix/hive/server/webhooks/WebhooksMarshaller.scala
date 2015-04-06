@@ -14,7 +14,7 @@ object WebhooksMarshaller {
   val eventTypeKey = "x-wix-event-type"
 }
 
-class WebhooksMarshaller extends HttpRequestHelpers {
+class WebhooksMarshaller {
   private val eventType2Class = Map(
     "/provision/provision" -> classOf[Provision],
     "/provision/disabled" -> classOf[ProvisionDisabled],

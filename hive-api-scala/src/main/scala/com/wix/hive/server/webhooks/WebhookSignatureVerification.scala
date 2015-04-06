@@ -10,7 +10,7 @@ import scala.util.{Failure, Success, Try}
  * User: maximn
  * Date: 12/1/14
  */
-class WebhookSignatureVerification(secret: String) extends HttpRequestHelpers {
+class WebhookSignatureVerification(secret: String) {
   private lazy val signer = new HiveSigner(secret)
 
   def verify(req: HttpRequestData): Try[HttpRequestData] = {
