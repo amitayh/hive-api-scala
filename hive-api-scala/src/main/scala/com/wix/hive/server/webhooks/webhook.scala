@@ -9,25 +9,17 @@ import org.joda.time.format.ISODateTimeFormat
  * User: maximn
  * Date: 12/1/14
  */
-case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters)
-
-trait WebhookParameters {
-  def appId: String
-  def timestamp: DateTime
-
-  def asHeaders: Map[String, String]
+case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters) {
+  def this(other: Webhook[T]) = this(other.instanceId, other.data, other.parameters)
 }
 
-case class GenericWebhookParameters(val appId: String, val timestamp: DateTime) extends WebhookParameters {
-  def asHeaders : Map[String, String] = Map(
-    "x-wix-application-id" -> appId,
-    "x-wix-timestamp" -> ISODateTimeFormat.dateTime.print(timestamp))
-}
+case class WebhookParameters(appId: String, timestamp: DateTime)
 
 sealed trait WebhookData
 
-case class Provision (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
-case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @JsonProperty("origin-instance-id")originInstanceId: Option[String]) extends WebhookData
+case class Provision(@JsonProperty("instance-id") instanceId: String, @JsonProperty("origin-instance-id") originInstanceId: Option[String]) extends WebhookData
+
+case class ProvisionDisabled(@JsonProperty("instance-id") instanceId: String, @JsonProperty("origin-instance-id") originInstanceId: Option[String]) extends WebhookData
 
 //case class BillingUpgrade(vendorProductId: String) extends WebhookData
 //
@@ -40,6 +32,7 @@ case class ProvisionDisabled (@JsonProperty("instance-id")instanceId: String, @J
 case class ActivitiesPosted(activityId: String, activityType: String, contactId: Option[String] = None) extends WebhookData
 
 case class ServiceResult(providerId: String, correlationId: String, data: ServiceRunData) extends WebhookData
+
 //TODO: status -> enum
 //TODO: errorType -> enum [UNKNOWN_TOKEN' or 'MISSING_PARAMETERS' or 'INTERNAL_ERROR' or 'LIMIT_REACHED' or 'MISSING_PREMIUM']]
 case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])

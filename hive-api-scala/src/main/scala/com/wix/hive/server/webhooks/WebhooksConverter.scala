@@ -6,6 +6,7 @@ import com.wix.hive.server.webhooks.WebhooksConverter._
 import org.joda.time.DateTime
 
 import scala.util.Try
+
 /**
  * User: maximn
  * Date: 12/1/14
@@ -16,10 +17,7 @@ object WebhooksConverter {
   val timestampKey = "x-wix-timestamp"
 }
 
-//TODO: why trait and not class? Why extends HttpReqHelpers and not import?
-trait WebhooksConverter {
-  def secret: String
-
+class WebhooksConverter(secret: String) {
   private lazy val validator = new WebhookSignatureVerification(secret)
   private lazy val marshaller = new WebhooksMarshaller
 
@@ -28,7 +26,7 @@ trait WebhooksConverter {
     convert(req)
   }
 
-  def convert(req: HttpRequestData): Try[Webhook[WebhookData]] = {
+  protected[server] def convert(req: HttpRequestData): Try[Webhook[WebhookData]] = {
     val tryHeaderForReq = tryHeader(req, _: String)
     for {
       validRequest <- validator.verify(req)
@@ -37,13 +35,8 @@ trait WebhooksConverter {
       timestamp <- tryHeaderForReq(timestampKey)
       data <- marshaller.unmarshal(validRequest)
     } yield {
-      val parameters = GenericWebhookParameters(appId, new DateTime(timestamp))
+      val parameters = WebhookParameters(appId, new DateTime(timestamp))
       new Webhook(instanceId, data, parameters)
-        with OriginalRequestStorage {override def request: HttpRequestData = req}
     }
   }
-}
-
-trait OriginalRequestStorage {
-  def request: HttpRequestData
 }

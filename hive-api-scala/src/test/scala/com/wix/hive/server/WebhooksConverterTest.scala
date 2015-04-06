@@ -17,11 +17,8 @@ class WebhooksConverterTest extends SpecificationWithJUnit with Matchers {
 
   trait ctx extends Scope
   with WebhooksTestSupport
-  with SigningTestSupport  {
-    val processor = new WebhooksConverter {
-      override val secret: String = SigningTestSupport.key
-    }
-
+  with SigningTestSupport {
+    val processor = new WebhooksConverter(SigningTestSupport.key)
   }
 
   "process" should {

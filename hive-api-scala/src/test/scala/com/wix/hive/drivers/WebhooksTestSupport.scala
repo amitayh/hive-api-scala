@@ -14,7 +14,7 @@ import org.specs2.matcher.{Matcher, Matchers}
  */
 trait WebhooksTestSupport extends Matchers
 with HiveMatchers {
-  def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = GenericWebhookParameters(appId, timestamp)
+  def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = WebhookParameters(appId, timestamp)
 
 
   def randomId: String = {

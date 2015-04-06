@@ -24,7 +24,9 @@ trait WebhooksDriver {
   def callActivityPosted(fromAppId: String, webhook: Webhook[ActivitiesPosted])
 
   def callServicesDone(webhook: Webhook[ServiceResult])
-}
+
+  def callEmailSend(webhook: Webhook[EmailSend])
+  }
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
   val path: String
@@ -42,14 +44,20 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
       signer.getSignature(request)
     }
 
-    val headers = Map(
-      "x-wix-instance-id" -> instanceId,
-      "x-wix-event-type" -> eventType,
-      HttpHeaders.Names.HOST -> host) ++ parameters.asHeaders
+    val headers = getHeaders(instanceId, parameters, eventType)
 
     val signatureHeader = "x-wix-signature" -> getSignature(headers, content)
 
     (url("http://" + host + path) << content <:< (headers + signatureHeader)).setMethod("POST")
+  }
+
+  protected def getHeaders(instanceId: String, parameters: WebhookParameters, eventType: String): Map[String, String] = {
+    Map(
+      "x-wix-application-id" -> parameters.appId,
+      "x-wix-instance-id" -> instanceId,
+      "x-wix-timestamp" -> ISODateTimeFormat.dateTime().print(parameters.timestamp),
+      "x-wix-event-type" -> eventType,
+      HttpHeaders.Names.HOST -> host)
   }
 
   override def callProvisionWebhook(webhook: Webhook[Provision]) = {
@@ -68,11 +76,11 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
     callWebhook(webhook, "/services/actions/done")
   }
 
-  def callEmailSend(webhook: Webhook[EmailSend]) = {
+  override def callEmailSend(webhook: Webhook[EmailSend]) = {
     callWebhook(webhook, "/services/actions/email/send")
   }
 
-  private def callWebhook(webhook: Webhook[_], eventType: String): Unit = {
+  protected def callWebhook(webhook: Webhook[_], eventType: String): Unit = {
     val payload = JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 

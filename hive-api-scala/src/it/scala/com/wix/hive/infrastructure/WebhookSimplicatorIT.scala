@@ -24,9 +24,7 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   val webhookPath: String = "/localhost/webhook-url"
   val webhookPort = WiremockEnvironment.serverPort
 
-  val converter = new WebhooksConverter {
-    override def secret: String = webhookSecret
-  }
+  protected val converter = new WebhooksConverter(webhookSecret)
 
   givenThat(WireMock.post(urlMatching(webhookPath)).willReturn(aResponse().withStatus(200)))
 
