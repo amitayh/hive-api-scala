@@ -9,7 +9,15 @@ import org.joda.time.format.ISODateTimeFormat
  * User: maximn
  * Date: 12/1/14
  */
-case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters) {
+trait WebhookBase[T <: WebhookData] {
+  def instanceId: String
+
+  def parameters: WebhookParameters
+
+  def data: T
+}
+
+case class Webhook[T <: WebhookData](instanceId: String, data: T, parameters: WebhookParameters) extends WebhookBase[T] {
   def this(other: Webhook[T]) = this(other.instanceId, other.data, other.parameters)
 }
 

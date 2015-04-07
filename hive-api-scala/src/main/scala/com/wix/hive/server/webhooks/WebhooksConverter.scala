@@ -2,8 +2,6 @@ package com.wix.hive.server.webhooks
 
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.server.adapters.RequestConverterFrom
-import com.wix.hive.server.webhooks.WebhooksConverter._
-import org.joda.time.DateTime
 
 import scala.util.Try
 
@@ -17,26 +15,22 @@ object WebhooksConverter {
   val timestampKey = "x-wix-timestamp"
 }
 
-class WebhooksConverter(secret: String) {
-  private lazy val validator = new WebhookSignatureVerification(secret)
-  private lazy val marshaller = new WebhooksMarshaller
+trait GenericWebhooksConverter[+W <: WebhookBase[WebhookData]] {
+  protected def secret: String
 
-  def convert[T: RequestConverterFrom](originalReq: T): Try[Webhook[WebhookData]] = {
+  protected val webhookRequestExtractor = new WebhookRequestExtractor(secret)
+
+  def convert[T: RequestConverterFrom](originalReq: T): Try[W] = {
     val req = implicitly[RequestConverterFrom[T]].convert(originalReq)
     convert(req)
   }
 
-  protected[server] def convert(req: HttpRequestData): Try[Webhook[WebhookData]] = {
-    val tryHeaderForReq = tryHeader(req, _: String)
-    for {
-      validRequest <- validator.verify(req)
-      appId <- tryHeaderForReq(appIdKey)
-      instanceId <- tryHeaderForReq(instanceIdKey)
-      timestamp <- tryHeaderForReq(timestampKey)
-      data <- marshaller.unmarshal(validRequest)
-    } yield {
-      val parameters = WebhookParameters(appId, new DateTime(timestamp))
-      new Webhook(instanceId, data, parameters)
-    }
+  protected def convert(req: HttpRequestData): Try[W]
+}
+
+class WebhooksConverter(protected val secret: String) extends GenericWebhooksConverter[Webhook[WebhookData]] {
+  protected def convert(req: HttpRequestData): Try[Webhook[WebhookData]] = {
+    webhookRequestExtractor.convert(req)
   }
 }
+

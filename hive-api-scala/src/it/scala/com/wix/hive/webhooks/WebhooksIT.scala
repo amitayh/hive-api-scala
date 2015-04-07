@@ -2,7 +2,7 @@ package com.wix.hive.webhooks
 
 import com.wix.hive.drivers.WebhooksTestSupport
 import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicatorIT}
-import com.wix.hive.server.webhooks.{Webhook, WebhookData}
+import com.wix.hive.server.webhooks.{WebhookBase, Webhook, WebhookData}
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.mutable.After
@@ -24,7 +24,7 @@ with WebhooksTestSupport {
   val port: Int = webhookPort
 
   trait ctx extends After {
-    val mockFunc = mock[Try[Webhook[_]] => Unit]
+    val mockFunc = mock[Try[WebhookBase[_]] => Unit]
     subscribeFunc(mockFunc)
 
     override def after: Any = clearListener()
