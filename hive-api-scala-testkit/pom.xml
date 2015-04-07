@@ -68,7 +68,6 @@
             <groupId>org.specs2</groupId>
             <artifactId>specs2_${scala.dependencies.version}</artifactId>
             <version>${specs2.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
