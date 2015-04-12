@@ -21,11 +21,10 @@ import com.wix.hive.commands.sites.{GetSitePages, Site}
 import com.wix.hive.model.WixAPIErrorException
 import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
-
+import com.wix.hive.json.JacksonObjectMapper.mapper
 import scala.runtime.BoxedUnit
 
 trait SimplicatorHive {
-  private val mapper = new ObjectMapper().registerModules(DefaultScalaModule, new JodaModule)
   private val appIdHeader = "x-wix-application-id"
   private val instanceIdHeader = "x-wix-instance-id"
 

@@ -1,15 +1,14 @@
 package com.wix.hive.infrastructure
 
-import com.wix.hive.infrastructure
-
-import scala.concurrent.Await
-
 import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
+import com.wix.hive.infrastructure
 import com.wix.hive.server.webhooks._
 import dispatch.{Req, url, _}
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
+
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
