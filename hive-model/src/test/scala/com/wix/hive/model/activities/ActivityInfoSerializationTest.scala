@@ -1,10 +1,10 @@
-package com.wix.hive.model
+package com.wix.hive.model.activities
 
-import com.wix.hive.json.JacksonObjectMapper
-import com.wix.hive.model.activities.{Activity, ActivityDetails, AuthRegister}
+import com.wix.hive.infrastructure.JacksonObjectMapper
 import org.joda.time.DateTime
-import org.specs2.matcher.{Matcher, Scope}
+import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit
+import org.specs2.specification.Scope
 
 class ActivityInfoSerializationTest extends SpecificationWithJUnit {
 
@@ -13,7 +13,7 @@ class ActivityInfoSerializationTest extends SpecificationWithJUnit {
     val createdAt = "2014-10-23T11:05:55.620Z"
     val summary = "MfPfWt4pjKwdfRbn8js9"
     val activityLocationUrl = "http://dasd.com/aaaaaa"
-    
+
     def beSameDatetimeAs(s: String): Matcher[DateTime] = (d: DateTime) => d.isEqual(new DateTime(s))
     def beWithSummary(s: String): Matcher[Option[ActivityDetails]] = (ad: Option[ActivityDetails]) => ad.get.summary == s
   }
