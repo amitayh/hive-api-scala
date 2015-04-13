@@ -1,7 +1,7 @@
 package com.wix.hive.drivers
 
 import com.wix.hive.commands.contacts._
-import com.wix.hive.model.contacts.{Contact, ContactName, EmailStatus, PagingContactsResult}
+import com.wix.hive.model.contacts.{PagingContactsResult, Contact, ContactName, EmailStatus}
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.matcher.Matchers._

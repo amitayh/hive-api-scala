@@ -1,7 +1,7 @@
 package com.wix.hive.model.activities
 
 import com.fasterxml.jackson.annotation.JsonCreator
-import com.wix.hive.json.JacksonObjectMapper
+import com.wix.hive.infrastructure.JacksonObjectMapper
 import org.joda.time.DateTime
 
 import scala.util.control.Exception._
@@ -33,7 +33,6 @@ object Activity {
     `music/track-share` -> classOf[MusicTrackShare],
     `music/track-skip` -> classOf[MusicTrackSkip])
 
-
   @JsonCreator
   def factory(props: Map[String, Object]): Activity = {
 
@@ -43,7 +42,7 @@ object Activity {
 
     val createdAt = JacksonObjectMapper.mapper.convertValue(props("createdAt"), classOf[DateTime])
 
-    val activityLocationUrl = opt(JacksonObjectMapper.mapper.convertValue(props("activityLocationUrl"), classOf[String]))
+    val activityLocationUrl =  opt(JacksonObjectMapper.mapper.convertValue(props("activityLocationUrl"), classOf[String]))
 
     val activityDetails = opt(JacksonObjectMapper.mapper.convertValue(props("activityDetails"), classOf[ActivityDetails]))
 
@@ -59,3 +58,5 @@ object Activity {
       activityDetails)
   }
 }
+
+

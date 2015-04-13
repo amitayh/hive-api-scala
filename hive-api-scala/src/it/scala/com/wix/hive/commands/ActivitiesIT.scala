@@ -30,6 +30,8 @@ class ActivitiesIT extends HiveSimplicatorIT {
       expect(app, cmd)(res)
 
       client.execute(instance, cmd) must haveActivityResult(res.activityId, contactId).await
+
+      verify(app, cmd)
     }
 
     "get activity by ID" in new clientContext {

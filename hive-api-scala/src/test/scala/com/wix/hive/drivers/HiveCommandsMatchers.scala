@@ -4,7 +4,7 @@ import com.wix.hive.commands.activities.PagingActivitiesResult
 import com.wix.hive.commands.contacts.{CreatedContact, UpsertContactResponse}
 import com.wix.hive.model.activities.ActivityType._
 import com.wix.hive.model.activities.{Activity, ActivityCreatedResult, ActivityTypes}
-import com.wix.hive.model.contacts.{Contact, PagingContactsResult}
+import com.wix.hive.model.contacts.{PagingContactsResult, Contact}
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import com.wix.hive.model.sites.SiteData
 import org.specs2.matcher.{Matcher, Matchers}
