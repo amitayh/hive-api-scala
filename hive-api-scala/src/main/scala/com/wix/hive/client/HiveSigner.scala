@@ -12,11 +12,10 @@ import org.apache.commons.net.util.Base64
 class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
 
-  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id", "bi-token")
+  private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id", "bi-token", "staging-environment")
   private val excludes = Set("signature")
 
   private val headerPrefix = "x-wix-"
-  private def withHeaderPrefix(names: Set[String]) = names map (headerPrefix + _)
 
   // base64 & mac are NOT THREAD SAFE
   def base64: Base64 = new Base64(true)
