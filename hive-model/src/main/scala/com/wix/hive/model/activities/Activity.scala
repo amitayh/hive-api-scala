@@ -1,6 +1,6 @@
 package com.wix.hive.model.activities
 
-import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.{JsonSubTypes, JsonTypeInfo, JsonCreator}
 import com.wix.hive.infrastructure.JacksonObjectMapper
 import org.joda.time.DateTime
 
@@ -57,6 +57,20 @@ object Activity {
       activityLocationUrl,
       activityDetails)
   }
+
+  //HACK: I use the `JacksonObjectMapper.mapper` as a hack here until find better solution.
+  // The correct solution will be to use `JsonTypeInfo.As.EXTERNAL_PROPERTY` -
+  //  case class Activity(id: String,
+  //                      createdAt: DateTime,
+  //                      @JsonSubTypes(Array(
+  //                        new Type(value = classOf[AuthLogin], name = "auth/login"),
+  //                        new Type(value = classOf[AuthRegister], name = "auth/register")
+  //                      ))
+  //                      @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "activityType")
+  //                      activityInfo: ActivityInfo,
+  //                      activityLocationUrl: Option[String] = None,
+  //                      activityDetails: Option[ActivityDetails] = None)
+  // But seems that jackson doesn't allow to use this mehtod with case classes
 }
 
 
