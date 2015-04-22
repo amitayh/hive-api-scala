@@ -29,10 +29,12 @@ class HiveSigner(key: String) {
   def getSignature(data: HttpRequestData): String = {
     val stringToSign = generateStringToSign(data)
 
-    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(Charsets.US_ASCII))
+    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(Charsets.UTF_8))
     base64.encodeToString(result).trim
   }
-
+  implicit object StringCaseInsensitiveOrder extends Ordering[String] {
+    def compare(x: String, y: String) = x.compareToIgnoreCase(y)
+  }
   private[client] def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
@@ -41,7 +43,6 @@ class HiveSigner(key: String) {
 
     val headerPart = headers.toList
       .filter {case (name, _) => includes map(headerPrefix + _) contains name.toLowerCase }
-      .filterNot {case (name, _) => excludes map(headerPrefix + _) contains name.toLowerCase }
 
     val paramsAndHeaders = (queryPart ++ headerPart).sortBy { case (name, _) => name }.map { case (_, value) => value }
 

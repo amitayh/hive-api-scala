@@ -1,7 +1,5 @@
 package com.wix.hive.client
 
-import java.util.concurrent.atomic.AtomicInteger
-
 import com.wix.hive.client.http.{HttpMethod, HttpRequestData}
 import com.wix.hive.drivers.SigningTestSupport
 import org.specs2.mutable.SpecificationWithJUnit

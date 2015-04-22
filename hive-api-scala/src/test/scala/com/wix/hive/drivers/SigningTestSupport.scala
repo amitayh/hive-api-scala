@@ -30,10 +30,10 @@ trait SigningTestSupport {
 
   val dataWithNonEnglishBody = dataWithNoBody.copy(body = Some( """{"name":{"тест":"Wix","last":"Cool"},"company":{},"emails":[{"email":"maximn@wix.com","tag":"work"}],"phones":[{"phone":"123456789","tag":"work"}],"addresses":[],"urls":[],"dates":[],"notes":[],"custom":[]}"""))
 
-  val dataWithNoBodySignature = "pG-s-fCnfLlqZoOjmfYBbHeiWReh6Dd_IwRiL5DMpSw"
-  var dataWithBodySignature = "VyC8sYLmNbpwSiCkXJFSHabpSJ9jBMs9TmP7g0525CI"
-  var dataWithNonEnglishBodySignature = "W5rEFNl9iwg9vhDeQg8KavaiIO80FMFyWl98ubJz0tg"
-  var dataWithBodyNoUrlSignature = "5aDMaj8A-zGjl_ZZi4-FtF0SUSL2gJYVAlurBp8y-CA"
+  val dataWithNoBodySignature = "UrFBeoY-aLEDS9IROTUCN0hfb049OliHkXaoTHiFsBA"
+  var dataWithBodySignature = "t9dpXkcld8c9yhDglJSDnTuaxEnEnNTLhj_-L7sruUA"
+  var dataWithNonEnglishBodySignature = "9sVpXAeJO8_B06bfWYbZt4CNxa7q5SgETBtXGjDBMdc"
+  var dataWithBodyNoUrlSignature = "vLdzbN5naHFzeoOMuGlBJT6OzRCt3OKoU_njObzWNpY"
 
   val provisioningData = Provision(instance, None)
 
