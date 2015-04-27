@@ -4,23 +4,35 @@ import java.util.concurrent.ExecutionException
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.ning.http.client.Response
+import com.ning.http.client.{AsyncHttpClient => NAsyncHttpClient, Response}
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
-import dispatch.{Http, url, _}
+import dispatch.{url, _}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.reflect.{ClassTag, _}
-
 
 trait AsyncHttpClient {
   def request[T: ClassTag](data: HttpRequestData): Future[T]
 }
 
+
+
+
 class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecutor) extends AsyncHttpClient {
+
+  val httpClient = new dispatch.Http {
+    import com.ning.http.client._
+    val builder = new AsyncHttpClientConfig.Builder()
+    builder.setCompressionEnabled(true)
+      .setConnectionTimeoutInMs(7000)
+    override val client = new NAsyncHttpClient(builder.build())
+  }
+
+
   override def request[T: ClassTag](data: HttpRequestData): Future[T] = {
     val postDataAsString: String = data.bodyAsString
 
@@ -28,7 +40,7 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
                 .setMethod(data.method.toString)
                 .setBodyEncoding("UTF-8")
 
-    Http(req > handle[T] _)(executionContext).recover {
+    httpClient(req > handle[T] _)(executionContext).recover {
       case e: ExecutionException => throw e.getCause
     }
   }
