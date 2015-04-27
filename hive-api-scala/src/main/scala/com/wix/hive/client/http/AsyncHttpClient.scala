@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutionException
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.ning.http.client.{AsyncHttpClient => NAsyncHttpClient, Response}
+import com.ning.http.client.{AsyncHttpClient => NingAsyncHttpClient, Response}
 import com.wix.hive.client.http.DispatchHttpClient.`2XX`
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
@@ -29,7 +29,7 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
     val builder = new AsyncHttpClientConfig.Builder()
     builder.setCompressionEnabled(true)
       .setConnectionTimeoutInMs(7000)
-    override val client = new NAsyncHttpClient(builder.build())
+    override val client = new NingAsyncHttpClient(builder.build())
   }
 
 
