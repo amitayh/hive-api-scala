@@ -24,7 +24,9 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
   override def request[T: ClassTag](data: HttpRequestData): Future[T] = {
     val postDataAsString: String = data.bodyAsString
 
-    val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers).setMethod(data.method.toString)
+    val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers)
+                .setMethod(data.method.toString)
+                .setBodyEncoding("UTF-8")
 
     Http(req > handle[T] _)(executionContext).recover {
       case e: ExecutionException => throw e.getCause

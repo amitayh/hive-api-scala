@@ -11,6 +11,7 @@ import org.apache.commons.net.util.Base64
 
 class HiveSigner(key: String) {
   private val encryptionMethod = "HMACSHA256"
+  private val encodingForSignature = "UTF-8"
 
   private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id", "bi-token", "staging-environment")
   private val excludes = Set("signature")
@@ -29,7 +30,7 @@ class HiveSigner(key: String) {
   def getSignature(data: HttpRequestData): String = {
     val stringToSign = generateStringToSign(data)
 
-    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(Charsets.UTF_8))
+    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(encodingForSignature))
     base64.encodeToString(result).trim
   }
   implicit object StringCaseInsensitiveOrder extends Ordering[String] {
