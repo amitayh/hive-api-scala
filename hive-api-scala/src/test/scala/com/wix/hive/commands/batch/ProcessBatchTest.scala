@@ -28,18 +28,7 @@ class ProcessBatchTest extends SpecificationWithJUnit {
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(POST),
         url = be_===("/batch"),
-        query = havePair("modifiedAt" -> modifiedAt.toString),
-        body = beSome(CreateBatchOperation(Seq(anOperation), FailurePolicy.STOP_ON_FAILURE)))
-    }
-
-    "create HttpRequestData with 'modifiedAt' query parameter omitted" in new Context {
-      val cmd = ProcessBatch(operations = Seq(anOperation))
-
-      cmd.createHttpRequestData must httpRequestDataWith(
-        method = be_===(POST),
-        url = be_===("/batch"),
-        query = not(haveKey("modifiedAt")),
-        body = anything)
+        body = beSome(CreateBatchOperation(Seq(anOperation), Some(modifiedAt), FailurePolicy.STOP_ON_FAILURE)))
     }
   }
 }

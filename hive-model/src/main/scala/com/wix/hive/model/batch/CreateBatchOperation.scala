@@ -1,7 +1,10 @@
 package com.wix.hive.model.batch
 
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
+import com.wix.accord.dsl._
+import com.wix.accord.Validator
 import com.wix.hive.model.batch.FailurePolicy.{STOP_ON_FAILURE, FailurePolicy}
+import org.joda.time.DateTime
 
 /**
  * @author viliusl
@@ -9,8 +12,14 @@ import com.wix.hive.model.batch.FailurePolicy.{STOP_ON_FAILURE, FailurePolicy}
  */
 case class CreateBatchOperation(
   operations: Seq[BatchOperation],
+  modifiedAt: Option[DateTime] = None,
   @JsonScalaEnumeration(classOf[FailurePolicyType])
-  failurePolicy: FailurePolicy = STOP_ON_FAILURE) {
+  failurePolicy: FailurePolicy = STOP_ON_FAILURE)
 
-  require(operations.nonEmpty, "At least one 'BatchOperation' has to be provided")
+object CreateBatchOperation {
+  implicit val CreateBatchOperationValidator: Validator[CreateBatchOperation] = validator[CreateBatchOperation] { c =>
+    c.operations is notEmpty
+    c.operations.each is valid
+  }
 }
+

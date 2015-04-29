@@ -18,6 +18,5 @@ case class ProcessBatch(
 
   override def method: HttpMethod = HttpMethod.POST
   override def url: String = "/batch"
-  override def body: Option[AnyRef] = Some(CreateBatchOperation(operations, failurePolicy))
-  override def query: NamedParameters = modifiedAt map { mAt => Map("modifiedAt" -> mAt.toString) } getOrElse Map.empty
+  override def body: Option[AnyRef] = Some(CreateBatchOperation(operations, modifiedAt, failurePolicy))
 }

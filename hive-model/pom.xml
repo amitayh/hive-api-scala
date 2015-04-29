@@ -26,20 +26,11 @@
         <scala.version>2.11.5</scala.version>
         <scala.dependencies.version>2.11</scala.dependencies.version>
 
-        <dispatch.version>0.11.2</dispatch.version>
-        <wiremock.version>1.50</wiremock.version>
-        <ning.version>1.8.10</ning.version>
         <jodatime.version>2.5</jodatime.version>
         <jackson.version>2.4.4</jackson.version>
         <org.specs2.version>2.4.15</org.specs2.version>
         <joda.convert.version>1.2</joda.convert.version>
-        <config.version>1.2.1</config.version>
-        <quasiquotes.version>2.1.0-M1</quasiquotes.version>
-        <finagle-http.version>6.24.0</finagle-http.version>
-        <servlet.version>3.0.1</servlet.version>
-        <commons-net.version>3.3</commons-net.version>
-        <spring-test.version>4.1.1.RELEASE</spring-test.version>
-        <spray-client.version>1.3.2</spray-client.version>
+        <accord.version>0.4.1</accord.version>
     </properties>
 
     <repositories>
@@ -57,40 +48,11 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.scalamacros</groupId>
-                <artifactId>quasiquotes_${scala.dependencies.version}</artifactId>
-                <version>${quasiquotes.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>net.databinder.dispatch</groupId>
-            <artifactId>dispatch-core_${scala.dependencies.version}</artifactId>
-            <version>${dispatch.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ning</groupId>
-            <artifactId>async-http-client</artifactId>
-            <version>${ning.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>${wiremock.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -130,12 +92,6 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>${commons-net.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.specs2</groupId>
             <artifactId>specs2_${scala.dependencies.version}</artifactId>
             <version>${org.specs2.version}</version>
@@ -149,38 +105,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>${config.version}</version>
+            <groupId>com.wix</groupId>
+            <artifactId>accord-core_${scala.dependencies.version}</artifactId>
+            <version>${accord.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>finagle-http_${scala.dependencies.version}</artifactId>
-            <version>${finagle-http.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring-test.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-httpx_${scala.dependencies.version}</artifactId>
-            <version>${spray-client.version}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_${scala.dependencies.version}</artifactId>
-            <version>2.3.8</version>
+            <groupId>com.wix</groupId>
+            <artifactId>accord-specs2_${scala.dependencies.version}</artifactId>
+            <version>${accord.version}</version>
             <scope>test</scope>
         </dependency>
 
