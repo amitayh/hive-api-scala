@@ -18,5 +18,4 @@ trait HiveClientContext extends Before {
   val instance = app.instanceId
 
   val client = new HiveClient(app.appId, app.secret, baseUrl = baseUrl)
-
 }

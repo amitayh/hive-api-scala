@@ -24,7 +24,6 @@ private[infrastructure] trait WiremockEnvironment {
 
   def stop(): Unit = WireMock.shutdownServer()
 
-
   val emptyListener: (Request, Response) => Unit = (req: Request, res: Response) => {}
 
   val listener = new AtomicReference[(Request, Response) => Unit](emptyListener)
