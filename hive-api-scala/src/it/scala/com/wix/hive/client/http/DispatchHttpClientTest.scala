@@ -126,6 +126,22 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       res must beFailedWith(isWixApiErrorException(be_===(400), beSome("some msg"), beSome(-23001)))
     }
 
+    "handle generic 404 error on service/resource not found" in new ctx {
+      val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl + "not"))
+
+      res must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
+    }
+
+    "handle 404 error returned from server with response dto" in new ctx {
+      givenThat(get(urlEqualTo(relativeTestUrl)).willReturn(aResponse().
+        withStatus(404).
+        withBody(asString(WixAPIErrorException(404, Some("method not found"), Some(-23007))))))
+
+      val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl))
+
+      res must beFailedWith(isWixApiErrorException(be_===(404), beSome("method not found"), beSome(-23007)))
+    }
+
     "handle failure - no server listening" in new ctx {
       val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl)) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
     }
