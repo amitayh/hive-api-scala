@@ -23,7 +23,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
     def oneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
       method = be_===(HttpMethod.GET),
-      url = be_===(client.baseUrl + client.versionForUrl + commandUrl + commandParams),
+      url = be_===(client.baseUrl + HiveClient.versionForUrl + commandUrl + commandParams),
       query = havePairs(commandQuery.toSeq: _*),
       headers = headersFor(commandHeaders, client, instance),
       body = be_===(commandBody)))(any)

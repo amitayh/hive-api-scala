@@ -1,6 +1,7 @@
 package com.wix.hive.client
 
 import com.typesafe.config._
+import com.wix.hive.client.HiveClient.{version, versionForUrl}
 import com.wix.hive.client.http._
 import com.wix.hive.commands.HiveCommand
 import org.joda.time.DateTime
@@ -30,11 +31,7 @@ class HiveClient(val appId: String,
 
   def timestamp: String = new DateTime().toString(ISODateTimeFormat.dateTime())
 
-  val version = "1.0.0"
-
-  val versionForUrl = "/v1"
-
-  val agent = s"Hive Scala v$version"
+  val agent = s"Hive Scala v${version}"
 
   val signer = new HiveSigner(secretKey)
 
@@ -57,8 +54,8 @@ class HiveClient(val appId: String,
 
   private def withClientData(instanceId: String)(httpData: HttpRequestData): HttpRequestData = {
     httpData.copy(
-      url = s"$versionForUrl${httpData.url}",
-      queryString = httpData.queryString + (HiveClient.VersionKey -> this.version),
+      url = s"${versionForUrl}${httpData.url}",
+      queryString = httpData.queryString + (HiveClient.VersionKey -> version),
       headers = httpData.headers +
         (HiveClient.InstanceIdKey -> instanceId) +
         (HiveClient.ApplicationIdKey -> this.appId) +
@@ -78,6 +75,9 @@ object HiveClient {
   val UserAgentKey = "User-Agent"
 
   val VersionKey = "version"
+
+  val version = "1.0.0"
+  val versionForUrl = "/v1"
 
 
   def apply(appId: Option[String] = None,
