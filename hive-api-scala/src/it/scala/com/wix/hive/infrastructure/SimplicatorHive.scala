@@ -2,15 +2,13 @@ package com.wix.hive.infrastructure
 
 import java.net.URLEncoder
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.util.ISO8601Utils
-import com.fasterxml.jackson.datatype.joda.JodaModule
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching, urlMatching, verify => wiremockVerify}
 import com.github.tomakehurst.wiremock.client.{MappingBuilder, RequestPatternBuilder, VerificationException}
 import com.github.tomakehurst.wiremock.http.RequestMethod
 import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities._
+import com.wix.hive.commands.batch.ProcessBatch
 import com.wix.hive.commands.contacts._
 import com.wix.hive.commands.insights.InsightActivitySummary
 import com.wix.hive.commands.labels.{GetLabelById, GetLabels}
@@ -18,10 +16,11 @@ import com.wix.hive.commands.redirects.GetRedirects
 import com.wix.hive.commands.services.email.SendSingle
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
 import com.wix.hive.commands.sites.{GetSitePages, Site}
+import com.wix.hive.json.JacksonObjectMapper.mapper
 import com.wix.hive.model.WixAPIErrorException
 import org.joda.time.DateTime
 import org.skyscreamer.jsonassert.JSONCompareMode
-import com.wix.hive.json.JacksonObjectMapper.mapper
+
 import scala.runtime.BoxedUnit
 
 trait SimplicatorHive {
@@ -120,6 +119,7 @@ trait SimplicatorHive {
       case c: GetLabelById => Match(s"/labels/${c.id}")
       case c: GetLabels => Match("/labels")
       case c: GetRedirects.type => Match("/redirects")
+      case c: ProcessBatch => Match("/batch", method = RequestMethod.POST)
     }
   }
 
