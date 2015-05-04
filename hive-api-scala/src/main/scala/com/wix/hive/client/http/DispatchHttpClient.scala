@@ -13,6 +13,7 @@ import dispatch.{url, _}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.reflect.{ClassTag, _}
+import scala.util.{Success, Failure, Try}
 
 /**
  * User: maximn
@@ -39,12 +40,16 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
     }(executionContext)
   }
 
-
   def handle[T: ClassTag](r: Response): T = {
     try {
       r.getStatusCode match {
         case `2XX`() => asT[T](r)
-        case 404 => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
+        case 404 => {
+          Try { JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException]) } match {
+            case Failure(_) => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
+            case Success(e) => throw e
+          }
+        }
         case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
       }
     } catch {
