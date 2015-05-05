@@ -5,6 +5,8 @@ import com.wix.hive.drivers.ActivitiesTestSupport._
 import com.wix.hive.drivers.ContactsTestSupport._
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.matchers.HiveMatchers._
+import com.wix.hive.model.activities.ActivityType._
+import com.wix.hive.model.activities.{ActivityType, ActivityTypes}
 
 /**
  * User: maximn
@@ -40,10 +42,18 @@ class ActivitiesIT extends HiveSimplicatorIT {
       client.execute(app.instanceId, getActivityByIdCommand) must beAnActivityWith(activityId).await
     }
 
-    "get list of all activity types" in new clientContext {
-      expect(app, GetActivityTypes())(types)
+    "get list of all known activity types" in new clientContext {
+      expectCustom(app, GetActivityTypes())(aJsonResponseOfActivityTypesNamedAs(ActivityTypes.knownNames.toSeq: _*))
 
-      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(types.types).await
+      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(ActivityType.values.toSeq).await
+    }
+
+    "ignore unknown activity types" in new clientContext {
+      expectCustom(app, GetActivityTypes())(aJsonResponseOfActivityTypesNamedAs(
+        `auth/login`, `auth/register`, "unknown/activity-type-to-hive-client"
+      ))
+
+      client.execute(app.instanceId, GetActivityTypes()) must haveTypes(Seq(`auth/login`, `auth/register`)).await
     }
 
     "create activity for contact using contact's user session" in new clientContext {
@@ -57,6 +67,11 @@ class ActivitiesIT extends HiveSimplicatorIT {
 
       client.execute(instance, getActivitiesCommand) must beActivitiesWithIds(activity).await
     }
+  }
+
+  private def aJsonResponseOfActivityTypesNamedAs(names: Any*): String = {
+    val jsonArrayOfNames = names.map(name => s""""$name"""").mkString("[", ", ", "]")
+    s"""{"types":$jsonArrayOfNames}"""
   }
 
 }
