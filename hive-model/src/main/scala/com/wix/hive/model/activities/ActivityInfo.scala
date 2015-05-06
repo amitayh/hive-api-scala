@@ -3,16 +3,15 @@ package com.wix.hive.model.activities
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wix.hive.model.activities.ActivityType._
 import com.wix.hive.model.contacts.ContactName
+import org.joda.time.DateTime
 
 sealed trait ActivityInfo {
   @JsonIgnore
   def activityType: ActivityType
 }
 
-
 case class AuthLogin() extends ActivityInfo {
   override val activityType: ActivityType = `auth/login`
-
 }
 
 case class AuthRegister(initiator: String, previousActivityStreamId: String, status: String) extends ActivityInfo {
@@ -55,16 +54,18 @@ case class CartItem(id: String, sku: Option[String], title: String, quantity: In
 
 case class ItemMetadata(name: String, value: String)
 
-case class ECommercePurchase(cartId: String,
-                             storeId: String,
-                             orderId: Option[String],
-                             items: Seq[CartItem],
-                             payment: Payment,
-                             shippingAddress: Option[CartAddress],
-                             billingAddress: Option[CartAddress],
-                             paymentGateway: Option[String],
-                             note: Option[String],
-                             buyerAcceptsMarketing: Option[Boolean]) extends ActivityInfo {
+case class ECommercePurchase(
+  cartId: String,
+  storeId: String,
+  orderId: Option[String],
+  items: Seq[CartItem],
+  payment: Payment,
+  shippingAddress: Option[CartAddress],
+  billingAddress: Option[CartAddress],
+  paymentGateway: Option[String],
+  note: Option[String],
+  buyerAcceptsMarketing: Option[Boolean]
+) extends ActivityInfo {
   override val activityType = `e_commerce/purchase`
 }
 
@@ -95,3 +96,93 @@ case class MusicTrackShare() extends ActivityInfo {
 case class MusicTrackSkip() extends ActivityInfo {
   override val activityType = `music/track-skip`
 }
+
+case class SchedulerAppointment(
+  appointmentId: Option[String],
+  source: Source,
+  title: String,
+  description: String,
+  infoLink: Option[String],
+  price: Option[Price],
+  location: Option[Location],
+  time: Option[Time],
+  attendees: Seq[Attendee]
+) extends ActivityInfo {
+  override val activityType = `scheduler/appointment`
+}
+
+case class SchedulerConfirmation(
+  appointmentId: Option[String],
+  source: Source,
+  title: String,
+  description: String,
+  infoLink: Option[String],
+  price: Option[Price],
+  location: Option[Location],
+  time: Option[Time],
+  attendees: Seq[Attendee]
+) extends ActivityInfo {
+  override val activityType = `scheduler/confirmation`
+}
+
+case class SchedulerCancel(
+  appointmentId: Option[String],
+  source: Source,
+  cancelDate: DateTime,
+  refund: Option[Refund],
+  title: String,
+  description: String,
+  infoLink: Option[String],
+  price: Option[Price],
+  location: Option[Location],
+  time: Option[Time],
+  attendees: Seq[Attendee]
+) extends ActivityInfo {
+  override val activityType = `scheduler/cancel`
+}
+
+case class Price(
+  price: java.math.BigDecimal,
+  currency: String,
+  formattedPrice: Option[String]
+)
+
+case class Location(
+  address: Option[String],
+  city: Option[String],
+  region: Option[String],
+  postalCode: Option[String],
+  country: Option[String],
+  url: Option[String]
+)
+
+case class Time(
+  start: DateTime,
+  end: DateTime,
+  timezone: String
+)
+
+case class Refund(
+  kind: RefundKind,
+  total: java.math.BigDecimal,
+  formattedTotal: Option[String],
+  currency: String,
+  notes: Option[String]
+)
+
+case class Attendee(
+  contactId: Option[String],
+  name: Option[Name],
+  phone: Option[String],
+  email: Option[String],
+  notes: Option[String],
+  self: Option[Boolean]
+)
+
+case class Name(
+  prefix: Option[String],
+  first: Option[String],
+  middle: Option[String],
+  last: Option[String],
+  suffix: Option[String]
+)

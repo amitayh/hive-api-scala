@@ -31,7 +31,11 @@ object Activity {
     `music/track-play` -> classOf[MusicTrackPlay],
     `music/track-played` -> classOf[MusicTrackPlayed],
     `music/track-share` -> classOf[MusicTrackShare],
-    `music/track-skip` -> classOf[MusicTrackSkip])
+    `music/track-skip` -> classOf[MusicTrackSkip],
+    `scheduler/appointment` -> classOf[SchedulerAppointment],
+    `scheduler/cancel` -> classOf[SchedulerCancel],
+    `scheduler/confirmation` -> classOf[SchedulerConfirmation]
+  )
 
   @JsonCreator
   def factory(props: Map[String, Object]): Activity = {

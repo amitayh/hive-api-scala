@@ -19,4 +19,7 @@ object ActivityType extends Enumeration {
   val `music/track-played` = Value("music/track-played")
   val `music/track-share` = Value("music/track-share")
   val `music/track-skip` = Value("music/track-skip")
+  val `scheduler/appointment` = Value("scheduler/appointment")
+  val `scheduler/cancel` = Value("scheduler/cancel")
+  val `scheduler/confirmation` = Value("scheduler/confirmation")
 }
