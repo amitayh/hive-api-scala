@@ -36,16 +36,16 @@ class HiveClient(val appId: String,
   val signer = new HiveSigner(secretKey)
 
 
-  def execute[R: ClassTag](instanceId: String, command: HiveCommand[R]): Future[R] = {
+  def execute[R](instanceId: String, command: HiveCommand[R]): Future[R] = {
     val httpDataFromCommand = command.createHttpRequestData
 
     val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
 
-    httpClient.request(httpDataForRequest)
+    httpClient.request(httpDataForRequest) map command.decode
   }
 
-  def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R] => Future[_ >: R]) = this.execute(instanceId, _)
-
+  def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R]) => Future[_ >: R] =
+    this.execute(instanceId, _)
 
   private def withSignature(httpData: HttpRequestData): HttpRequestData = {
     val signature = signer.getSignature(httpData)

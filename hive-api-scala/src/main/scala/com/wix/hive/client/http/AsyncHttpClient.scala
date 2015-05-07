@@ -1,13 +1,13 @@
 package com.wix.hive.client.http
 
+import java.io.InputStream
+
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.json.JacksonObjectMapper
 import dispatch._
 
-import scala.reflect.ClassTag
-
 trait AsyncHttpClient {
-  def request[T: ClassTag](data: HttpRequestData): Future[T]
+  def request(data: HttpRequestData): Future[InputStream]
 }
 
 case class HttpRequestData(method: HttpMethod,

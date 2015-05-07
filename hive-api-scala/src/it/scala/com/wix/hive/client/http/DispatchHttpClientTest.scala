@@ -1,5 +1,7 @@
 package com.wix.hive.client.http
 
+import java.io.{ByteArrayInputStream, InputStream}
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
 import com.wix.hive.infrastructure.WiremockEnvironment
@@ -43,7 +45,8 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
-    def haveDataForDummy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
+    def haveDataForDummy(data: String): Matcher[InputStream] =
+      (is:InputStream) => JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]).data == data
 
     def asString(obj: AnyRef): String = JacksonObjectMapper.mapper.writeValueAsString(obj)
 
@@ -52,6 +55,10 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       message ^^ { (_: WixAPIErrorException).message aka "message" } and
       wixErrorCode ^^ { (_: WixAPIErrorException).wixErrorCode aka "wixErrorCode" }
     }
+
+    def matchDummy(d: Dummy): Matcher[InputStream] = (is: InputStream) => JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]) == d
+
+    def asInputStream(json: String): InputStream = new ByteArrayInputStream(json.getBytes)
 
     def beFailedWith(exception: Matcher[WixAPIErrorException]) = new Matcher[Future[_]] {
       override def apply[S <: Future[_]](t: Expectable[S]): MatchResult[S] = {
@@ -73,9 +80,9 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     "parse response to an Object" in new ctx {
       givenThat(get(urlMatching(relativeTestUrl))
-        .willReturn(aResponse().withBody( """{"data":"some info"}""")))
+        .willReturn(aResponse().withBody("""{"data":"some info"}""")))
 
-      client.request[Dummy](httpRequestData) must be_===(Dummy("some info")).await(timeout = 1.second)
+      client.request(httpRequestData) must matchDummy(Dummy("some info")).await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
@@ -112,7 +119,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       givenThat(delete(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
 
       HttpMethod.values foreach { method =>
-        client.request[Dummy](HttpRequestData(method, absoluteTestUrl)) must haveDataForDummy(method.toString).await
+        client.request(HttpRequestData(method, absoluteTestUrl)) must haveDataForDummy(method.toString).await
       }
     }
 

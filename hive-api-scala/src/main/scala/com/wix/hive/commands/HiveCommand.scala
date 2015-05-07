@@ -1,10 +1,15 @@
 package com.wix.hive.commands
 
+import java.io.InputStream
+
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
+import com.wix.hive.json.JacksonObjectMapper
+
+import scala.reflect._
 
 
-trait HiveCommand[T] {
+abstract class HiveCommand[T: ClassTag] {
   def url: String
 
   def method: HttpMethod
@@ -25,4 +30,18 @@ trait HiveCommand[T] {
     case (k, v: Enumeration#Value) => k -> v.toString
     case (k, v: String) => k -> v
   }
+
+  def decode(r: InputStream) = {
+    val classOfR = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+
+    if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[T]
+    else JacksonObjectMapper.mapper.readValue(r, classOfR)
+  }
+
+//  def asT[R: ClassTag](r: Response): R = {
+//    val classOfR = classTag.runtimeClass.asInstanceOf[Class[R]]
+//
+//    if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[R]
+//    else JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfR)
+//  }
 }

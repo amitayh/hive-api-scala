@@ -1,5 +1,6 @@
 package com.wix.hive.client.http
 
+import java.io.InputStream
 import java.util.concurrent.ExecutionException
 
 import com.fasterxml.jackson.core.JsonParseException
@@ -12,8 +13,7 @@ import com.wix.hive.model.WixAPIErrorException
 import dispatch.{url, _}
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.reflect.{ClassTag, _}
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 /**
  * User: maximn
@@ -28,22 +28,22 @@ object DispatchHttpClient {
 }
 
 class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecutor) extends AsyncHttpClient {
-  override def request[T: ClassTag](data: HttpRequestData): Future[T] = {
+  override def request(data: HttpRequestData): Future[InputStream] = {
     val postDataAsString: String = data.bodyAsString
 
     val req = (url(data.url) << postDataAsString <<? data.queryString <:< data.headers)
       .setMethod(data.method.toString)
       .setBodyEncoding("UTF-8")
 
-    Http(req > handle[T] _)(executionContext).recover {
+    Http(req > handle _)(executionContext).recover {
       case e: ExecutionException => throw e.getCause
     }(executionContext)
   }
 
-  def handle[T: ClassTag](r: Response): T = {
+  def handle(r: Response): InputStream = {
     try {
       r.getStatusCode match {
-        case `2XX`() => asT[T](r)
+        case `2XX`() => r.getResponseBodyAsStream
         case 404 => {
           Try { JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException]) } match {
             case Failure(_) => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
@@ -55,12 +55,5 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecut
     } catch {
       case e@(_: JsonParseException | _: JsonMappingException) => throw new WixAPIErrorException(r.getStatusCode, Some(s"Couldn't parse response because of ${e.getClass.getName}: ${r.getResponseBody}"))
     }
-  }
-
-  def asT[T: ClassTag](r: Response): T = {
-    val classOfT = classTag.runtimeClass.asInstanceOf[Class[T]]
-
-    if (classOf[scala.runtime.Nothing$] == classOfT || classOf[Unit] == classOfT) null.asInstanceOf[T]
-    else JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOfT)
   }
 }

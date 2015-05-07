@@ -1,5 +1,7 @@
 package com.wix.hive.client
 
+import java.io.{InputStream, ByteArrayInputStream}
+
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
 import com.wix.hive.commands.HiveCommand
@@ -7,6 +9,8 @@ import com.wix.hive.matchers.HiveMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
+
+import scala.concurrent.Future
 
 
 class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatchers {
@@ -17,7 +21,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val id = "appId"
     val key = "appKey"
     val instance = "websiteInstance"
-
+    val responseBody: InputStream = new ByteArrayInputStream("dummy".getBytes)
     val baseUrl = "http://wix.com/"
     val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient), baseUrl = Some(baseUrl))
 
@@ -26,7 +30,7 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
       url = be_===(client.baseUrl + HiveClient.versionForUrl + commandUrl + commandParams),
       query = havePairs(commandQuery.toSeq: _*),
       headers = headersFor(commandHeaders, client, instance),
-      body = be_===(commandBody)))(any)
+      body = be_===(commandBody)))
 
     val command = TestCommand()
   }
@@ -35,6 +39,8 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
   "execute" should {
 
     "call the http client with the correct parameters" in new Context {
+      httpClient.request(any) returns Future.successful(responseBody)
+
       client.execute(instance, TestCommand())
 
       oneCallWithCorrectParams
@@ -46,6 +52,8 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
     "call the http client with the correct parameters" in new Context {
       val executor = client.executeForInstance(instance)
+
+      httpClient.request(any) returns Future.successful(responseBody)
 
       executor(TestCommand())
 
