@@ -1,17 +1,18 @@
 package com.wix.hive.client
 
-import java.io.{InputStream, ByteArrayInputStream}
+import java.io.{ByteArrayInputStream, InputStream}
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
 import com.wix.hive.commands.HiveCommand
 import com.wix.hive.matchers.HiveMatchers
+import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
 import scala.concurrent.Future
-
 
 class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatchers {
 
@@ -21,46 +22,54 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val id = "appId"
     val key = "appKey"
     val instance = "websiteInstance"
-    val responseBody: InputStream = new ByteArrayInputStream("dummy".getBytes)
     val baseUrl = "http://wix.com/"
     val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient), baseUrl = Some(baseUrl))
 
-    def oneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
+    def verifyOneCallWithCorrectParams = there was one(httpClient).request(httpRequestDataWith(
       method = be_===(HttpMethod.GET),
       url = be_===(client.baseUrl + HiveClient.versionForUrl + commandUrl + commandParams),
       query = havePairs(commandQuery.toSeq: _*),
       headers = headersFor(commandHeaders, client, instance),
       body = be_===(commandBody)))
 
-    val command = TestCommand()
-  }
-
-
-  "execute" should {
-
-    "call the http client with the correct parameters" in new Context {
-      httpClient.request(any) returns Future.successful(responseBody)
-
-      client.execute(instance, TestCommand())
-
-      oneCallWithCorrectParams
+    def givenAHttpClientReturnsAResponse = httpClient.request(any) returns Future.successful {
+        new ByteArrayInputStream(new ObjectMapper().writeValueAsBytes(TestCommandResponse())).asInstanceOf[InputStream]
     }
+
+    def givenAHttpClientFailsWith(anException: Throwable) = httpClient.request(any) returns Future.failed(anException)
   }
 
+  "HiveClient" should {
 
-  "executeForInstance" should {
+    "wrap unhandled exceptions thrown from AsyncHttpClient" in new Context {
+      givenAHttpClientFailsWith(new RuntimeException("an unhandled exception."))
 
-    "call the http client with the correct parameters" in new Context {
-      val executor = client.executeForInstance(instance)
-
-      httpClient.request(any) returns Future.successful(responseBody)
-
-      executor(TestCommand())
-
-      oneCallWithCorrectParams
+      client.execute(instance, TestCommand()) must throwA[HiveClientException]((".*an unhandled exception.*")).await
     }
-  }
 
+    "pass-through WixAPIErrorException thrown from AsyncHttpClient" in new Context {
+      givenAHttpClientFailsWith(new WixAPIErrorException(400, Some("bad request"), None))
+
+      client.execute(instance, TestCommand()) must throwA[WixAPIErrorException].await
+    }
+
+    "execute a command with correct parameters and return a response" in new Context {
+      givenAHttpClientReturnsAResponse
+
+      client.execute(instance, TestCommand()) must be_==(TestCommandResponse()).await
+
+      verifyOneCallWithCorrectParams
+    }
+
+    "execute a command via executeForInstance with correct parameters and return a response" in new Context {
+      givenAHttpClientReturnsAResponse
+
+      client.executeForInstance(instance).apply(TestCommand())
+
+      verifyOneCallWithCorrectParams
+    }
+
+  }
 
   "apply" should {
     "load with configuration from conf file" >> {
@@ -98,19 +107,13 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
   case class TestCommand() extends HiveCommand[TestCommandResponse] {
     override def url: String = commandUrl
-
     override def urlParams: String = commandParams
-
     override def query: NamedParameters = commandQuery
-
     override def headers: NamedParameters = commandHeaders
-
     override def body: Option[AnyRef] = commandBody
-
     override def method: HttpMethod = HttpMethod.GET
   }
 
-  case class TestCommandResponse()
-
 }
+  case class TestCommandResponse()
 

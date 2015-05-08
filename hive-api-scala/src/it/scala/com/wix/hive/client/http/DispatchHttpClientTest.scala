@@ -1,6 +1,6 @@
 package com.wix.hive.client.http
 
-import java.io.{ByteArrayInputStream, InputStream}
+import java.io.InputStream
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
@@ -16,6 +16,7 @@ import org.specs2.time.NoTimeConversions
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor}
+import scala.io.Source
 import scala.util.{Failure, Try}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
@@ -36,29 +37,25 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     val nonEnglishBodyData = Dummy("גוף")
 
-
     val httpRequestData = HttpRequestData(HttpMethod.GET, absoluteTestUrl)
 
     val executor = mock[ExecutionContextExecutor]
     val clientWithCustomExecutor = new DispatchHttpClient()(executor)
 
-    
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
     def haveDataForDummy(data: String): Matcher[InputStream] =
-      (is:InputStream) => JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]).data == data
+      (is:InputStream) =>  JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]).data == data
 
     def asString(obj: AnyRef): String = JacksonObjectMapper.mapper.writeValueAsString(obj)
+
+    def matchJson(json: String) : Matcher[InputStream] = (is: InputStream) => Source.fromInputStream(is).mkString == json
 
     def isWixApiErrorException(errorCode: Matcher[Int], message: Matcher[Option[String]], wixErrorCode: Matcher[Option[Int]]): Matcher[WixAPIErrorException] = {
       errorCode ^^ { (_: WixAPIErrorException).errorCode aka "errorCode" } and
       message ^^ { (_: WixAPIErrorException).message aka "message" } and
       wixErrorCode ^^ { (_: WixAPIErrorException).wixErrorCode aka "wixErrorCode" }
     }
-
-    def matchDummy(d: Dummy): Matcher[InputStream] = (is: InputStream) => JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]) == d
-
-    def asInputStream(json: String): InputStream = new ByteArrayInputStream(json.getBytes)
 
     def beFailedWith(exception: Matcher[WixAPIErrorException]) = new Matcher[Future[_]] {
       override def apply[S <: Future[_]](t: Expectable[S]): MatchResult[S] = {
@@ -75,14 +72,13 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     }
   }
 
-
   "request" should {
 
-    "parse response to an Object" in new ctx {
+    "return an input stream matching response from server" in new ctx {
       givenThat(get(urlMatching(relativeTestUrl))
         .willReturn(aResponse().withBody("""{"data":"some info"}""")))
 
-      client.request(httpRequestData) must matchDummy(Dummy("some info")).await(timeout = 1.second)
+      client.request(httpRequestData) must matchJson("""{"data":"some info"}""").await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
@@ -171,6 +167,5 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     }
   }
 }
-
 
 case class Dummy(data: String)
