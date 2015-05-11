@@ -27,7 +27,7 @@
         <scala.version>2.11.5</scala.version>
         <scala.dependencies.version>2.11</scala.dependencies.version>
 
-        <org.specs2.version>2.4.15</org.specs2.version>
+        <org.specs2.version>3.6</org.specs2.version>
 
         <wiremock.version>1.50</wiremock.version>
         <finagle-http.version>6.24.0</finagle-http.version>
@@ -67,7 +67,22 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_${scala.dependencies.version}</artifactId>
+            <artifactId>specs2-core_${scala.dependencies.version}</artifactId>
+            <version>${org.specs2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-junit_${scala.dependencies.version}</artifactId>
+            <version>${org.specs2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-matcher-extra_${scala.dependencies.version}</artifactId>
+            <version>${org.specs2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-mock_${scala.dependencies.version}</artifactId>
             <version>${org.specs2.version}</version>
         </dependency>
     </dependencies>
