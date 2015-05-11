@@ -69,7 +69,6 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
       verifyOneCallWithCorrectParams
     }
-
   }
 
   "apply" should {
@@ -80,7 +79,6 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
       client.baseUrl must be_===("https://openapi.wix.com")
     }
   }
-
 
   "object" should {
     "compose with no slashes" >> {
