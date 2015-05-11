@@ -74,7 +74,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
   "request" should {
 
-    "return an input stream matching response from server" in new ctx {
+    "return result matching response from server" in new ctx {
       givenThat(get(urlMatching(relativeTestUrl))
         .willReturn(aResponse().withBody("""{"data":"some info"}""")))
 
