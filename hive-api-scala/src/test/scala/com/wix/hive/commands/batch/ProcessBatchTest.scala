@@ -19,8 +19,8 @@ class ProcessBatchTest extends SpecificationWithJUnit {
 
     "create HttpRequestData with parameters" in {
       val modifiedAt = DateTime.now
-      val cmd = ProcessBatch(Some(modifiedAt), operations = Seq("theId" -> aCommand(uri = "/sites/site/pages")))
-      val anOperation = BatchOperation("theId", "GET", "/v1/sites/site/pages?version=1.0.0", Set.empty, None)
+      val cmd = ProcessBatch(Some(modifiedAt), operations = Seq(aCommand(uri = "/sites/site/pages")))
+      val anOperation = BatchOperation("0", "GET", "/v1/sites/site/pages?version=1.0.0", Set.empty, None)
 
       cmd.createHttpRequestData must httpRequestDataWith(
         method = be_===(POST),
@@ -31,33 +31,33 @@ class ProcessBatchTest extends SpecificationWithJUnit {
 
   "toBatchOperation should infer" >> {
     "id, method, url" in {
-      val op = ProcessBatch.toBatchOperation("anId", aCommand(httpMethod = HttpMethod.PUT, uri = "/batch/method"))
+      val op = ProcessBatch.toBatchOperation("0", aCommand(httpMethod = HttpMethod.PUT, uri = "/batch/method"))
 
-      op.id mustEqual "anId"
+      op.id mustEqual "0"
       op.method mustEqual "PUT"
       op.relativeUrl must startWith("/v1/batch/method")
     }
 
     "default version parameter" in {
-      val op = ProcessBatch.toBatchOperation("anId", aCommand(uri = "/batch/method"))
+      val op = ProcessBatch.toBatchOperation("0", aCommand(uri = "/batch/method"))
 
       op.relativeUrl mustEqual "/v1/batch/method?version=1.0.0"
     }
 
     "query parameters" in {
-      val op = ProcessBatch.toBatchOperation("anId", aCommand(queryParams = Map("first" -> "firstVal", "second" -> "secondVal")))
+      val op = ProcessBatch.toBatchOperation("0", aCommand(queryParams = Map("first" -> "firstVal", "second" -> "secondVal")))
 
       op.relativeUrl must (contain("first=firstVal") and contain("second=secondVal"))
     }
 
     "headers" in {
-      val op = ProcessBatch.toBatchOperation("anId", aCommand(theHeaders = Map("first" -> "firstVal")))
+      val op = ProcessBatch.toBatchOperation("0", aCommand(theHeaders = Map("first" -> "firstVal")))
 
       op.headers must contain("first" -> "firstVal")
     }
 
     "body" in {
-      val op = ProcessBatch.toBatchOperation("anId", aCommand(payload = Some("payload")))
+      val op = ProcessBatch.toBatchOperation("0", aCommand(payload = Some("payload")))
 
       op.body must beSome("payload")
     }

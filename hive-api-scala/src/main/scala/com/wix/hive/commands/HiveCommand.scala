@@ -8,7 +8,6 @@ import com.wix.hive.json.JacksonObjectMapper
 
 import scala.reflect._
 
-
 abstract class HiveCommand[T: ClassTag] {
   def url: String
 
@@ -31,10 +30,13 @@ abstract class HiveCommand[T: ClassTag] {
     case (k, v: String) => k -> v
   }
 
-  def decode(r: InputStream): T = {
+  def decode(r: InputStream): T = asT(r)
+
+  def asT(r: InputStream): T = {
     val classOfR = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
 
     if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[T]
     else JacksonObjectMapper.mapper.readValue(r, classOfR)
   }
+
 }

@@ -24,11 +24,11 @@ class BatchIT extends HiveSimplicatorIT {
     "process a batch request" in new clientContext {
       val op1 = aCommand(HttpMethod.GET, "/v1/method/one")
       val op2 = aCommand(HttpMethod.POST, "/v1/method/two")
-      val cmd = ProcessBatch(operations = Seq("op1" -> op1, "op2" -> op2))
+      val cmd = ProcessBatch(operations = Seq(op1, op2))
 
       val resp = BatchOperationResult(Seq(
-        OperationResult("op1", "GET", "/v1/method/one?version=1.0.0", 200, None),
-        OperationResult("op2", "POST", "/v1/method/two?version=1.0.0", 201, None)))
+        OperationResult("1", "GET", "/v1/method/one?version=1.0.0", 200, None),
+        OperationResult("2", "POST", "/v1/method/two?version=1.0.0", 201, None)))
 
       expect(app, cmd)(resp)
 

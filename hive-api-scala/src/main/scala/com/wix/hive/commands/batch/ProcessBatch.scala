@@ -1,13 +1,12 @@
 package com.wix.hive.commands.batch
 
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
-import com.wix.hive.client.HiveClient
-import com.wix.hive.client.HiveClient.{version, VersionKey, versionForUrl}
+import com.wix.hive.client.HiveClient.{VersionKey, version, versionForUrl}
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.HttpRequestDataImplicits._
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationId, CreateBatchOperation}
+import com.wix.hive.commands.batch.ProcessBatch.CreateBatchOperation
 import com.wix.hive.model.batch.FailurePolicy.{FailurePolicy, STOP_ON_FAILURE}
 import com.wix.hive.model.batch._
 import org.joda.time.DateTime
@@ -18,12 +17,12 @@ import org.joda.time.DateTime
 case class ProcessBatch(
   modifiedAt: Option[DateTime] = None,
   failurePolicy: FailurePolicy = STOP_ON_FAILURE,
-  operations: Seq[(BatchOperationId, HiveCommand[_])]) extends HiveCommand[BatchOperationResult] {
+  operations: Seq[HiveCommand[_]]) extends HiveCommand[BatchOperationResult] {
 
   override def method: HttpMethod = HttpMethod.POST
   override def url: String = "/batch"
   override def body: Option[AnyRef] = {
-    val ops = operations.map { case (id, op) => ProcessBatch.toBatchOperation(id, op) }
+    val ops = operations.zipWithIndex.map { case (op, id) => ProcessBatch.toBatchOperation(id.toString, op) }
     Some(CreateBatchOperation(ops, modifiedAt, failurePolicy))
   }
 }
