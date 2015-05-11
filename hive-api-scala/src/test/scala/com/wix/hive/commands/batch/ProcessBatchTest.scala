@@ -1,11 +1,14 @@
 package com.wix.hive.commands.batch
 
+import java.io.{ByteArrayInputStream, InputStream}
+
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{HttpMethod, _}
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.commands.batch.ProcessBatch.{CreateBatchOperation, BatchOperation}
+import com.wix.hive.commands.batch.ProcessBatch.{BatchOperation, CreateBatchOperation}
+import com.wix.hive.json.JacksonObjectMapper.mapper
 import com.wix.hive.matchers.HiveMatchers._
-import com.wix.hive.model.batch.FailurePolicy
+import com.wix.hive.model.batch.{BatchOperationResult, FailurePolicy, OperationResult}
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 
@@ -63,12 +66,48 @@ class ProcessBatchTest extends SpecificationWithJUnit {
     }
   }
 
+  "decode" should {
+    "decode an ok response" in {
+      val cmd = ProcessBatch(operations = Seq(aCommand(uri = "/sites/site/pages")))
+      val responseFromServer = BatchOperationResult(Seq(
+        OperationResult("0", "GET", "/v1/method/one?version=1.0.0", 200, Some("""{"data": "some data"}"""))))
+
+      cmd.decode(asJsonIs(responseFromServer)) must contain(Right(AResponse("some data")))
+    }
+
+    "decode a None response for Option response type" in {
+      val cmd = ProcessBatch(operations = Seq(aCommand(uri = "/sites/site/pages")))
+      val responseFromServer = BatchOperationResult(Seq(
+        OperationResult("0", "GET", "/v1/method/one?version=1.0.0", 200, None)))
+
+      cmd.decode(asJsonIs(responseFromServer)) must contain(Right(None))
+    }
+
+    "decode a error response" in {
+      val cmd = ProcessBatch(operations = Seq(aCommand(uri = "/sites/site/pages")))
+      val responseFromServer = BatchOperationResult(Seq(
+        OperationResult("0", "GET", "/v1/method/one?version=1.0.0", 401, Some("""{"errorCode": 401, "message": "err msg", "wixErrorCode": -12333}"""))))
+
+      cmd.decode(asJsonIs(responseFromServer)) must contain(Left(WixAPIError(401, Some("err msg"), Some(-12333))))
+    }
+
+    "handle an error response when error payload is missing" in {
+      val cmd = ProcessBatch(operations = Seq(aCommand(uri = "/sites/site/pages")))
+      val responseFromServer = BatchOperationResult(Seq(
+        OperationResult("0", "GET", "/v1/method/one?version=1.0.0", 401, None)))
+
+      cmd.decode(asJsonIs(responseFromServer)) must contain(anInstanceOf[Left[WixAPIError, _]])
+    }
+  }
+
+  def asJsonIs(entity: AnyRef): InputStream = new ByteArrayInputStream(mapper.writeValueAsBytes(entity))
+
   def aCommand(
     httpMethod: HttpMethod = HttpMethod.GET,
     uri: String = "/some/method",
     queryParams: NamedParameters = Map.empty,
     theHeaders: NamedParameters = Map.empty,
-    payload: Option[AnyRef] = None) = new HiveCommand[AnyRef] {
+    payload: Option[AnyRef] = None) = new HiveCommand[AResponse] {
     override def url: String = uri
     override def method: HttpMethod = httpMethod
     override def query: NamedParameters = queryParams
@@ -76,3 +115,5 @@ class ProcessBatchTest extends SpecificationWithJUnit {
     override def body: Option[AnyRef] = payload
   }
 }
+
+case class AResponse(data: String)
