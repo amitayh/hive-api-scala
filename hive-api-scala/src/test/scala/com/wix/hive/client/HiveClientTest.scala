@@ -46,9 +46,10 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     }
 
     "pass-through WixAPIErrorException thrown from AsyncHttpClient" in new Context {
-      givenAHttpClientFailsWith(new WixAPIErrorException(400, Some("bad request"), None))
+      private val anException = new WixAPIErrorException(400, Some("bad request"), None)
+      givenAHttpClientFailsWith(anException)
 
-      client.execute(instance, TestCommand()) must throwA[WixAPIErrorException].await
+      client.execute(instance, TestCommand()) must throwAn(anException).await
     }
   }
 
