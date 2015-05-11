@@ -8,8 +8,8 @@ import com.wix.hive.json.JacksonObjectMapper
 
 import scala.reflect._
 
-
 abstract class HiveCommand[T: ClassTag] {
+
   def url: String
 
   def method: HttpMethod
@@ -31,10 +31,13 @@ abstract class HiveCommand[T: ClassTag] {
     case (k, v: String) => k -> v
   }
 
-  def decode(r: InputStream): T = {
-    val classOfR = implicitly[ClassTag[T]].runtimeClass.asInstanceOf[Class[T]]
+  protected[hive] def decode(r: InputStream): T = asR[T](r)
 
-    if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[T]
+  protected def asR[R: ClassTag](r: InputStream): R = {
+    val classOfR = implicitly[ClassTag[R]].runtimeClass.asInstanceOf[Class[R]]
+
+    if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[R]
     else JacksonObjectMapper.mapper.readValue(r, classOfR)
   }
+
 }
