@@ -4,14 +4,12 @@ import com.typesafe.config._
 import com.wix.hive.client.HiveClient.{version, versionForUrl}
 import com.wix.hive.client.http._
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.ClassTag
-import scala.util.control.NonFatal
+import scala.concurrent.ExecutionContext.Implicits.global
 
 private object DefaultHttpClientFactory {
   def create: AsyncHttpClient = new DispatchHttpClient()
@@ -43,10 +41,7 @@ class HiveClient(val appId: String,
 
     val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
 
-    httpClient.request(httpDataForRequest) recoverWith {
-      case e: WixAPIErrorException => throw e
-      case NonFatal(e) => throw new HiveClientException(message = e.getMessage)
-    }
+    httpClient.request(httpDataForRequest)
   }
 
   def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R] => Future[_ >: R]) = this.execute(instanceId, _)

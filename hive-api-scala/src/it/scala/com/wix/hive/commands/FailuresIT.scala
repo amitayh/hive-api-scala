@@ -2,7 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.drivers.ContactsTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
-import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
+import com.wix.hive.model.WixAPIErrorException
 
 /**
  * User: maximn
@@ -43,7 +43,7 @@ class FailuresIT extends HiveSimplicatorIT with ContactsTestSupport {
     "throw WixApiErrorException(500)" in new clientContext {
       expectCustom(app, addAddressCommand)("<test>fmejwklf7e89wf632g1$#@#^%&^%*</test>")
 
-      client.execute(instance, addAddressCommand) must throwA[HiveClientException].await
+      client.execute(instance, addAddressCommand) must throwA[WixAPIErrorException].await
     }
   }
 }

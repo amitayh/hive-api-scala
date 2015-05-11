@@ -1,6 +1,5 @@
 package com.wix.hive.client.http
 
-import com.fasterxml.jackson.core.JsonParseException
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
 import com.wix.hive.infrastructure.WiremockEnvironment
@@ -162,13 +161,6 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
       verify(postRequestedFor(urlEqualTo(relativeTestUrl))
         .withRequestBody(equalToJson(asString(nonEnglishBodyData))))
-    }
-
-    "throw error on deserialization when server returned 2XX" in new ctx {
-      givenThat(get(urlMatching(relativeTestUrl))
-        .willReturn(aResponse().withBody("""<head>woops</head>""")))
-
-      client.request[Dummy](httpRequestData) must throwA[JsonParseException].await(timeout = 1.second)
     }
   }
 }
