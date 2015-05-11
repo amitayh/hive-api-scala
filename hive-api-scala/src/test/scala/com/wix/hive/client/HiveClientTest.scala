@@ -1,5 +1,8 @@
 package com.wix.hive.client
 
+import java.io.{ByteArrayInputStream, InputStream}
+
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
 import com.wix.hive.commands.HiveCommand
@@ -11,7 +14,6 @@ import org.specs2.specification.Scope
 
 import scala.concurrent.Future
 
-
 class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatchers {
 
   class Context extends Scope {
@@ -20,7 +22,6 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
     val id = "appId"
     val key = "appKey"
     val instance = "websiteInstance"
-
     val baseUrl = "http://wix.com/"
     val client = HiveClient(Some(id), Some(key), httpClient = Some(httpClient), baseUrl = Some(baseUrl))
 
@@ -29,16 +30,17 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
       url = be_===(client.baseUrl + HiveClient.versionForUrl + commandUrl + commandParams),
       query = havePairs(commandQuery.toSeq: _*),
       headers = headersFor(commandHeaders, client, instance),
-      body = be_===(commandBody)))(any)
+      body = be_===(commandBody)))
 
-    def givenAHttpClientReturnsAResponse =
-      httpClient.request(any)(===(scala.reflect.classTag[TestCommandResponse])) returns Future.successful(TestCommandResponse())
+    def givenAHttpClientReturnsAResponse = httpClient.request(any) returns Future.successful {
+        new ByteArrayInputStream(new ObjectMapper().writeValueAsBytes(TestCommandResponse())).asInstanceOf[InputStream]
+    }
 
-    def givenAHttpClientFailsWith(anException: Throwable) =
-      httpClient.request(any)(===(scala.reflect.classTag[TestCommandResponse])) returns Future.failed(anException)
+    def givenAHttpClientFailsWith(anException: Throwable) = httpClient.request(any) returns Future.failed(anException)
   }
 
   "HiveClient" should {
+
     "wrap unhandled exceptions thrown from AsyncHttpClient" in new Context {
       givenAHttpClientFailsWith(new RuntimeException("an unhandled exception."))
 
@@ -51,33 +53,24 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
       client.execute(instance, TestCommand()) must throwAn(anException).await
     }
-  }
 
-  "execute" should {
-
-    "call the http client with the correct parameters" in new Context {
+    "execute a command with correct parameters and return a response" in new Context {
       givenAHttpClientReturnsAResponse
 
       client.execute(instance, TestCommand()) must be_==(TestCommandResponse()).await
 
       verifyOneCallWithCorrectParams
     }
-  }
 
-
-  "executeForInstance" should {
-
-    "call the http client with the correct parameters" in new Context {
+    "execute a command via executeForInstance with correct parameters and return a response" in new Context {
       givenAHttpClientReturnsAResponse
 
-      val executor = client.executeForInstance(instance)
-
-      executor(TestCommand())
+      client.executeForInstance(instance).apply(TestCommand())
 
       verifyOneCallWithCorrectParams
-    }.pendingUntilFixed("command does not infer acutal command response type")
-  }
+    }
 
+  }
 
   "apply" should {
     "load with configuration from conf file" >> {
@@ -115,19 +108,13 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
   case class TestCommand() extends HiveCommand[TestCommandResponse] {
     override def url: String = commandUrl
-
     override def urlParams: String = commandParams
-
     override def query: NamedParameters = commandQuery
-
     override def headers: NamedParameters = commandHeaders
-
     override def body: Option[AnyRef] = commandBody
-
     override def method: HttpMethod = HttpMethod.GET
   }
 
-  case class TestCommandResponse()
-
 }
+  case class TestCommandResponse()
 

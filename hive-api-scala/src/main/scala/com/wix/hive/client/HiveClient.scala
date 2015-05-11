@@ -10,7 +10,6 @@ import org.joda.time.format.ISODateTimeFormat
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.reflect.ClassTag
 import scala.util.control.NonFatal
 
 private object DefaultHttpClientFactory {
@@ -38,19 +37,19 @@ class HiveClient(val appId: String,
   val signer = new HiveSigner(secretKey)
 
 
-  def execute[R: ClassTag](instanceId: String, command: HiveCommand[R]): Future[R] = {
+  def execute[R](instanceId: String, command: HiveCommand[R]): Future[R] = {
     val httpDataFromCommand = command.createHttpRequestData
 
     val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)
 
-    httpClient.request(httpDataForRequest) recoverWith {
+    httpClient.request(httpDataForRequest) map command.decode recoverWith {
       case e: WixAPIErrorException => throw e
       case NonFatal(e) => throw new HiveClientException(message = e.getMessage)
     }
   }
 
-  def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R] => Future[_ >: R]) = this.execute(instanceId, _)
-
+  def executeForInstance[R](instanceId: String): (HiveCommand[_ <: R]) => Future[_ >: R] =
+    this.execute(instanceId, _)
 
   private def withSignature(httpData: HttpRequestData): HttpRequestData = {
     val signature = signer.getSignature(httpData)

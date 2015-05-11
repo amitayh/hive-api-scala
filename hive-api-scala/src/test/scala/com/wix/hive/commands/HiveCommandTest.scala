@@ -1,6 +1,10 @@
 package com.wix.hive.commands
 
+import java.io.{ByteArrayInputStream, InputStream}
+
+import com.fasterxml.jackson.core.JsonParseException
 import com.wix.hive.client.http.HttpMethod.HttpMethod
+import com.wix.hive.json.JacksonObjectMapper
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
@@ -11,9 +15,8 @@ import org.specs2.specification.Scope
 class HiveCommandTest extends SpecificationWithJUnit {
 
   trait Context extends Scope {
-    val cmd = new HiveCommand[AnyRef] {
+    val cmd = new HiveCommand[CmdResponse] {
       override def url: String = ???
-
       override def method: HttpMethod = ???
     }
 
@@ -25,7 +28,6 @@ class HiveCommandTest extends SpecificationWithJUnit {
     }
 
   }
-
 
   "mapValuesToStrings" should {
     "convert value of Some to string of inner" in new Context {
@@ -48,4 +50,20 @@ class HiveCommandTest extends SpecificationWithJUnit {
       cmd.mapValuesToStrings(aMap(new AnyRef)) must beEmpty
     }
   }
+
+  "decode" should {
+    "deserialize valid json" in new Context {
+      val response = CmdResponse("some data")
+      val jsonIS: InputStream = new ByteArrayInputStream(JacksonObjectMapper.mapper.writeValueAsBytes(response))
+      cmd.decode(jsonIS) mustEqual response
+    }
+
+    "fail when content is not a json" in new Context {
+      val is: InputStream = new ByteArrayInputStream("<head>wohoo</head>".getBytes)
+      cmd.decode(is) must throwA[JsonParseException]
+
+    }
+  }
 }
+
+case class CmdResponse(data: String)

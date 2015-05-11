@@ -1,6 +1,7 @@
 package com.wix.hive.client.http
 
-import com.fasterxml.jackson.core.JsonParseException
+import java.io.InputStream
+
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
 import com.wix.hive.infrastructure.WiremockEnvironment
@@ -15,6 +16,7 @@ import org.specs2.time.NoTimeConversions
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor}
+import scala.io.Source
 import scala.util.{Failure, Try}
 
 class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
@@ -35,18 +37,19 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
 
     val nonEnglishBodyData = Dummy("גוף")
 
-
     val httpRequestData = HttpRequestData(HttpMethod.GET, absoluteTestUrl)
 
     val executor = mock[ExecutionContextExecutor]
     val clientWithCustomExecutor = new DispatchHttpClient()(executor)
 
-    
     def beSuccess: Matcher[Future[_]] = (f: Future[_]) => Try(Await.result(f, 1.second)).isSuccess
 
-    def haveDataForDummy(data: String): Matcher[Dummy] = (d:Dummy) => d.data == data
+    def haveDataForDummy(data: String): Matcher[InputStream] =
+      (is:InputStream) =>  JacksonObjectMapper.mapper.readValue(is, classOf[Dummy]).data == data
 
     def asString(obj: AnyRef): String = JacksonObjectMapper.mapper.writeValueAsString(obj)
+
+    def matchJson(json: String) : Matcher[InputStream] = (is: InputStream) => Source.fromInputStream(is).mkString == json
 
     def isWixApiErrorException(errorCode: Matcher[Int], message: Matcher[Option[String]], wixErrorCode: Matcher[Option[Int]]): Matcher[WixAPIErrorException] = {
       errorCode ^^ { (_: WixAPIErrorException).errorCode aka "errorCode" } and
@@ -69,14 +72,13 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
     }
   }
 
-
   "request" should {
 
-    "parse response to an Object" in new ctx {
+    "return result matching response from server" in new ctx {
       givenThat(get(urlMatching(relativeTestUrl))
-        .willReturn(aResponse().withBody( """{"data":"some info"}""")))
+        .willReturn(aResponse().withBody("""{"data":"some info"}""")))
 
-      client.request[Dummy](httpRequestData) must be_===(Dummy("some info")).await(timeout = 1.second)
+      client.request(httpRequestData) must matchJson("""{"data":"some info"}""").await(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
@@ -113,7 +115,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       givenThat(delete(urlEqualTo(relativeTestUrl)).willReturn(aResponse().withBody("""{"data":"DELETE"}""")))
 
       HttpMethod.values foreach { method =>
-        client.request[Dummy](HttpRequestData(method, absoluteTestUrl)) must haveDataForDummy(method.toString).await
+        client.request(HttpRequestData(method, absoluteTestUrl)) must haveDataForDummy(method.toString).await
       }
     }
 
@@ -163,15 +165,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       verify(postRequestedFor(urlEqualTo(relativeTestUrl))
         .withRequestBody(equalToJson(asString(nonEnglishBodyData))))
     }
-
-    "throw error on deserialization when server returned 2XX" in new ctx {
-      givenThat(get(urlMatching(relativeTestUrl))
-        .willReturn(aResponse().withBody("""<head>woops</head>""")))
-
-      client.request[Dummy](httpRequestData) must throwA[JsonParseException].await(timeout = 1.second)
-    }
   }
 }
-
 
 case class Dummy(data: String)
