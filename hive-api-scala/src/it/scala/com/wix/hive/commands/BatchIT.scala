@@ -2,10 +2,10 @@ package com.wix.hive.commands
 
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod._
-import com.wix.hive.commands.batch.{WixAPIError, ProcessBatch}
+import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, OperationResult}
+import com.wix.hive.commands.batch.{ProcessBatch, WixAPIError}
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.json.JacksonObjectMapper.mapper
-import com.wix.hive.model.batch.{BatchOperationResult, OperationResult}
 
 /**
  * @author viliusl

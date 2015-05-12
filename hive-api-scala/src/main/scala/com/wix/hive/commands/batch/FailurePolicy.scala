@@ -1,4 +1,4 @@
-package com.wix.hive.model.batch
+package com.wix.hive.commands.batch
 
 import com.fasterxml.jackson.core.`type`.TypeReference
 

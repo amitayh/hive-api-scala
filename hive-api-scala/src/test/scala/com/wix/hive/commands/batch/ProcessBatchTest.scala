@@ -5,10 +5,9 @@ import java.io.{ByteArrayInputStream, InputStream}
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{HttpMethod, _}
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.commands.batch.ProcessBatch.{BatchOperation, CreateBatchOperation}
+import com.wix.hive.commands.batch.ProcessBatch.{OperationResult, BatchOperationResult, BatchOperation, CreateBatchOperation}
 import com.wix.hive.json.JacksonObjectMapper.mapper
 import com.wix.hive.matchers.HiveMatchers._
-import com.wix.hive.model.batch.{BatchOperationResult, FailurePolicy, OperationResult}
 import org.joda.time.DateTime
 import org.specs2.mutable.SpecificationWithJUnit
 

@@ -2,16 +2,14 @@ package com.wix.hive.commands.batch
 
 import java.io.{ByteArrayInputStream, InputStream}
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.client.HiveClient.{VersionKey, version, versionForUrl}
 import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod.HttpMethod
 import com.wix.hive.client.http.HttpRequestDataImplicits._
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.commands.batch.ProcessBatch.CreateBatchOperation
-import com.wix.hive.model.batch.FailurePolicy.{FailurePolicy, STOP_ON_FAILURE}
-import com.wix.hive.model.batch._
+import com.wix.hive.commands.batch.FailurePolicy.{STOP_ON_FAILURE, FailurePolicy}
+import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, CreateBatchOperation}
 import org.joda.time.DateTime
 
 /**
@@ -64,19 +62,26 @@ object ProcessBatch {
     BatchOperation(id, cmd.method.toString, url, cmd.headers.toSet, cmd.body map {_ => reqData.bodyAsString })
   }
 
-  protected[batch] case class BatchOperation(
+  protected[commands] case class BatchOperation(
     id: String,
     method: String,
     relativeUrl: String,
     headers: Set[(String, String)],
     body: Option[String])
 
-  protected[batch] case class CreateBatchOperation(
+  protected[commands] case class CreateBatchOperation(
     operations: Seq[BatchOperation],
     modifiedAt: Option[DateTime] = None,
     @JsonScalaEnumeration(classOf[FailurePolicyType])
     failurePolicy: FailurePolicy = STOP_ON_FAILURE)
-}
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-case class WixAPIError(errorCode: Int, message: Option[String], wixErrorCode: Option[Int])
+  protected[commands] case class BatchOperationResult(
+    operations: Seq[OperationResult])
+
+  protected[commands] case class OperationResult(
+    id: String,
+    method: String,
+    relativeUrl: String,
+    responseCode: Int,
+    body: Option[String])
+}
