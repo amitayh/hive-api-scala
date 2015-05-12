@@ -8,7 +8,7 @@ import com.wix.hive.model.activities.ActivityType
 import com.wix.hive.model.activities.ActivityType._
 import com.wix.hive.model.insights.{ActivitySummary, ActivityTypesSummary}
 import org.joda.time.DateTime
-import org.specs2.matcher.{Matcher, Matchers}
+import org.specs2.matcher.{MustThrownExpectations, Matcher, Matchers}
 
 /**
  * User: maximn

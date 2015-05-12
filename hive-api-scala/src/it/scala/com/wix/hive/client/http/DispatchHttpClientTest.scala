@@ -8,26 +8,28 @@ import com.wix.hive.infrastructure.WiremockEnvironment
 import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.Future
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.{Expectable, MatchResult, Matcher}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.time.NoTimeConversions
+import org.specs2.specification.Scope
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor}
 import scala.io.Source
 import scala.util.{Failure, Try}
 
-class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversions with Mockito {
+class DispatchHttpClientTest extends SpecificationWithJUnit with Mockito {
   sequential
 
   step {
     WiremockEnvironment.start()
   }
 
-  trait ctx extends Before {
+  trait ctx extends Scope with Before {
     def before = WiremockEnvironment.resetMocks()
+
+    implicit val executionEnv = ExecutionEnv.fromGlobalExecutionContext
 
     val client = new DispatchHttpClient()
 
@@ -78,7 +80,7 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       givenThat(get(urlMatching(relativeTestUrl))
         .willReturn(aResponse().withBody("""{"data":"some info"}""")))
 
-      client.request(httpRequestData) must matchJson("""{"data":"some info"}""").await(timeout = 1.second)
+      client.request(httpRequestData) must matchJson("""{"data":"some info"}""").awaitFor(timeout = 1.second)
     }
 
     "pass query parameters" in new ctx {
@@ -149,10 +151,12 @@ class DispatchHttpClientTest extends SpecificationWithJUnit with NoTimeConversio
       val res = client.request(HttpRequestData(HttpMethod.GET, absoluteTestUrl)) must beFailedWith(isWixApiErrorException(be_===(404), beSome("Not Found"), beNone))
     }
 
-    "provide other execution context" in new ctx with Mockito {
+    "provide other execution context" in new ctx {
       clientWithCustomExecutor.request(httpRequestData)
 
-      there was one(executor).execute(any[Runnable])
+      eventually {
+        there was one(executor).execute(any[Runnable])
+      }
     }
 
     "pass non-English characters in body" in new ctx {

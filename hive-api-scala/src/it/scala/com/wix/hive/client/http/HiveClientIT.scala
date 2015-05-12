@@ -1,8 +1,6 @@
 package com.wix.hive.client.http
 
-import java.util.UUID
-
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo => equalToString, _}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, equalTo => equalToString, givenThat, matching => regexMatching, verify => wiremockVerify, _}
 import com.github.tomakehurst.wiremock.verification.LoggedRequest
 import com.wix.hive.client.HiveClient
 import com.wix.hive.client.http.HttpMethod.HttpMethod
@@ -10,21 +8,24 @@ import com.wix.hive.commands.HiveCommand
 import com.wix.hive.infrastructure.WiremockEnvironment
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.Matcher
 import org.specs2.mock.Mockito
 import org.specs2.mutable.{Before, SpecificationWithJUnit}
-import org.specs2.time.NoTimeConversions
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, containing, equalTo, equalToJson, givenThat, matching => regexMatching, urlMatching, verify => wiremockVerify}
+import org.specs2.specification.Scope
 
-class HiveClientIT extends SpecificationWithJUnit with NoTimeConversions with Mockito {
+
+class HiveClientIT extends SpecificationWithJUnit with Mockito {
   sequential
 
   step {
     WiremockEnvironment.start()
   }
 
-  trait ctx extends Before {
+  trait ctx extends Scope with Before {
     def before = WiremockEnvironment.resetMocks()
+
+    implicit val executionEnv = ExecutionEnv.fromGlobalExecutionContext
 
     val appId = "d6f07c22-cabc-4438-af94-6e31535dc8ae"
     val appSecret = "081b6070-6983-4d97-94b5-7cd0d6edfc9b"

@@ -7,6 +7,11 @@ import org.specs2.specification.Scope
 
 class UpsertContactTest extends SpecificationWithJUnit with HiveMatchers {
 
+  trait Context extends Scope {
+    val commandWithDefaults = UpsertContact()
+    val command = UpsertContact(Some("972-54-5551234"), Some("email@wix.com"))
+  }
+
   "createHttpRequestData" should {
 
     "create HttpRequestData with declared parameters" in new Context {
@@ -24,12 +29,6 @@ class UpsertContactTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.PUT),
         url = be_===("/contacts"),
         body = beNone)
-    }
-
-
-    class Context extends Scope {
-      val commandWithDefaults = UpsertContact()
-      val command = UpsertContact(Some("972-54-5551234"), Some("email@wix.com"))
     }
   }
 }

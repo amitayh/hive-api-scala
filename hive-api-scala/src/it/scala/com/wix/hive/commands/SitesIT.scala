@@ -3,6 +3,7 @@ package com.wix.hive.commands
 import com.wix.hive.commands.sites.{GetSitePages, Site}
 import com.wix.hive.drivers.SitesTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
+import org.specs2.matcher.MustThrownExpectations
 
 /**
  * User: maximn

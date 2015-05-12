@@ -10,7 +10,7 @@ import com.wix.hive.json.JacksonObjectMapper
 import com.wix.hive.model.WixAPIErrorException
 import dispatch.{url, _}
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -25,7 +25,7 @@ object DispatchHttpClient {
 
 }
 
-class DispatchHttpClient()(implicit val executionContext: ExecutionContextExecutor) extends AsyncHttpClient {
+class DispatchHttpClient()(implicit val executionContext: ExecutionContext) extends AsyncHttpClient {
   override def request(data: HttpRequestData): Future[InputStream] = {
     val postDataAsString: String = data.bodyAsString
 

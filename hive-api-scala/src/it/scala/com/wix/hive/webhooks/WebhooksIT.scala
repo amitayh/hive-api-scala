@@ -5,6 +5,7 @@ import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicato
 
 
 class WebhooksIT extends WebhookITBase with WebhookSimplicatorIT {
+
   class webhooksCtx extends ctx with SimplicatorWebhooksDriver
 
   "Webhooks" should {

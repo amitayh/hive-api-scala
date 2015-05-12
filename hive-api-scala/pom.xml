@@ -31,7 +31,7 @@
         <ning.version>1.8.10</ning.version>
         <jodatime.version>2.5</jodatime.version>
         <jackson.version>2.4.4</jackson.version>
-        <org.specs2.version>2.4.15</org.specs2.version>
+        <org.specs2.version>3.6</org.specs2.version>
         <joda.convert.version>1.2</joda.convert.version>
         <config.version>1.2.1</config.version>
         <quasiquotes.version>2.1.0-M1</quasiquotes.version>
@@ -143,7 +143,20 @@
 
         <dependency>
             <groupId>org.specs2</groupId>
-            <artifactId>specs2_${scala.dependencies.version}</artifactId>
+            <artifactId>specs2-core_${scala.dependencies.version}</artifactId>
+            <version>${org.specs2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-junit_${scala.dependencies.version}</artifactId>
+            <version>${org.specs2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-mock_${scala.dependencies.version}</artifactId>
             <version>${org.specs2.version}</version>
             <scope>test</scope>
         </dependency>

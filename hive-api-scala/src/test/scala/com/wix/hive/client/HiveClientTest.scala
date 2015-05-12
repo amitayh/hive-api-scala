@@ -8,6 +8,7 @@ import com.wix.hive.client.http.{AsyncHttpClient, HttpMethod, NamedParameters}
 import com.wix.hive.commands.HiveCommand
 import com.wix.hive.matchers.HiveMatchers
 import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
@@ -18,6 +19,8 @@ class HiveClientTest extends SpecificationWithJUnit with Mockito with HiveMatche
 
   class Context extends Scope {
     val httpClient = mock[AsyncHttpClient]
+
+    implicit val executionEnv = ExecutionEnv.fromGlobalExecutionContext
 
     val id = "appId"
     val key = "appKey"

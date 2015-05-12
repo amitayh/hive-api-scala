@@ -19,7 +19,6 @@
         </developer>
     </developers>
 
-
     <modules>
         <module>hive-model</module>
         <module>hive-api-scala</module>
