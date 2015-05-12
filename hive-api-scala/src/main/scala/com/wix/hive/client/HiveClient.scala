@@ -36,8 +36,8 @@ class HiveClient(val appId: String,
 
   val signer = new HiveSigner(secretKey)
 
-
   def execute[R](instanceId: String, command: HiveCommand[R]): Future[R] = {
+
     val httpDataFromCommand = command.createHttpRequestData
 
     val httpDataForRequest = (withClientData(instanceId) _ andThen withSignature andThen withBaseUrl)(httpDataFromCommand)

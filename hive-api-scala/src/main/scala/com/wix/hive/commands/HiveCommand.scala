@@ -2,7 +2,7 @@ package com.wix.hive.commands
 
 import java.io.InputStream
 
-import com.wix.hive.client.http.HttpMethod.HttpMethod
+import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
 import com.wix.hive.json.JacksonObjectMapper
 
@@ -39,5 +39,4 @@ abstract class HiveCommand[T: ClassTag] {
     if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[R]
     else JacksonObjectMapper.mapper.readValue(r, classOfR)
   }
-
 }

@@ -4,16 +4,14 @@ import com.wix.hive.client.http.HttpMethod.{HttpMethod, _}
 import com.wix.hive.client.http._
 import org.joda.time.DateTime
 
-trait ContactsModificationCommand[TResult] extends ContactsCommand[TResult]{
+trait ContactsModificationCommand[TResult] extends ContactsCommand[TResult] {
   val modifiedAtKey = "modifiedAt"
 
   val contactId: String
-  val modifiedAt: DateTime
 
+  protected val modifiedAtOption: Option[DateTime]
 
-  override def query: NamedParameters = Map(
-    modifiedAtKey -> modifiedAt.toString
-  )
+  override def query: NamedParameters = modifiedAtOption map { mAt => Map(modifiedAtKey -> mAt.toString) } getOrElse Map.empty
 
   override def urlParams: String = s"/$contactId"
 }
