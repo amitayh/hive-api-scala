@@ -5,7 +5,7 @@ import com.wix.hive.commands.common.PageSizes._
 import com.wix.hive.model.contacts.PagingContactsResult
 
 
-case class GetContacts(tag: Seq[String] = Nil,
+case class GetContacts(labels: Seq[String] = Nil,
                        email: Option[String] = None,
                        phone: Option[String] = None,
                        firstName: Option[String] = None,
@@ -19,7 +19,7 @@ case class GetContacts(tag: Seq[String] = Nil,
     super.mapValuesToStrings({
       import com.wix.hive.commands.contacts.GetContacts.QueryKeys
       Map(
-        QueryKeys.tag -> tag,
+        QueryKeys.labels -> labels,
         QueryKeys.email -> email,
         QueryKeys.phone -> phone,
         QueryKeys.firstName -> firstName,
@@ -34,11 +34,11 @@ case class GetContacts(tag: Seq[String] = Nil,
 object GetContacts {
 
   object QueryKeys {
-    val tag = "tag"
+    val labels = "labels"
     val email = "email"
     val phone = "phone"
-    val firstName = "firstName"
-    val lastName = "lastName"
+    val firstName = "name.first"
+    val lastName = "name.last"
     val cursor = "cursor"
     val pageSize = "pageSize"
   }
