@@ -1,6 +1,9 @@
 package com.wix.hive.infrastructure
 
+import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.activities.PagingActivitiesResult
+import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, OperationResult}
+import com.wix.hive.commands.batch.{ProcessBatch, WixAPIError}
 import com.wix.hive.model.activities.{Activity, ActivityDetails, ActivityInfo}
 import org.joda.time.DateTime
 
@@ -21,11 +24,24 @@ class DeserializableByHiveClientAdapter {
   private def pagingActivitiesResultConverter(r: PagingActivitiesResult): PagingActivitiesResultAsInHiveServer =
     PagingActivitiesResultAsInHiveServer(r.pageSize, r.previousCursor, r.nextCursor, r.results map (new ActivityAsInHiveServer(_)))
 
-  def convertToDeserializableByHiveClient[T](originalResponse: T): Any =
-    originalResponse match {
-      case r: PagingActivitiesResult => pagingActivitiesResultConverter(r)
-      case r: Activity => new ActivityAsInHiveServer(r)
-      case r: Unit => ""
-      case r => r
+  private def batchResultConverter(cmd: ProcessBatch, originalResponse: Seq[Either[WixAPIError, _]]) = {
+    val res = originalResponse.zipWithIndex.map { case (item, index) =>
+      val op = ProcessBatch.toBatchOperation(index.toString, cmd.operations(index))
+      item match {
+        case Right(r) => OperationResult(op.id, op.method, op.relativeUrl, 200, Some(JacksonObjectMapper.mapper.writeValueAsString(r)))
+        case Left(e: WixAPIError) => OperationResult(op.id, op.method, op.relativeUrl, e.errorCode, Some(JacksonObjectMapper.mapper.writeValueAsString(e)))
+      }
     }
+
+    BatchOperationResult(res)
+  }
+
+  def convertToDeserializableByHiveClient[T, R](cmd: HiveCommand[T])(originalResponse: R): Any =
+    (cmd, originalResponse) match {
+      case (_, r: PagingActivitiesResult) => pagingActivitiesResultConverter(r)
+      case (_, r: Activity) => new ActivityAsInHiveServer(r)
+      case (cmd: ProcessBatch, r: Seq[_]) => batchResultConverter(cmd, r.asInstanceOf[Seq[Either[WixAPIError, _]]])
+      case (_, r: Unit) => ""
+      case (_, r) => r
+  }
 }

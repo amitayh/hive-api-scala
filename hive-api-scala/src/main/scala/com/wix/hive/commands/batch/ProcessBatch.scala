@@ -55,30 +55,30 @@ case class ProcessBatch(
 
 object ProcessBatch {
 
-  protected[batch] def toBatchOperation(id: String, cmd: HiveCommand[_]) = {
+  protected[hive] def toBatchOperation(id: String, cmd: HiveCommand[_]) = {
     val reqData = cmd.createHttpRequestData
     val queryParams = Map(VersionKey -> version) ++ reqData.queryString map { p => s"${p._1}=${p._2}"} mkString "&"
     val url = s"${versionForUrl}${reqData.url}?$queryParams"
     BatchOperation(id, cmd.method.toString, url, cmd.headers.toSet, cmd.body map {_ => reqData.bodyAsString })
   }
 
-  protected[commands] case class BatchOperation(
+  protected[hive] case class BatchOperation(
     id: String,
     method: String,
     relativeUrl: String,
     headers: Set[(String, String)],
     body: Option[String])
 
-  protected[commands] case class CreateBatchOperation(
+  protected[hive] case class CreateBatchOperation(
     operations: Seq[BatchOperation],
     modifiedAt: Option[DateTime] = None,
     @JsonScalaEnumeration(classOf[FailurePolicyType])
     failurePolicy: FailurePolicy = STOP_ON_FAILURE)
 
-  protected[commands] case class BatchOperationResult(
+  protected[hive] case class BatchOperationResult(
     operations: Seq[OperationResult])
 
-  protected[commands] case class OperationResult(
+  protected[hive] case class OperationResult(
     id: String,
     method: String,
     relativeUrl: String,
