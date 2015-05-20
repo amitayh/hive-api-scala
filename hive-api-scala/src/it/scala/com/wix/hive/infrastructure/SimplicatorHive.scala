@@ -62,7 +62,7 @@ trait SimplicatorHive {
   private def nonTypedExpect(app: AppDef, cmd: HiveCommand[_])(respondWith: Any = ()): Unit = {
     val matchParams = getMatchParameters(cmd)
 
-    val response = responseConverter.convertToDeserializableByHiveClient(respondWith)
+    val response = responseConverter.convertToDeserializableByHiveClient(cmd)(respondWith)
     val statusCode: Int = respondWith match {
       case e: WixAPIErrorException => e.errorCode
       case _ => matchParams.statusCode.getOrElse(200)
