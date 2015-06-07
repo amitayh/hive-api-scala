@@ -94,6 +94,7 @@ trait SimplicatorHive {
       case c: UpsertContact => Match("/contacts", containInBody = Seq(c.email, c.phone), method = RequestMethod.PUT)
       case c: AddAddress => Match(s"/contacts/${c.contactId}/address.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.address.address, c.address.city, c.address.country, c.address.neighborhood, c.address.postalCode, c.address.region, c.address.tag), RequestMethod.POST)
       case c: AddPhone => Match(s"/contacts/${c.contactId}/phone.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.phone.phone, c.phone.tag), RequestMethod.POST)
+      case c: AddCustomField => Match(s"/contacts/${c.contactId}/custom.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.customField.field, c.customField.value), RequestMethod.POST)
       case c: AddUrl => Match(s"/contacts/${c.contactId}/url.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.urlToAdd.tag, c.urlToAdd.url), RequestMethod.POST)
       case c: AddDate => Match(s"/contacts/${c.contactId}/date.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.date.tag, c.date.date), RequestMethod.POST)
       case c: UpdateName => Match(s"/contacts/${c.contactId}/name.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.name.first, c.name.last, c.name.middle, c.name.prefix, c.name.suffix), RequestMethod.PUT)
