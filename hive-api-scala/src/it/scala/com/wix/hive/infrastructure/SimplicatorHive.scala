@@ -104,6 +104,7 @@ trait SimplicatorHive {
       case c: UpdatePhone => Match(s"/contacts/${c.contactId}/phone/${c.phoneId}.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.phone.phone, c.phone.tag), RequestMethod.PUT)
       case c: UpdateUrl => Match(s"/contacts/${c.contactId}/url/${c.urlId}.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.urlToUpdate.tag, c.urlToUpdate.url), RequestMethod.PUT)
       case c: UpdateDate => Match(s"/contacts/${c.contactId}/date/${c.dateId}.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.date.date, c.date.tag), RequestMethod.PUT)
+      case c: UpdateCustomField => Match(s"/contacts/${c.contactId}/custom/${c.customFieldId}.*${urlEncode(c.modifiedAtOption.get.toString)}", Seq(c.customField.field, c.customField.value), RequestMethod.PUT)
       case c: GetContactActivities => val cursorPortion = c.cursor.fold("")(cur => s".*$cur"); Match(s"/contacts/${c.contactId}/activities$cursorPortion")
       case c: GetActivities => Match("/activities.*")
       case c: GetActivityById => Match(s"/activities/${c.id}")

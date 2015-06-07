@@ -49,6 +49,9 @@ trait ContactsTestSupport {
   val contactCompany = CompanyDTO(Some("role-comp"), name.first)
   val contactPicture = PictureDTO("some-pic")
   val contactAddress = AddressDTO("tag-address-contact")
+  
+  val customFieldId = "c8226786-cca9-48a9-8750-a2043c867d34"
+  val contactCustomField = ContactCustomFieldDTO("field1", "value1")
 
   val createContactResult = CreatedContact(contactId)
 
@@ -60,6 +63,7 @@ trait ContactsTestSupport {
   val addPhoneCommand = AddPhone(contactId, modifiedAt, contactPhone)
   val addUrlCommand = AddUrl(contactId, modifiedAt, contactUrl)
   val addDateCommand = AddDate(contactId, modifiedAt, contactDate)
+  val addCustomFieldCommand = AddCustomField(contactId, modifiedAt, contactCustomField)
   val updateNameCommand = UpdateName(contactId, modifiedAt, name)
   val updateCompanyCommand = UpdateCompany(contactId, modifiedAt, contactCompany)
   val updateAddressCommand = UpdateAddress(contactId, modifiedAt, addressId, contactAddress)
@@ -67,6 +71,7 @@ trait ContactsTestSupport {
   val updatePhoneCommand = UpdatePhone(contactId, modifiedAt, phoneId, contactPhone)
   val updateUrlCommand = UpdateUrl(contactId, modifiedAt, urlId, contactUrl)
   val updateDateCommand = UpdateDate(contactId, modifiedAt, dateId, contactDate)
+  val updateCustomFieldCommand = UpdateCustomField(contactId, modifiedAt, customFieldId, contactCustomField)
   val createContactCommand = CreateContact()
 }
 
