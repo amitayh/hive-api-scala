@@ -12,7 +12,7 @@ class UpdateEmailSubscriptionTest extends SpecificationWithJUnit with HiveMatche
     val subscription = EmailStatus.OptOut
     val res = ContactResult(EmailStatus.OptOut)
 
-    val cmd = UpdateEmailSubscription(contactId, modifiedAt, emailId, subscription)
+    val cmd = UpdateEmailSubscription(contactId, emailId, subscription, modifiedAt)
   }
 
   "createHttpRequestData" should {

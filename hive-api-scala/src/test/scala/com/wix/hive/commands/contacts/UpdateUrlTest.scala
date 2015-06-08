@@ -10,7 +10,7 @@ class UpdateUrlTest extends SpecificationWithJUnit with HiveMatchers {
     val urlId = "027206f3-e278-43a7-be27-93610cbf25a0"
     val url = ContactUrlDTO("tag-url", "http://some.wix.com/site")
 
-    val cmd = UpdateUrl(contactId, modifiedAt, urlId, url)
+    val cmd = UpdateUrl(contactId, urlId, url, modifiedAt)
   }
 
   "createHttpRequestData" should {

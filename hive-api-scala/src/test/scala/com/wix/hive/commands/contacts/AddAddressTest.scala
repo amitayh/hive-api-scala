@@ -19,6 +19,6 @@ class AddAddressTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification {
     val address = AddressDTO("tag")
 
-    val cmd = AddAddress(contactId, modifiedAt, address)
+    val cmd = AddAddress(contactId, address, modifiedAt)
   }
 }

@@ -20,6 +20,6 @@ class UpdateAddressTest extends SpecificationWithJUnit with HiveMatchers {
     val addressId = "e2f5559b-74a0-4916-8e11-3c2da4b6bfe1"
     val address = AddressDTO("tag-address")
 
-    val cmd = UpdateAddress(contactId, modifiedAt, addressId, address)
+    val cmd = UpdateAddress(contactId, addressId, address, modifiedAt)
   }
 }

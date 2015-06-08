@@ -19,7 +19,7 @@ class UpdateCompanyTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification {
     val company = CompanyDTO(Some("role in company"), Some("my name"))
 
-    val cmd = UpdateCompany(contactId, modifiedAt, company)
+    val cmd = UpdateCompany(contactId, company, modifiedAt)
   }
 
 }
