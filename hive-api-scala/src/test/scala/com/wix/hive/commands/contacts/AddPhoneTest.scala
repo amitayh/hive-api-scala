@@ -19,7 +19,7 @@ class AddPhoneTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification {
     val phone = ContactPhoneDTO("tag-phone", "972-54-5551234")
 
-    val cmd = AddPhone(contactId, phone, modifiedAt)
+    val cmd = AddPhone(contactId, modifiedAt, phone)
   }
 
 }

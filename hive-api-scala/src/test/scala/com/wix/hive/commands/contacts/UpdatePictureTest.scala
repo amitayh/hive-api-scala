@@ -19,7 +19,7 @@ class UpdatePictureTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification{
     val picture = PictureDTO("some-pic-name")
 
-    val cmd = UpdatePicture(contactId, picture, modifiedAt)
+    val cmd = UpdatePicture(contactId, modifiedAt, picture)
   }
 
 }

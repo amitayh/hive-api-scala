@@ -20,7 +20,7 @@ class UpdateNameTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification {
     val name = ContactName(Some("Mr."), Some("first"), Some("middle"), Some("last"))
 
-    val cmd = UpdateName(contactId, name, modifiedAt)
+    val cmd = UpdateName(contactId, modifiedAt, name)
   }
 
 }

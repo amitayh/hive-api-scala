@@ -11,7 +11,7 @@ class UpdateEmailTest extends SpecificationWithJUnit with HiveMatchers {
     val emailId = "222163d7-7d97-49aa-8ee2-e1af48db4241"
     val email = ContactEmailDTO("tag-address", "some@wix.com", Some(EmailStatus.OptOut))
 
-    val cmd = UpdateEmail(contactId, emailId, email, modifiedAt)
+    val cmd = UpdateEmail(contactId, modifiedAt, emailId, email)
   }
 
   "createHttpRequestData" should {

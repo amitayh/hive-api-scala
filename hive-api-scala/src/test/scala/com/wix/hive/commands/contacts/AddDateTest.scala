@@ -21,7 +21,7 @@ class AddDateTest extends SpecificationWithJUnit with HiveMatchers {
     val contactDate = new DateTime(2012, 1, 2, 3, 2)
     val date = ContactDateDTO("tag-date", contactDate)
 
-    val cmd = AddDate(contactId, date, modifiedAt)
+    val cmd = AddDate(contactId, modifiedAt, date)
   }
 
 }

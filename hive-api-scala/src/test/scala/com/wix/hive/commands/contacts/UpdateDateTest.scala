@@ -12,7 +12,7 @@ class UpdateDateTest extends SpecificationWithJUnit with HiveMatchers {
     val dateTime = new DateTime(2013, 3,6, 3, 5)
     val date = ContactDateDTO("tag-date", dateTime)
 
-    val cmd = UpdateDate(contactId, dateId, date, modifiedAt)
+    val cmd = UpdateDate(contactId, modifiedAt, dateId, date)
   }
 
   "createHttpRequestData" should {

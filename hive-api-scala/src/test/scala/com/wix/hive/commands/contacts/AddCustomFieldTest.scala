@@ -19,7 +19,7 @@ class AddCustomFieldTest extends SpecificationWithJUnit with HiveMatchers {
   class Context extends ContextForModification {
     val customField = ContactCustomFieldDTO("time zone", "Eastern Time Zone (UTC-05:00)")
 
-    val cmd = AddCustomField(contactId, customField, modifiedAt)
+    val cmd = AddCustomField(contactId, modifiedAt, customField)
   }
 
 }

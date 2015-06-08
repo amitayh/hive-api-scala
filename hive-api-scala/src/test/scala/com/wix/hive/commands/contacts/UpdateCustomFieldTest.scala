@@ -10,7 +10,7 @@ class UpdateCustomFieldTest extends SpecificationWithJUnit with HiveMatchers {
     val customFieldId = "222163d7-7d97-49aa-8ee2-e1af48db4241"
     val customField = ContactCustomFieldDTO("field1", "value1")
 
-    val cmd = UpdateCustomField(contactId, customFieldId, customField, modifiedAt)
+    val cmd = UpdateCustomField(contactId, modifiedAt, customFieldId, customField)
   }
 
   "createHttpRequestData" should {
