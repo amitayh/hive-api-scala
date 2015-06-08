@@ -15,11 +15,11 @@ class GetContactsTest extends SpecificationWithJUnit with HiveMatchers {
         method = be_===(HttpMethod.GET),
         url = be_===("/contacts"),
         query = havePairs(
-          "tag" -> "tag1,tag2",
+          "labels" -> "label1,label2",
           "email" -> "email1@google.com",
           "phone" -> "+972-54-5557726",
-          "firstName" -> "Max",
-          "lastName" -> "Nov",
+          "name.first" -> "Max",
+          "name.last" -> "Nov",
           "cursor" -> "/cursor/",
           "pageSize" -> "25") and haveSize(7))
     }
@@ -35,6 +35,6 @@ class GetContactsTest extends SpecificationWithJUnit with HiveMatchers {
 
 
   class Context extends Scope {
-    val command = GetContacts(Seq("tag1", "tag2"), Some("email1@google.com"), Some("+972-54-5557726"), Some("Max"), Some("Nov"), Some("/cursor/"), Some(PageSizes.`25`))
+    val command = GetContacts(Seq("label1", "label2"), Some("email1@google.com"), Some("+972-54-5557726"), Some("Max"), Some("Nov"), Some("/cursor/"), Some(PageSizes.`25`))
   }
 }
