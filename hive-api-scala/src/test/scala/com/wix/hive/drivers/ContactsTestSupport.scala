@@ -11,8 +11,9 @@ import org.specs2.matcher.Matchers._
  * Date: 1/21/15
  */
 trait ContactsTestSupport {
-  def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ { (_: Contact).id aka "contactId" }
-  def beContactsWith(matcher: Matcher[Seq[Contact]]): Matcher[PagingContactsResult] = matcher ^^ { (_: PagingContactsResult).results aka "results" }
+  def beContactWithId(matcher: Matcher[String]): Matcher[Contact] = matcher ^^ {(_: Contact).id aka "contactId"}
+
+  def beContactsWith(matcher: Matcher[Seq[Contact]]): Matcher[PagingContactsResult] = matcher ^^ {(_: PagingContactsResult).results aka "results"}
 
 
   val contactId = "e5d81850-5dd8-407f-9acc-7ffd6c924ecf"
@@ -49,7 +50,7 @@ trait ContactsTestSupport {
   val contactCompany = CompanyDTO(Some("role-comp"), name.first)
   val contactPicture = PictureDTO("some-pic")
   val contactAddress = AddressDTO("tag-address-contact")
-  
+
   val customFieldId = "c8226786-cca9-48a9-8750-a2043c867d34"
   val contactCustomField = ContactCustomFieldDTO("field1", "value1")
 
@@ -58,11 +59,13 @@ trait ContactsTestSupport {
   val upsertCommand = UpsertContact(Some(phone), Some(myEmail))
   val addAddressCommand = AddAddress(contactId, address, modifiedAt)
   val getContactByIdCommand = GetContactById(contactId)
-  val getContactsCommand =GetContacts()
+  val getContactsCommand = GetContacts()
   val addEmailCommand = AddEmail(contactId, contactEmail, modifiedAt)
   val addPhoneCommand = AddPhone(contactId, contactPhone, modifiedAt)
   val addUrlCommand = AddUrl(contactId, contactUrl, modifiedAt)
   val addDateCommand = AddDate(contactId, contactDate, modifiedAt)
+  val addCustomFieldCommand = AddCustomField(contactId, contactCustomField, modifiedAt)
+  val updateCustomFieldCommand = UpdateCustomField(contactId, customFieldId, contactCustomField, modifiedAt)
   val updateNameCommand = UpdateName(contactId, name, modifiedAt)
   val updateCompanyCommand = UpdateCompany(contactId, contactCompany, modifiedAt)
   val updateAddressCommand = UpdateAddress(contactId, addressId, contactAddress, modifiedAt)
