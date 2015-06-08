@@ -74,6 +74,12 @@ class ContactsIT extends HiveSimplicatorIT with ContactsTestSupport {
       client.execute(instance, addDateCommand) must beContactWithId(contactId).await
     }
 
+    "add custom field to contact" in new clientContext {
+      expect(app, addCustomFieldCommand)(contact)
+
+      client.execute(instance, addCustomFieldCommand) must beContactWithId(contactId).await
+    }
+
     "update contact's name" in new clientContext {
       expect(app, updateNameCommand)(contact)
 
@@ -114,6 +120,12 @@ class ContactsIT extends HiveSimplicatorIT with ContactsTestSupport {
       expect(app, updateDateCommand)(contact)
 
       client.execute(instance, updateDateCommand) must beContactWithId(contactId).await
+    }
+    
+    "update contact's custom field" in new clientContext {
+      expect(app, updateCustomFieldCommand)(contact)
+
+      client.execute(instance, updateCustomFieldCommand) must beContactWithId(contactId).await
     }
 
   }
