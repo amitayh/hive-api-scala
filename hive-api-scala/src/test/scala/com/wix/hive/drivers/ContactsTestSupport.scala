@@ -49,6 +49,9 @@ trait ContactsTestSupport {
   val contactCompany = CompanyDTO(Some("role-comp"), name.first)
   val contactPicture = PictureDTO("some-pic")
   val contactAddress = AddressDTO("tag-address-contact")
+  
+  val customFieldId = "c8226786-cca9-48a9-8750-a2043c867d34"
+  val contactCustomField = ContactCustomFieldDTO("field1", "value1")
 
   val createContactResult = CreatedContact(contactId)
 

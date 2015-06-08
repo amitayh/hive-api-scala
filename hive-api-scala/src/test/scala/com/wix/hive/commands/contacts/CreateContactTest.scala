@@ -13,7 +13,7 @@ class CreateContactTest extends SpecificationWithJUnit with HiveMatchers {
       cmd.createHttpRequestData must httpRequestDataWith(
       method = be_===(HttpMethod.POST),
       url = be_===("/contacts"),
-      body = beSome(ContactData(cmd.name, cmd.picture, cmd.company, cmd.emails, cmd.phones, cmd.addresses, cmd.urls, cmd.dates))
+      body = beSome(ContactData(cmd.name, cmd.picture, cmd.company, cmd.emails, cmd.phones, cmd.addresses, cmd.urls, cmd.dates, cmd.custom))
       )
     }
   }
@@ -30,7 +30,7 @@ class CreateContactTest extends SpecificationWithJUnit with HiveMatchers {
     val notes = Seq(Note(Some(new DateTime(2014, 3, 21, 10, 35, 0, 0)), "first note", Some(7)))
     val custom = Seq(CustomField("filed_name", "value for a custom field", Some(8)))
 
-    val cmd = CreateContact(Some(contactName), Some("pic.jpg"), Some(company), emails, phones, address, urls, dates)
+    val cmd = CreateContact(Some(contactName), Some("pic.jpg"), Some(company), emails, phones, address, urls, dates, custom)
   }
 
 }
