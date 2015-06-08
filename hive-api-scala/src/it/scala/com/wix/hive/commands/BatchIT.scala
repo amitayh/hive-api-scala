@@ -4,8 +4,11 @@ import com.wix.hive.client.http.HttpMethod
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, OperationResult}
 import com.wix.hive.commands.batch.{ProcessBatch, WixAPIError}
+import com.wix.hive.commands.sites.GetSitePages
+import com.wix.hive.drivers.SitesTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.json.JacksonObjectMapper.mapper
+import org.specs2.matcher.Matcher
 
 /**
  * @author viliusl
@@ -13,7 +16,7 @@ import com.wix.hive.json.JacksonObjectMapper.mapper
  */
 class BatchIT extends HiveSimplicatorIT {
 
-  class clientContext extends HiveClientContext {
+  trait clientContext extends HiveClientContext with SitesTestSupport {
 
     def aValidResponseFor(entity: AnyRef): Either[WixAPIError, _] = Right(entity)
 
@@ -38,6 +41,16 @@ class BatchIT extends HiveSimplicatorIT {
 
       client.execute(instance, cmd) must be_===(Seq(aValidResponseFor(AResponse("some data")), aValidResponseFor(None))).await
     }
+
+    "process a batch request with actual command" in new clientContext {
+      val cmd = ProcessBatch(operations = Seq(GetSitePages))
+      val res: Seq[Either[WixAPIError, _]] = Seq(Right(sitePages))
+
+      expect(app, cmd)(res)
+
+      client.execute(instance, cmd) must be_===(res).await
+    }
+
   }
 }
 

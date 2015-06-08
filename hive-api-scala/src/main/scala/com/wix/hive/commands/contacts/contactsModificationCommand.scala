@@ -5,20 +5,17 @@ import com.wix.hive.client.http._
 import org.joda.time.DateTime
 
 trait ContactsModificationCommand[TResult] extends ContactsCommand[TResult] {
-  val modifiedAtKey = "modifiedAt"
-
+  private val modifiedAtKey = "modifiedAt"
   val contactId: String
+  val modifiedAt: DateTime
 
-  protected val modifiedAtOption: Option[DateTime]
-
-  override def query: NamedParameters = modifiedAtOption map { mAt => Map(modifiedAtKey -> mAt.toString) } getOrElse Map.empty
+  override def query: NamedParameters = super.query + (modifiedAtKey -> modifiedAt.toString)
 
   override def urlParams: String = s"/$contactId"
 }
 
 trait AddToContactCommand[TResult] extends ContactsModificationCommand[TResult] {
   override def method: HttpMethod = POST
-
 }
 
 trait UpdateContactCommand[TResult] extends ContactsModificationCommand[TResult] {

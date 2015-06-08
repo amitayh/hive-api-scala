@@ -10,7 +10,7 @@ class UpdatePhoneTest extends SpecificationWithJUnit with HiveMatchers {
     val phoneId = "222163d7-7d97-49aa-8ee2-e1af48db4241"
     val phone = ContactPhoneDTO("tag-phone", "+972-54-5554321")
 
-    val cmd = UpdatePhone(contactId, modifiedAt, phoneId, phone)
+    val cmd = UpdatePhone(contactId, phoneId, phone, modifiedAt)
   }
 
   "createHttpRequestData" should {
