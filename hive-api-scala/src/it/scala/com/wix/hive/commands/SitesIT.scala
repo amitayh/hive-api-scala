@@ -1,9 +1,8 @@
 package com.wix.hive.commands
 
-import com.wix.hive.commands.sites.{GetSitePages, Site}
+import com.wix.hive.commands.sites.{GetSitePages, GetSiteSettings, Site}
 import com.wix.hive.drivers.SitesTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
-import org.specs2.matcher.MustThrownExpectations
 
 /**
  * User: maximn
@@ -26,6 +25,12 @@ class SitesIT extends HiveSimplicatorIT {
       expect(app, Site)(siteData)
 
       client.execute(instance, Site) must haveSiteUrl(url).await
+    }
+
+    "return site settings" in new clientContext {
+      expect(app, GetSiteSettings)(siteSettings)
+
+      client.execute(instance, GetSiteSettings) must be_===(siteSettings).await
     }
   }
 }

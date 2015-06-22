@@ -15,7 +15,7 @@ import com.wix.hive.commands.labels.{GetLabelById, GetLabels}
 import com.wix.hive.commands.redirects.GetRedirects
 import com.wix.hive.commands.services.email.SendSingle
 import com.wix.hive.commands.services.{EmailProviders, SendEmail, ServiceDone}
-import com.wix.hive.commands.sites.{GetSitePages, Site}
+import com.wix.hive.commands.sites.{GetSiteSettings, GetSitePages, Site}
 import com.wix.hive.json.JacksonObjectMapper.mapper
 import com.wix.hive.model.WixAPIErrorException
 import org.joda.time.DateTime
@@ -117,6 +117,7 @@ trait SimplicatorHive {
       case c: ServiceDone => Match("/services/actions/done", method = RequestMethod.POST)
       case c: EmailProviders.type => Match("/services/actions/email/providers")
       case c: GetSitePages.type => Match("/sites/site/pages")
+      case c: GetSiteSettings.type => Match("/sites/site/settings")
       case c: Site.type => Match("/sites/site")
       case c: GetLabelById => Match(s"/labels/${c.id}")
       case c: GetLabels => Match("/labels")
