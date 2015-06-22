@@ -10,7 +10,6 @@ case class Locale(language: Option[String] = None,
                   timeZone: Option[String] = None)
 
 case class LocationInfo(name: Option[String] = None,
-                        description: Option[String] = None,
                         email: Option[String] = None,
                         phone: Option[String] = None,
                         fax: Option[String] = None,
@@ -18,7 +17,8 @@ case class LocationInfo(name: Option[String] = None,
                         accessibility: Option[Boolean] = None,
                         parking: Option[Boolean] = None)
 
-case class Address(street: Option[String] = None,
+case class Address(description: Option[String] = None,
+                   street: Option[String] = None,
                    city: Option[String] = None,
                    country: Option[String] = None,
                    state: Option[String] = None,
