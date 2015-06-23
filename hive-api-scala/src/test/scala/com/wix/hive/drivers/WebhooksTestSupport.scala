@@ -78,6 +78,12 @@ with HiveMatchers {
       originInstanceId ^^ {(_: ProvisionDisabled).originInstanceId aka "originInstanceId"}
   }
 
+  def aSiteSettingsChangedWebhook = Webhook(
+    instanceId,
+    SiteSettingsChanged(SiteSettingChange.UPDATED, "DateFormat"),
+    aWebhookParams()
+  )
+
 }
 
 object WebhooksTestSupport extends WebhooksTestSupport

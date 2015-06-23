@@ -26,6 +26,8 @@ trait WebhooksDriver {
   def callServicesDone(webhook: Webhook[ServiceResult])
 
   def callEmailSend(webhook: Webhook[EmailSend])
+
+  def callSiteSettingsChanged(webhook: Webhook[SiteSettingsChanged])
   }
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
@@ -78,6 +80,10 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
 
   override def callEmailSend(webhook: Webhook[EmailSend]) = {
     callWebhook(webhook, "/services/actions/email/send")
+  }
+
+  override def callSiteSettingsChanged(webhook: Webhook[SiteSettingsChanged]) = {
+    callWebhook(webhook, "/site/settings/changed")
   }
 
   protected def callWebhook(webhook: Webhook[_], eventType: String): Unit = {

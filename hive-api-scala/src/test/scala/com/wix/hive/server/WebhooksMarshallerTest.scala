@@ -37,7 +37,8 @@ class WebhooksMarshallerTest extends SpecificationWithJUnit {
     //    aReq("/contacts/updated", ContactsUpdated("4b02ca1e-4d7f-49b2-b505-0f9050cd575f")),
     aReq("/activities/posted", ActivitiesPosted("45ed130c-10a7-48c1-b32b-76949b1d59b3", "activity-type")),
     aReq("/services/actions/done", ServiceResult("6f8e4d8e-13ee-42fa-9584-a29d28decf70", "6aae078a-63ab-472d-af39-b5280b9b08e8", ServiceRunData("success", None, None))),
-    aReq("/services/actions/email/send", EmailSend(randomId, randomId, randomId, EmailContacts(EmailContactMethod.Id, Seq(randomId))))
+    aReq("/services/actions/email/send", EmailSend(randomId, randomId, randomId, EmailContacts(EmailContactMethod.Id, Seq(randomId)))),
+    aReq("/site/settings/changed", SiteSettingsChanged(SiteSettingChange.UPDATED, "DateFormat"))
   )
 
 

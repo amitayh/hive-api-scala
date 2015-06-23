@@ -46,3 +46,5 @@ case class ServiceResult(providerId: String, correlationId: String, data: Servic
 case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])
 
 case class EmailSend(originId: String, correlationId: String, redemptionToken: String, contacts: EmailContacts) extends WebhookData
+
+case class SiteSettingsChanged(event: SiteSettingChange, propertyName: String) extends WebhookData
