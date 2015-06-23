@@ -1,8 +1,7 @@
 package com.wix.hive.webhooks
 
 import com.wix.hive.drivers.WebhooksTestSupport._
-import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookSimplicatorIT, WebhookITBase}
-
+import com.wix.hive.infrastructure.{SimplicatorWebhooksDriver, WebhookITBase, WebhookSimplicatorIT}
 
 class WebhooksIT extends WebhookITBase with WebhookSimplicatorIT {
 
@@ -46,6 +45,14 @@ class WebhooksIT extends WebhookITBase with WebhookSimplicatorIT {
       callEmailSend(webhook)
 
       verifyWebhookWith(beWebhook(instanceId, appId, beEmailSend(webhook.data.originId, webhook.data.correlationId, webhook.data.redemptionToken, webhook.data.contacts)))
+    }
+
+    "receive site settings changed webhook" in new webhooksCtx {
+      val webhook = aSiteSettingsChangedWebhook
+
+      callSiteSettingsChanged(webhook)
+
+      verifyWebhookWith(beWebhook(instanceId, appId, beEqualTo(webhook.data)))
     }
   }
 }

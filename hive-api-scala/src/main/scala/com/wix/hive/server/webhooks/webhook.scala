@@ -1,9 +1,11 @@
 package com.wix.hive.server.webhooks
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.`type`.TypeReference
+import com.fasterxml.jackson.module.scala.JsonScalaEnumeration
 import com.wix.hive.commands.services.EmailContacts
+import com.wix.hive.server.webhooks.SiteSettingChange.SiteSettingChange
 import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
 
 /**
  * User: maximn
@@ -46,3 +48,12 @@ case class ServiceResult(providerId: String, correlationId: String, data: Servic
 case class ServiceRunData(status: String, errorType: Option[String], errorMessage: Option[String])
 
 case class EmailSend(originId: String, correlationId: String, redemptionToken: String, contacts: EmailContacts) extends WebhookData
+
+case class SiteSettingsChanged(@JsonScalaEnumeration(classOf[SiteSettingChangeType]) event: SiteSettingChange, propertyName: String) extends WebhookData
+
+object SiteSettingChange extends Enumeration {
+  type SiteSettingChange = Value
+  val UPDATED, DELETED = Value
+}
+
+class SiteSettingChangeType extends TypeReference[SiteSettingChange.type]

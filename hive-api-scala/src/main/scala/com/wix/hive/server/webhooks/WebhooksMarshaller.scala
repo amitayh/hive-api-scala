@@ -20,7 +20,8 @@ class WebhooksMarshaller {
     "/provision/disabled" -> classOf[ProvisionDisabled],
     "/activities/posted" -> classOf[ActivitiesPosted],
     "/services/actions/done" -> classOf[ServiceResult],
-    "/services/actions/email/send" -> classOf[EmailSend]
+    "/services/actions/email/send" -> classOf[EmailSend],
+    "/site/settings/changed" -> classOf[SiteSettingsChanged]
     //    "/billing/upgrade" -> classOf[BillingUpgrade],
     //    "/billing/cancel" -> classOf[BillingCancel],
     //    "/contacnts/created" -> classOf[ContactsCreated],
