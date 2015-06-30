@@ -1,15 +1,19 @@
 package com.wix.hive.commands
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.wix.hive.drivers.ContactsTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
+
 
 /**
  * User: maximn
  * Date: 2/3/15
  */
 class FailuresIT extends HiveSimplicatorIT with ContactsTestSupport {
+
   class clientContext extends HiveClientContext
+
 
   "When no server listening" should {
     "throw WixApiErrorException(404)" in new clientContext {
@@ -39,11 +43,14 @@ class FailuresIT extends HiveSimplicatorIT with ContactsTestSupport {
     }
   }
 
-  "Status code 200 but non-json response" should{
+
+  "Status code 200 but non-json response" should {
     "throw WixApiErrorException(500)" in new clientContext {
       expectCustom(app, addAddressCommand)("<test>fmejwklf7e89wf632g1$#@#^%&^%*</test>")
 
-      client.execute(instance, addAddressCommand) must throwA[HiveClientException].await
+      client.execute(instance, addAddressCommand) must throwA[HiveClientException].like { case e: HiveClientException =>
+        e.getCause must beAnInstanceOf[JsonParseException]
+      }.await
     }
   }
 }

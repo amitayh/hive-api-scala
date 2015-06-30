@@ -4,7 +4,7 @@ import com.typesafe.config._
 import com.wix.hive.client.HiveClient.{version, versionForUrl}
 import com.wix.hive.client.http._
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.model.{HiveClientException, WixAPIErrorException}
+import com.wix.hive.model.{HiveClientErrorCodes, HiveClientException, WixAPIErrorException}
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
@@ -44,7 +44,9 @@ class HiveClient(val appId: String,
 
     httpClient.request(httpDataForRequest) map command.decode recoverWith {
       case e: WixAPIErrorException => throw e
-      case NonFatal(e) => throw new HiveClientException(message = e.getMessage)
+      case NonFatal(e) => {
+        throw new HiveClientException(HiveClientErrorCodes.Generic, message = e.getMessage, e)
+      }
     }
   }
 
@@ -58,7 +60,7 @@ class HiveClient(val appId: String,
 
   private def withClientData(instanceId: String)(httpData: HttpRequestData): HttpRequestData = {
     httpData.copy(
-      url = s"${versionForUrl}${httpData.url}",
+      url = s"$versionForUrl${httpData.url}",
       queryString = httpData.queryString + (HiveClient.VersionKey -> version),
       headers = httpData.headers +
         (HiveClient.InstanceIdKey -> instanceId) +

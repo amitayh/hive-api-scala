@@ -2,9 +2,9 @@ package com.wix.hive.model
 
 import com.wix.hive.model.HiveClientErrorCodes._
 
-case class HiveClientException(errorCode: Int = GENERIC, message: String)
-  extends RuntimeException(s"Hive Client error with code: '$errorCode' and message: '$message'")
+case class HiveClientException(errorCode: Int = Generic, message: String, cause: Throwable)
+  extends RuntimeException(s"Hive Client error with code: '$errorCode' and message: '$message'", cause)
 
 object HiveClientErrorCodes {
-  val GENERIC = -1
+  val Generic = -1
 }
