@@ -26,11 +26,8 @@ case class Logo(logo: Option[String] = None, squareLogo: Option[String] = None)
 
 case class DomainInfo(domain: String, googleAnalyticsId: Option[String] = None, isPrimary: Boolean)
 
-case class Locale(language: Option[String] = None,
-                  currency: Option[String] = None,
-                  dateFormat: Option[String] = None,
-                  startWeek: Option[String] = None,
-                  timeZone: Option[String] = None)
+case class Locale(code: Option[String] = None,
+                  currency: Option[String] = None)
 
 case class LocationInfo(name: Option[String] = None,
                         email: Option[String] = None,
