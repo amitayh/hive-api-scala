@@ -22,7 +22,7 @@
 
     <parent>
         <groupId>com.wixpress</groupId>
-        <artifactId>hive-api-scala-modules</artifactId>
+        <artifactId>hive-api-scala-parent</artifactId>
         <version>1.3.0-SNAPSHOT</version>
     </parent>
 
