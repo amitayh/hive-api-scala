@@ -15,7 +15,7 @@ case class SiteSettings(title: String,
                         favIcon: Option[String] = None,
                         logo: Option[Logo] = None,
                         domainInfo: Seq[DomainInfo] = Nil,
-                        locale: Option[Locale] = None,
+                        localization: Option[Localization] = None,
                         locationInfo: Seq[LocationInfo] = Nil,
                         category: Option[SiteCategory] = None,
                         goals: Seq[String] = Nil)
@@ -26,8 +26,9 @@ case class Logo(logo: Option[String] = None, squareLogo: Option[String] = None)
 
 case class DomainInfo(domain: String, googleAnalyticsId: Option[String] = None, isPrimary: Boolean)
 
-case class Locale(code: Option[String] = None,
-                  currency: Option[String] = None)
+case class Localization(locale: Option[String] = None,
+                        currency: Option[String] = None,
+                        timeZone: Option[String] = None)
 
 case class LocationInfo(name: Option[String] = None,
                         email: Option[String] = None,
