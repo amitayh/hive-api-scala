@@ -1,14 +1,14 @@
-package com.wix.hive.client
+package com.wix.hive.security
 
 import com.wix.hive.client.http.{HttpMethod, HttpRequestData}
 import com.wix.hive.drivers.SigningTestSupport
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
 
-class HiveSignerTest extends SpecificationWithJUnit {
+class HiveRequestSignerTest extends SpecificationWithJUnit {
 
   class ctx extends Scope with SigningTestSupport {
-    val signer = new HiveSigner(key)
+    val signer = new HiveRequestSigner(key)
   }
 
   "Signer" should {

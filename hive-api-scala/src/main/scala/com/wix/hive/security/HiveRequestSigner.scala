@@ -1,42 +1,29 @@
-package com.wix.hive.client
+package com.wix.hive.security
 
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
-
-import com.google.common.base.Charsets
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.client.http.HttpRequestDataImplicits.HttpRequestDataStringify
-import org.apache.commons.net.util.Base64
 
 
-class HiveSigner(key: String) {
-  private val encryptionMethod = "HMACSHA256"
-  private val encodingForSignature = "UTF-8"
+class HiveRequestSigner(key: String) {
+  private val signer = new HiveSigner(key)
 
   private val includes = Set("application-id", "instance-id", "event-type", "timestamp", "event-id", "bi-token", "staging-environment")
   private val excludes = Set("signature")
 
   private val headerPrefix = "x-wix-"
 
-  // base64 & mac are NOT THREAD SAFE
-  def base64: Base64 = new Base64(true)
-  def mac = {
-    val secret = new SecretKeySpec(key.getBytes, encryptionMethod)
-    val instance = Mac.getInstance(encryptionMethod)
-    instance.init(secret)
-    instance
-  }
 
   def getSignature(data: HttpRequestData): String = {
     val stringToSign = generateStringToSign(data)
 
-    val result: Array[Byte] = mac.doFinal(stringToSign.getBytes(encodingForSignature))
-    base64.encodeToString(result).trim
+    signer.signString(stringToSign)
   }
+
   implicit object StringCaseInsensitiveOrder extends Ordering[String] {
     def compare(x: String, y: String) = x.compareToIgnoreCase(y)
   }
-  private[client] def generateStringToSign(data: HttpRequestData): String = {
+
+  private[security] def generateStringToSign(data: HttpRequestData): String = {
     import data._
 
     val queryPart = queryString.toList

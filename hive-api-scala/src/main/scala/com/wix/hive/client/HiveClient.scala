@@ -5,6 +5,7 @@ import com.wix.hive.client.HiveClient.{version, versionForUrl}
 import com.wix.hive.client.http._
 import com.wix.hive.commands.HiveCommand
 import com.wix.hive.model.{HiveClientErrorCodes, HiveClientException, WixAPIErrorException}
+import com.wix.hive.security.HiveRequestSigner
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 
@@ -34,7 +35,7 @@ class HiveClient(val appId: String,
 
   val agent = s"Hive Scala v${version}"
 
-  val signer = new HiveSigner(secretKey)
+  val signer = new HiveRequestSigner(secretKey)
 
   def execute[R](instanceId: String, command: HiveCommand[R]): Future[R] = {
 

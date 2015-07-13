@@ -1,7 +1,7 @@
 package com.wix.hive.server.webhooks
 
-import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
+import com.wix.hive.security.HiveRequestSigner
 import com.wix.hive.server.webhooks.exceptions.InvalidSignatureException
 
 import scala.util.{Failure, Success, Try}
@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
  * Date: 12/1/14
  */
 class WebhookSignatureVerification(secret: String) {
-  private lazy val signer = new HiveSigner(secret)
+  private lazy val signer = new HiveRequestSigner(secret)
 
   def verify(req: HttpRequestData): Try[HttpRequestData] = {
     tryHeader(req, "x-wix-signature") flatMap { sig =>

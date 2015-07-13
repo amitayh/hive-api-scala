@@ -1,8 +1,8 @@
 package com.wix.hive.infrastructure
 
-import com.wix.hive.client.HiveSigner
 import com.wix.hive.client.http.HttpRequestData
 import com.wix.hive.infrastructure
+import com.wix.hive.security.HiveRequestSigner
 import com.wix.hive.server.webhooks._
 import dispatch.{Req, url, _}
 import org.jboss.netty.handler.codec.http._
@@ -38,7 +38,7 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   val timeout = 5.seconds
 
   lazy val host = s"localhost:$port"
-  lazy val signer = new HiveSigner(secret)
+  lazy val signer = new HiveRequestSigner(secret)
 
   def aReq(instanceId: String, parameters: WebhookParameters, eventType: String, content: String): Req = {
     def getSignature(headers: Map[String, String], content: String): String = {
