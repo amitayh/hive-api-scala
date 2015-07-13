@@ -1,13 +1,12 @@
 package com.wix.hive.infrastructure
 
 import com.wix.hive.client.http.HttpRequestData
-import com.wix.hive.infrastructure
 import com.wix.hive.security.HiveRequestSigner
 import com.wix.hive.server.webhooks._
 import dispatch.{Req, url, _}
 import org.jboss.netty.handler.codec.http._
 import org.joda.time.format.ISODateTimeFormat
-
+import com.wix.hive.json
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -87,7 +86,7 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   }
 
   protected def callWebhook(webhook: Webhook[_], eventType: String): Unit = {
-    val payload = infrastructure.JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
+    val payload = json.JacksonObjectMapper.mapper.writeValueAsString(webhook.data)
     val request = aReq(webhook.instanceId, webhook.parameters, eventType, payload)
 
     Await.ready(Http(request OK as.String), Duration(5, "seconds"))

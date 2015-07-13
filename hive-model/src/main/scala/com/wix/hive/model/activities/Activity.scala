@@ -1,7 +1,7 @@
 package com.wix.hive.model.activities
 
 import com.fasterxml.jackson.annotation.{JsonSubTypes, JsonTypeInfo, JsonCreator}
-import com.wix.hive.infrastructure.JacksonObjectMapper
+import com.wix.hive.model.JacksonObjectMapper
 import org.joda.time.DateTime
 
 import scala.util.control.Exception._

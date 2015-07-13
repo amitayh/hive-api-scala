@@ -1,6 +1,6 @@
 package com.wix.hive.model.activities
 
-import com.wix.hive.infrastructure.JacksonObjectMapper
+import com.wix.hive.model.JacksonObjectMapper
 import org.joda.time.DateTime
 import org.specs2.matcher.Matcher
 import org.specs2.mutable.SpecificationWithJUnit

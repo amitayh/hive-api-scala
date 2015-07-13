@@ -6,6 +6,7 @@ import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, Operation
 import com.wix.hive.commands.batch.{ProcessBatch, WixAPIError}
 import com.wix.hive.model.activities.{Activity, ActivityDetails, ActivityInfo}
 import org.joda.time.DateTime
+import com.wix.hive.json
 
 /**
  * User: maximn
@@ -28,8 +29,8 @@ class DeserializableByHiveClientAdapter {
     val res = originalResponse.zipWithIndex.map { case (item, index) =>
       val op = ProcessBatch.toBatchOperation(index.toString, cmd.operations(index))
       item match {
-        case Right(r) => OperationResult(op.id, op.method, op.relativeUrl, 200, Some(JacksonObjectMapper.mapper.writeValueAsString(r)))
-        case Left(e: WixAPIError) => OperationResult(op.id, op.method, op.relativeUrl, e.errorCode, Some(JacksonObjectMapper.mapper.writeValueAsString(e)))
+        case Right(r) => OperationResult(op.id, op.method, op.relativeUrl, 200, Some(json.JacksonObjectMapper.mapper.writeValueAsString(r)))
+        case Left(e: WixAPIError) => OperationResult(op.id, op.method, op.relativeUrl, e.errorCode, Some(json.JacksonObjectMapper.mapper.writeValueAsString(e)))
       }
     }
 

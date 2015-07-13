@@ -1,6 +1,7 @@
 package com.wix.hive.server.instance
 
-import com.wix.hive.infrastructure.JacksonObjectMapper
+import com.wix.hive.json.JacksonObjectMapper
+
 
 /**
  * User: maximn
