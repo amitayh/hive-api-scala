@@ -155,6 +155,11 @@
                 <artifactId>specs2-junit_${scala.dependencies.version}</artifactId>
                 <version>${org.specs2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.specs2</groupId>
+                <artifactId>specs2-matcher-extra_${scala.dependencies.version}</artifactId>
+                <version>${org.specs2.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.specs2</groupId>

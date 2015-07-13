@@ -103,6 +103,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.specs2</groupId>
+            <artifactId>specs2-matcher-extra_${scala.dependencies.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
         </dependency>
