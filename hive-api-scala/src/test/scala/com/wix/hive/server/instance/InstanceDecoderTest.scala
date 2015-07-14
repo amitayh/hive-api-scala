@@ -29,9 +29,15 @@ class InstanceDecoderTest
           .ownerId(ownerId))
     }
 
-    "handle bad signature" in new ctx {
+    "explode on bad signature" in new ctx {
       new InstanceDecoder("invalid_key").decode(sampleSignedInstance) must
         beFailedTry.withThrowable[InvalidInstanceSignature]
+    }
+
+    "explode on expired instance" in new ctx {
+      givenClock(new DateTime(signDate).plusMinutes(6))
+      new InstanceDecoder(key, timeProvider = timeProvider)
+          .decode(sampleSignedInstance) must beFailedTry.withThrowable[ExpiredInstanceException]
     }
 
     "handle malformed payload - no separator" in new ctx {

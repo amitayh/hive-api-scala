@@ -3,7 +3,10 @@ package com.wix.hive.server.instance
 import java.net.InetSocketAddress
 import java.util.UUID
 
+import com.wix.hive.infrastructure.TimeProvider
 import org.apache.commons.net.util.Base64
+import org.joda.time.{DateTimeZone, DateTime}
+import org.specs2.mock.Mockito
 import org.specs2.specification.Scope
 
 /**
@@ -27,17 +30,27 @@ class InstanceDecoderScope extends Scope {
   val sampleInstanceEncoded = base64.encodeToString(generateInstance().getBytes)
   val precalculatedSignature = "wcR4TddW55czYzPn3OeOwh8QC7GdC7i_QcfAPWiQsRs"
   val sampleSignedInstance = precalculatedSignature + "." + sampleInstanceEncoded
-  val decoder = new InstanceDecoder(key)
+  val mockito = new Mockito {}
+  import mockito._
+
+  val timeProvider = mockito.mock[TimeProvider]
+  givenClock(new DateTime(signDate).withZone(DateTimeZone.UTC).plusMinutes(1))
+
+  def givenClock(time: DateTime) =
+    timeProvider.now returns time
+
+  val decoder = new InstanceDecoder(key, timeProvider = timeProvider)
 
   private def optAsJson[T](v: Option[T]): String = v.fold("null")(s => s"""\"$s\"""")
 
   def generateInstance(permissions: String = permission,
                        userId: Option[String] = Some(uid),
-                       premiumPackageId: Option[UUID] = Some(premiumPackage)) = {
+                       premiumPackageId: Option[UUID] = Some(premiumPackage),
+                       signedAt: String = signDate) = {
     // @formatter:off
     s"""{
         |  "instanceId": "${instanceId.toString}",
-        |  "signDate": "${signDate.toString}",
+        |  "signDate": "${signedAt.toString}",
         |  "uid": ${optAsJson(userId)},
         |  "permissions": "$permissions",
         |  "ipAndPort": "$ip/$port",
