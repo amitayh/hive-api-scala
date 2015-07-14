@@ -12,6 +12,13 @@ import scala.util.{Failure, Try}
  * User: maximn
  * Date: 12/7/14
  */
+
+/**
+ * Decodes the signed WixInstance
+ * Validates that the signature is right and that timestamp is within the allowed duration
+ *
+ * @param considerExpiredAfter This is the allowed duration from timestamp until now
+ */
 class InstanceDecoder(key: String,
                       considerExpiredAfter: Duration = InstanceDecoder.DefaultExpirationDuration,
                       timeProvider: TimeProvider = new SystemTimeProvider) {
