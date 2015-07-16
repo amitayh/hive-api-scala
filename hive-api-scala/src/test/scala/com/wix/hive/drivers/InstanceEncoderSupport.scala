@@ -10,12 +10,11 @@ import org.joda.time.DateTime
 
 trait InstanceEncoderSupport {
 
-  private lazy val base64 = new Base64
-
   def signAndEncodeInstance(wixInstance: WixInstance, key: String): String = {
+    val base64 = new Base64
+    val signer = new HiveSigner(key)
     val instanceForSerialization = createInstanceForSerialization(wixInstance)
     val instanceJson = JacksonObjectMapper.mapper.writeValueAsString(instanceForSerialization)
-    val signer = new HiveSigner(key)
     val encodedInstance = new String(base64.encode(instanceJson.getBytes))
     val signature = signer.signString(encodedInstance)
     s"$signature.$encodedInstance"
@@ -27,7 +26,7 @@ trait InstanceEncoderSupport {
       signDate = wixInstance.signedAt,
       uid = wixInstance.userId,
       permissions = wixInstance.permissions.headOption.getOrElse(""),
-      ipAndPort = "%s/%d".format(wixInstance.userIp.getHostString, wixInstance.userIp.getPort),
+      ipAndPort = s"${wixInstance.userIp.getHostString}/${wixInstance.userIp.getPort}",
       vendorProductId = wixInstance.premiumPackageId,
       demoMode = wixInstance.demoMode,
       siteOwnerId = wixInstance.ownerId)
