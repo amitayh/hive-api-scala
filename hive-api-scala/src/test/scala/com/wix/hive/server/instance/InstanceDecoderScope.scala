@@ -4,8 +4,7 @@ import java.net.InetSocketAddress
 import java.util.UUID
 
 import com.wix.hive.infrastructure.TimeProvider
-import org.apache.commons.net.util.Base64
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{DateTime, DateTimeZone}
 import org.specs2.mock.Mockito
 import org.specs2.specification.Scope
 
@@ -25,11 +24,7 @@ class InstanceDecoderScope extends Scope {
   val ipAndPort = InetSocketAddress.createUnresolved(ip, port)
   val demoMode = "false"
   val ownerId = UUID.fromString("c71abb54-25a9-4e98-a9ea-66e7681983fb")
-  val base64 = new Base64(true)
 
-  val sampleInstanceEncoded = base64.encodeToString(generateInstance().getBytes)
-  val precalculatedSignature = "wcR4TddW55czYzPn3OeOwh8QC7GdC7i_QcfAPWiQsRs"
-  val sampleSignedInstance = precalculatedSignature + "." + sampleInstanceEncoded
   val mockito = new Mockito {}
   import mockito._
 
