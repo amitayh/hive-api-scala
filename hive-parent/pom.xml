@@ -303,6 +303,8 @@
                     <args>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
+                        <arg>-Xmax-classfile-name</arg>
+                        <arg>240</arg>
                     </args>
                     <addJavacArgs>-deprecation</addJavacArgs>
                     <source>1.8</source>
