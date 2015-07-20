@@ -17,7 +17,7 @@ Scala client for the Wix Hive API
 <dependency>
     <groupId>com.wixpress</groupId>
     <artifactId>hive-api-scala</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</verseion>
 </dependency>
 ```
 
@@ -103,21 +103,6 @@ And the system knows that by comparing the two ``modifiedAt`` parameters (one fr
 ### Using the test-kit
 
 The test-kit provides you with the ability to test your code end to end.
-
-- Note: If you use Jetty in your project you might want to exlcude it from the test-kit to avoid collisions. That's because with  we use wiremock to set up the HTTP server, and Wiremock uses Jetty 6.
-``` xml
-<dependency>
-  <groupId>com.wixpress</groupId>
-  <artifactId>hive-api-scala-testkit</artifactId>
-  <scope>test</scope>
-  <exclusions>
-    <exclusion>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>servlet-api</artifactId>
-    </exclusion>
-  </exclusions>
-</dependency>
-```
 
 To use the test-kit you'll have to mixin `HiveTestkit` and/or `WebhooksTestkit` traits in your tests. The testkit allows you to set up embedded HTTP server that simulates the real hive server.
 Here's a code sample that independent of testing framework. For a full example see `HiveClientWithSimplicatorHubIT` and `WebhooksWithSimplicatorIT`
