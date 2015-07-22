@@ -34,10 +34,6 @@ case class ProvisionDisabled(@JsonProperty("instance-id") instanceId: String, @J
 //case class BillingUpgrade(vendorProductId: String) extends WebhookData
 //
 //case class BillingCancel() extends WebhookData
-//
-//case class ContactsCreated(contactId: String) extends WebhookData
-//
-//case class ContactsUpdated(contactId: String) extends WebhookData
 
 case class ActivitiesPosted(activityId: String, activityType: String, contactId: Option[String] = None) extends WebhookData
 
@@ -50,6 +46,12 @@ case class ServiceRunData(status: String, errorType: Option[String], errorMessag
 case class EmailSend(originId: String, correlationId: String, redemptionToken: String, contacts: EmailContacts) extends WebhookData
 
 case class SiteSettingsChanged(@JsonScalaEnumeration(classOf[SiteSettingChangeType]) event: SiteSettingChange, propertyName: String) extends WebhookData
+
+case class ContactDeleted(contactId: String) extends WebhookData
+
+case class ContactCreated(contactId: String) extends WebhookData
+
+case class ContactUpdated(contactId: String) extends WebhookData
 
 object SiteSettingChange extends Enumeration {
   type SiteSettingChange = Value

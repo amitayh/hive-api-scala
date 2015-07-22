@@ -27,7 +27,13 @@ trait WebhooksDriver {
   def callEmailSend(webhook: Webhook[EmailSend])
 
   def callSiteSettingsChanged(webhook: Webhook[SiteSettingsChanged])
-  }
+
+  def callContactCreated(webhook: Webhook[ContactCreated])
+
+  def callContactUpdated(webhook: Webhook[ContactUpdated])
+
+  def callContactDeleted(webhook: Webhook[ContactDeleted])
+}
 
 trait SimplicatorWebhooksDriver extends WebhooksDriver {
   val path: String
@@ -84,6 +90,13 @@ trait SimplicatorWebhooksDriver extends WebhooksDriver {
   override def callSiteSettingsChanged(webhook: Webhook[SiteSettingsChanged]) = {
     callWebhook(webhook, "/site/settings/changed")
   }
+
+  override def callContactCreated(webhook: Webhook[ContactCreated]) = callWebhook(webhook, "/contacts/created")
+
+  override def callContactUpdated(webhook: Webhook[ContactUpdated]) = callWebhook(webhook, "/contacts/updated")
+
+  override def callContactDeleted(webhook: Webhook[ContactDeleted]) = callWebhook(webhook, "/contacts/deleted")
+
 
   protected def callWebhook(webhook: Webhook[_], eventType: String): Unit = {
     val payload = json.JacksonObjectMapper.mapper.writeValueAsString(webhook.data)

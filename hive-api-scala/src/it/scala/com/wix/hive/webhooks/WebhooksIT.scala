@@ -54,5 +54,29 @@ class WebhooksIT extends WebhookITBase with WebhookSimplicatorIT {
 
       verifyWebhookWith(beWebhook(instanceId, appId, beEqualTo(webhook.data)))
     }
-  }
+
+    "receive contact created webhook" in new webhooksCtx {
+      val webhook = aContactCreatedWebhook
+
+      callContactCreated(webhook)
+
+      verifyWebhookWith(beWebhook(instanceId, appId, beEqualTo(webhook.data)))
+    }
+
+    "receive contact updated webhook" in new webhooksCtx {
+      val webhook = aContactUpdatedWebhook
+
+      callContactUpdated(webhook)
+
+      verifyWebhookWith(beWebhook(instanceId, appId, beEqualTo(webhook.data)))
+    }
+
+    "receive contact deleted webhook" in new webhooksCtx {
+      val webhook = aContactDeletedWebhook
+
+      callContactDeleted(webhook)
+
+      verifyWebhookWith(beWebhook(instanceId, appId, beEqualTo(webhook.data)))
+    }
+ }
 }
