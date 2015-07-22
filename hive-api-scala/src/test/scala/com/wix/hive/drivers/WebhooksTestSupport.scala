@@ -4,6 +4,7 @@ import java.util.UUID
 
 import com.wix.hive.commands.services.{EmailContactMethod, EmailContacts}
 import com.wix.hive.matchers.HiveMatchers
+import com.wix.hive.server.webhooks.SiteSettingChange.UPDATED
 import com.wix.hive.server.webhooks._
 import org.joda.time.DateTime
 import org.specs2.matcher.{Matcher, Matchers}
@@ -17,9 +18,7 @@ with HiveMatchers {
   def aWebhookParams(appId: String = appId, timestamp: DateTime = timestamp) = WebhookParameters(appId, timestamp)
 
 
-  def randomId: String = {
-    UUID.randomUUID().toString
-  }
+  def randomId: String = UUID.randomUUID().toString
 
   def anEmailSendWebhookData = EmailSend(randomId, randomId, randomId, EmailContacts(EmailContactMethod.Id, Seq(randomId)))
 
@@ -72,18 +71,18 @@ with HiveMatchers {
       contactId ^^ {(_: ActivitiesPosted).contactId aka "contactId"}
   }
 
-
   def beProvisionDisabled(instanceId: Matcher[String], originInstanceId: Matcher[Option[String]] = beNone): Matcher[ProvisionDisabled] = {
     instanceId ^^ {(_: ProvisionDisabled).instanceId aka "instanceId"} and
       originInstanceId ^^ {(_: ProvisionDisabled).originInstanceId aka "originInstanceId"}
   }
 
-  def aSiteSettingsChangedWebhook = Webhook(
-    instanceId,
-    SiteSettingsChanged(SiteSettingChange.UPDATED, "DateFormat"),
-    aWebhookParams()
-  )
+  def aSiteSettingsChangedWebhook = Webhook(instanceId, SiteSettingsChanged(UPDATED, "DateFormat"), aWebhookParams())
 
+  def aContactCreatedWebhook = Webhook(instanceId, ContactCreated(randomId), aWebhookParams())
+
+  def aContactUpdatedWebhook = Webhook(instanceId, ContactUpdated(randomId), aWebhookParams())
+
+  def aContactDeletedWebhook = Webhook(instanceId, ContactDeleted(randomId), aWebhookParams())
 }
 
 object WebhooksTestSupport extends WebhooksTestSupport

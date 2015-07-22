@@ -21,11 +21,12 @@ class WebhooksMarshaller {
     "/activities/posted" -> classOf[ActivitiesPosted],
     "/services/actions/done" -> classOf[ServiceResult],
     "/services/actions/email/send" -> classOf[EmailSend],
-    "/site/settings/changed" -> classOf[SiteSettingsChanged]
+    "/site/settings/changed" -> classOf[SiteSettingsChanged],
+    "/contacts/deleted" -> classOf[ContactDeleted],
+    "/contacts/created" -> classOf[ContactCreated],
+    "/contacts/updated" -> classOf[ContactUpdated]
     //    "/billing/upgrade" -> classOf[BillingUpgrade],
     //    "/billing/cancel" -> classOf[BillingCancel],
-    //    "/contacnts/created" -> classOf[ContactsCreated],
-    //    "/contacts/updated" -> classOf[ContactsUpdated],
   )
 
   def unmarshal(req: HttpRequestData): Try[WebhookData] = {
