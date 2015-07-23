@@ -2,8 +2,6 @@ package com.wix.hive.server.resolvers
 
 import com.wix.hive.server.instance.{InstanceDecoder, WixInstance}
 import org.springframework.core.MethodParameter
-import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.{HandlerMethodArgumentResolver, ModelAndViewContainer}
@@ -41,8 +39,7 @@ object Spring {
 
   }
 
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  case class InstanceValidationError(message: String, cause: Throwable) extends RuntimeException(message, cause) {
+  class InstanceValidationError(message: String, cause: Throwable) extends RuntimeException(message, cause) {
     def this(message: String) = this(message, null)
   }
 

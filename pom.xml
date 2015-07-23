@@ -15,6 +15,7 @@
         <module>hive-api-scala</module>
         <module>hive-api-scala-testkit</module>
         <module>wix-hive-scala-wixapps</module>
+        <module>hive-api-testapp</module>
     </modules>
 
     <developers>
