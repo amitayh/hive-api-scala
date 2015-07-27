@@ -18,7 +18,7 @@ class InstanceDecoderScope extends Scope {
   val signDate = "2015-07-13T13:18:51.965Z"
   val uid = "68f8ef81-c445-4ab8-9e8b-65119e84731b"
   val permission = "OWNER"
-  val premiumPackage = UUID.fromString("a05727a8-73d0-4ea3-b4cf-fedddbd49979")
+  val premiumPackage = "Premium1"
   val ip = "5.102.254.181"
   val port = 62834
   val ipAndPort = InetSocketAddress.createUnresolved(ip, port)
@@ -40,7 +40,7 @@ class InstanceDecoderScope extends Scope {
 
   def generateInstance(permissions: String = permission,
                        userId: Option[String] = Some(uid),
-                       premiumPackageId: Option[UUID] = Some(premiumPackage),
+                       premiumPackageId: Option[String] = Some(premiumPackage),
                        signedAt: String = signDate) = {
     // @formatter:off
     s"""{
