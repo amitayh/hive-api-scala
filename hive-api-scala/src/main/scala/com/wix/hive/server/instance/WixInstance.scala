@@ -34,7 +34,7 @@ case class WixInstance(instanceId: UUID,
                        @JsonProperty("uid") userId: Option[String],
                        @JsonDeserialize(using = classOf[CustomPermissionsDeserializer]) permissions: Set[String],
                        @JsonProperty("ipAndPort") @JsonDeserialize(using = classOf[CustomIpDeserializer]) userIp: InetSocketAddress,
-                       @JsonProperty("vendorProductId") premiumPackageId: Option[UUID],
+                       @JsonProperty("vendorProductId") premiumPackageId: Option[String],
                        demoMode: Boolean,
                        @JsonProperty("siteOwnerId") ownerId: UUID)
 

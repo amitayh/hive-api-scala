@@ -38,6 +38,6 @@ case class WixInstanceForSerialization(instanceId: UUID,
                                        uid: Option[String],
                                        permissions: String,
                                        ipAndPort: String,
-                                       vendorProductId: Option[UUID],
+                                       vendorProductId: Option[String],
                                        demoMode: Boolean,
                                        siteOwnerId: UUID)
