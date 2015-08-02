@@ -25,7 +25,7 @@ trait InstanceEncoderSupport {
       instanceId = wixInstance.instanceId,
       signDate = wixInstance.signedAt,
       uid = wixInstance.userId,
-      permissions = wixInstance.permissions.headOption.getOrElse(""),
+      permissions = wixInstance.permissions.headOption.getOrElse("null"),
       ipAndPort = s"${wixInstance.userIp.getHostString}/${wixInstance.userIp.getPort}",
       vendorProductId = wixInstance.premiumPackageId,
       demoMode = wixInstance.demoMode,

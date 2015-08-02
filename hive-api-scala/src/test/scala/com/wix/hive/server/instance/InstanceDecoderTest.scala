@@ -2,7 +2,7 @@ package com.wix.hive.server.instance
 
 import com.wix.hive.drivers.InstanceEncoderSupport
 import org.joda.time.{DateTime, DateTimeZone}
-import org.specs2.matcher.MatcherMacros
+import org.specs2.matcher.{Matcher, MatcherMacros}
 import org.specs2.mutable.SpecificationWithJUnit
 
 import scala.language.experimental.macros
@@ -28,6 +28,7 @@ class InstanceDecoderTest
 
     val signedInstance = signAndEncodeInstance(instance, key)
 
+    def beEmptySet: Matcher[Set[String]] = beEmpty
   }
 
   "decode" should {
@@ -42,6 +43,12 @@ class InstanceDecoderTest
           .userIp(ipAndPort)
           .demoMode(false)
           .ownerId(ownerId))
+    }
+
+    "resolve no permissions" in new ctx {
+      val noPermissionsInstance = signAndEncodeInstance(instance.copy(permissions = Set.empty), key)
+
+      decoder.decode(noPermissionsInstance) must beSuccessfulTry(matchA[WixInstance].permissions(beEmptySet))
     }
 
     "explode on bad signature" in new ctx {
