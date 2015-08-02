@@ -19,9 +19,7 @@ object Spring {
                                  binderFactory: WebDataBinderFactory): WixInstance = {
       val result = for {
         signedInstance <- extractSignedInstance(webRequest)
-        instance <- instanceDecoder.decode(signedInstance) recoverWith {
-          case e => Failure(new InstanceValidationError("Unable to decode instance", e))
-        }
+        instance <- decodeSignedInstance(signedInstance)
       } yield instance
       result.get
     }
@@ -34,6 +32,12 @@ object Spring {
       webRequest.getHeader(headerName) match {
         case signedInstance: String => Success(signedInstance)
         case null => Failure(new InstanceValidationError(s"Header '$headerName' is missing"))
+      }
+    }
+
+    private def decodeSignedInstance(signedInstance: String): Try[WixInstance] = {
+      instanceDecoder.decode(signedInstance) recoverWith {
+        case e => Failure(new InstanceValidationError("Unable to decode instance", e))
       }
     }
 

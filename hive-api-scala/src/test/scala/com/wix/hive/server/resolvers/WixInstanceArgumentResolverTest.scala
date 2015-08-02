@@ -4,18 +4,17 @@ import com.wix.hive.drivers.InstanceEncoderSupport
 import com.wix.hive.server.instance.{InstanceDecoderScope, WixInstance}
 import com.wix.hive.server.resolvers.Spring.{InstanceValidationError, WixInstanceArgumentResolver}
 import org.joda.time.{DateTime, DateTimeZone}
-import org.specs2.mock.Mockito
 import org.specs2.mutable.SpecificationWithJUnit
 import org.springframework.core.MethodParameter
-import org.springframework.web.bind.support.WebDataBinderFactory
-import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.mock.web.{MockHttpServletRequest, MockHttpServletResponse}
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.method.support.{HandlerMethodArgumentResolver, ModelAndViewContainer}
 
-class WixInstanceArgumentResolverTest extends SpecificationWithJUnit with Mockito {
+class WixInstanceArgumentResolverTest extends SpecificationWithJUnit {
 
   "WixInstanceArgumentResolver" should {
 
-    trait Context extends InstanceDecoderScope with InstanceEncoderSupport {
+    trait Context extends InstanceDecoderScope {
 
       class ExampleController {
         def handle(string: String, instance: WixInstance) = true
@@ -24,22 +23,6 @@ class WixInstanceArgumentResolverTest extends SpecificationWithJUnit with Mockit
       val headerName = "X-Wix-Instance"
 
       val resolver = new WixInstanceArgumentResolver(decoder, headerName)
-
-      val mavContainer = mock[ModelAndViewContainer]
-
-      val binderFactory = mock[WebDataBinderFactory]
-
-      val request = mock[NativeWebRequest]
-
-      val instance = WixInstance(
-        instanceId = instanceId,
-        signedAt = new DateTime(signDate).withZone(DateTimeZone.UTC),
-        userId = Some(uid),
-        permissions = Set(permission),
-        userIp = ipAndPort,
-        premiumPackageId = Some(premiumPackage),
-        demoMode = false,
-        ownerId = ownerId)
 
       def handleMethodParameter(index: Int) = {
         val handleMethod = classOf[ExampleController].getMethods.head
@@ -64,21 +47,41 @@ class WixInstanceArgumentResolverTest extends SpecificationWithJUnit with Mockit
       resolver.supportsParameter(wixInstanceParameter) must beTrue
     }
 
-    "resolve Wix instance from HTTP header" in new Context {
-      val signedInstance = signAndEncodeInstance(instance, key)
-      request.getHeader(headerName) returns signedInstance
-      resolver.resolveArgument(wixInstanceParameter, mavContainer, request, binderFactory) must equalTo(instance)
+    trait WebContext extends Context with InstanceEncoderSupport {
+
+      val mavContainer = new ModelAndViewContainer()
+
+      val request = new MockHttpServletRequest()
+
+      val instance = WixInstance(
+        instanceId = instanceId,
+        signedAt = new DateTime(signDate).withZone(DateTimeZone.UTC),
+        userId = Some(uid),
+        permissions = Set(permission),
+        userIp = ipAndPort,
+        premiumPackageId = Some(premiumPackage),
+        demoMode = false,
+        ownerId = ownerId)
+
+      def webRequest = new ServletWebRequest(request, new MockHttpServletResponse())
+
     }
 
-    "throw when instance header is missing" in new Context {
-      resolver.resolveArgument(wixInstanceParameter, mavContainer, request, binderFactory) must
+    "resolve Wix instance from HTTP header" in new WebContext {
+      val signedInstance = signAndEncodeInstance(instance, key)
+      request.addHeader(headerName, signedInstance)
+      resolver.resolveArgument(wixInstanceParameter, mavContainer, webRequest, null) must equalTo(instance)
+    }
+
+    "throw when instance header is missing" in new WebContext {
+      resolver.resolveArgument(wixInstanceParameter, mavContainer, webRequest, null) must
         throwA[InstanceValidationError]("Header 'X-Wix-Instance' is missing")
     }
 
-    "throw when instance is signed with invalid key" in new Context {
+    "throw when instance is signed with invalid key" in new WebContext {
       val signedInstance = signAndEncodeInstance(instance, "invalid key lol")
-      request.getHeader(headerName) returns signedInstance
-      resolver.resolveArgument(wixInstanceParameter, mavContainer, request, binderFactory) must
+      request.addHeader(headerName, signedInstance)
+      resolver.resolveArgument(wixInstanceParameter, mavContainer, webRequest, null) must
         throwA[InstanceValidationError]
     }
 
