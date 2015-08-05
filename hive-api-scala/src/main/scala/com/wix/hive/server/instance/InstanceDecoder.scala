@@ -33,16 +33,17 @@ class InstanceDecoder(key: String,
       base64 = new Base64
       decodedInstance = base64.decode(encodedJson)
       wixInstance <- Try {deserializer.deserialize(decodedInstance)}
-      _ <- validateNonExpired(wixInstance.signedAt)
+      _ <- validateNonExpired(wixInstance)
     } yield wixInstance
   }
 
   private def validateSignature(signature: String, calculatedSignature: String)(encodedJson: String) =
     Try {if (signature != calculatedSignature) throw new InvalidInstanceSignature(signature, encodedJson)}
 
-  private def validateNonExpired(instanceSignedAt: DateTime) = {
+  private def validateNonExpired(wixInstance: WixInstance) = {
     val now = timeProvider.now
     Try {
+      val instanceSignedAt = Option(wixInstance.signedAt).getOrElse(throw new ExpiredInstanceException(now, null))
       if (now.getMillis - instanceSignedAt.getMillis > considerExpiredAfter.getMillis) throw new ExpiredInstanceException(now, instanceSignedAt)
     }
   }
