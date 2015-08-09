@@ -2,7 +2,7 @@ package com.wix.hive.server.resolvers
 
 import com.wix.hive.drivers.InstanceEncoderSupport
 import com.wix.hive.server.instance.{InstanceDecoderScope, WixInstance}
-import com.wix.hive.server.resolvers.Spring.{InstanceValidationError, WixInstanceArgumentResolver}
+import com.wix.hive.server.resolvers.Spring.{InstanceValidationException, WixInstanceArgumentResolver}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.specs2.mutable.SpecificationWithJUnit
 import org.springframework.core.MethodParameter
@@ -75,14 +75,14 @@ class WixInstanceArgumentResolverTest extends SpecificationWithJUnit {
 
     "throw when instance header is missing" in new WebContext {
       resolver.resolveArgument(wixInstanceParameter, mavContainer, webRequest, null) must
-        throwA[InstanceValidationError]("Header 'X-Wix-Instance' is missing")
+        throwA[InstanceValidationException]("Header 'X-Wix-Instance' is missing")
     }
 
     "throw when instance is signed with invalid key" in new WebContext {
       val signedInstance = signAndEncodeInstance(instance, "invalid key lol")
       request.addHeader(headerName, signedInstance)
       resolver.resolveArgument(wixInstanceParameter, mavContainer, webRequest, null) must
-        throwA[InstanceValidationError]
+        throwA[InstanceValidationException]
     }
 
   }

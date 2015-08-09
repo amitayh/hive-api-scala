@@ -36,13 +36,13 @@ object Spring {
     private def extractSignedInstance(webRequest: NativeWebRequest): Try[String] = {
       webRequest.getHeader(headerName) match {
         case signedInstance: String => Success(signedInstance)
-        case null => Failure(new InstanceValidationError(s"Header '$headerName' is missing"))
+        case null => Failure(new InstanceValidationException(s"Header '$headerName' is missing"))
       }
     }
 
     private def decodeSignedInstance(signedInstance: String): Try[WixInstance] = {
       instanceDecoder.decode(signedInstance) recoverWith {
-        case e => Failure(new InstanceValidationError("Unable to decode instance", e))
+        case e => Failure(new InstanceValidationException("Unable to decode instance", e))
       }
     }
 
@@ -77,7 +77,7 @@ object Spring {
 
   }
 
-  class InstanceValidationError(message: String, cause: Throwable) extends RuntimeException(message, cause) {
+  class InstanceValidationException(message: String, cause: Throwable) extends RuntimeException(message, cause) {
     def this(message: String) = this(message, null)
   }
 
