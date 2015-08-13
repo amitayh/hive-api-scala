@@ -73,7 +73,44 @@ the same instance. You can use the convenience method 'executeForInstance'
 ``` scala
   val executor = client.executeForInstance(instance)
   executor(GetContactById(contactId))
-``` 
+```
+
+#### Spring integration
+
+If you're using [Spring Framework](http://projects.spring.io/spring-framework/),
+you can mixin the `WixInstanceDecoderSupport` in your spring config to easily access
+the instance from within your controllers:
+
+``` scala
+import com.wix.hive.server.resolvers.Spring.WixInstanceDecoderSupport
+
+@Configuration
+class MySpringConfig extends WixInstanceDecoderSupport {
+
+  // App secret key used to verify signed instance
+  override def wixInstanceSecretKey: String = '<secret key>' 
+
+  // HTTP header name in which the signed instance will be passed to the controller
+  override def wixInstanceHeaderName: String = '<header name>'
+  
+  // Rest of your config
+
+}
+```
+
+Then you can access the instance in your controllers like so:
+
+``` scala
+@Controller
+class MyController {
+
+  @RequestMapping(value = Array("/my-endpoint"))
+  def myEndpoint(instance: WixInstance) = {
+    // ...
+  }
+
+}
+```
 
 ### Hive Errors
 
