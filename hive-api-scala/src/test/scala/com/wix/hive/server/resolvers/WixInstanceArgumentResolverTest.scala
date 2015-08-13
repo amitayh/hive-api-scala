@@ -16,10 +16,6 @@ class WixInstanceArgumentResolverTest extends SpecificationWithJUnit {
 
     trait Context extends InstanceDecoderScope {
 
-      class ExampleController {
-        def handle(string: String, instance: WixInstance) = true
-      }
-
       val headerName = "X-Wix-Instance"
 
       val resolver = new WixInstanceArgumentResolver(decoder, headerName)
@@ -39,13 +35,13 @@ class WixInstanceArgumentResolverTest extends SpecificationWithJUnit {
       resolver must beAnInstanceOf[HandlerMethodArgumentResolver]
     }
 
-//    "not support method parameters of types different than WixInstance" in new Context {
-//      resolver.supportsParameter(stringParameter) must beFalse
-//    }
-//
-//    "support method parameters of type WixInstance" in new Context {
-//      resolver.supportsParameter(wixInstanceParameter) must beTrue
-//    }
+    "not support method parameters of types different than WixInstance" in new Context {
+      resolver.supportsParameter(stringParameter) must beFalse
+    }
+
+    "support method parameters of type WixInstance" in new Context {
+      resolver.supportsParameter(wixInstanceParameter) must beTrue
+    }
 
     trait WebContext extends Context with InstanceEncoderSupport {
 
