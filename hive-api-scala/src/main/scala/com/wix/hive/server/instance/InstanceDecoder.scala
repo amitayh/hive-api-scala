@@ -63,7 +63,7 @@ class InstanceDecoder(key: String,
 }
 
 object InstanceDecoder {
-  val DefaultExpirationDuration = Duration.standardMinutes(5)
+  val DefaultExpirationDuration = Duration.standardHours(1)
 }
 
 class InvalidInstanceSignature(signature: String, json: String) extends RuntimeException(s"Invalid signature: '$signature' for instance: '$json'")
