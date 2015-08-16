@@ -61,7 +61,7 @@ class InstanceDecoderTest
     }
 
     "explode on expired instance" in new ctx {
-      givenClock(new DateTime(signDate).plusMinutes(6))
+      givenClock(new DateTime(signDate).plusMinutes(61))
       new InstanceDecoder(key, timeProvider = timeProvider)
         .decode(signedInstance) must beFailedTry.withThrowable[ExpiredInstanceException]
     }
