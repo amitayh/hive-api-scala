@@ -15,4 +15,4 @@ case object GetSitePages extends HiveCommand[SitePages]{
 }
 
 case class SitePages(siteUrl: SiteData, pages: Seq[Page])
-case class Page(path: String, wixPageId: Option[String], appPageId: Option[String])
+case class Page(path: String, wixPageId: Option[String], appPageId: Option[String], title: String)
