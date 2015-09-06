@@ -2,7 +2,7 @@ package com.wix.hive.commands.sites
 
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.commands.HiveCommand
-import com.wix.hive.model.sites.SiteData
+import com.wix.hive.model.sites.{SitePages, SiteData}
 
 /**
  * User: maximn
@@ -14,5 +14,4 @@ case object GetSitePages extends HiveCommand[SitePages]{
   override def method: HttpMethod = GET
 }
 
-case class SitePages(siteUrl: SiteData, pages: Seq[Page])
-case class Page(path: String, wixPageId: Option[String], appPageId: Option[String], title: String)
+

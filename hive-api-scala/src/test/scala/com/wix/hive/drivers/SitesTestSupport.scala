@@ -1,6 +1,5 @@
 package com.wix.hive.drivers
 
-import com.wix.hive.commands.sites.{Page, SitePages}
 import com.wix.hive.model.sites._
 import org.specs2.matcher.{Matcher, Matchers}
 
