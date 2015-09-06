@@ -87,7 +87,6 @@
             <dependency>
                 <groupId>com.wix.hive</groupId>
                 <artifactId>hive-model</artifactId>
-                <version>1.3.0-SNAPSHOT</version>
             </dependency>
 
 
