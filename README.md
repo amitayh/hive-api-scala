@@ -17,7 +17,7 @@ to **obtain** your **APP_KEY** and **APP_SECRET**
 
 ``` maven
 <dependency>
-    <groupId>com.wixpress</groupId>
+    <groupId>com.wix.hive</groupId>
     <artifactId>hive-api-scala</artifactId>
     <version>1.1.0-SNAPSHOT</verseion>
 </dependency>
@@ -26,7 +26,7 @@ to **obtain** your **APP_KEY** and **APP_SECRET**
 ### SBT
 
 ``` sbt
-libraryDependencies += "com.wixpress" %% "hive-api-scala" % "1.1.0-SNAPSHOT"
+libraryDependencies += "com.wix.hive" %% "hive-api-scala" % "1.1.0-SNAPSHOT"
 ```
 
 ## Quick Start

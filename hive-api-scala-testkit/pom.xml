@@ -3,7 +3,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.wixpress</groupId>
     <artifactId>hive-api-scala-testkit</artifactId>
     <version>1.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -21,7 +20,7 @@
     </developers>
 
     <parent>
-        <groupId>com.wixpress</groupId>
+        <groupId>com.wix.hive</groupId>
         <artifactId>hive-api-scala-parent</artifactId>
         <version>1.3.0-SNAPSHOT</version>
         <relativePath>../hive-parent/pom.xml</relativePath>
@@ -29,13 +28,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.wixpress</groupId>
+            <groupId>com.wix.hive</groupId>
             <artifactId>hive-api-scala</artifactId>
             <version>1.3.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.wixpress</groupId>
+            <groupId>com.wix.hive</groupId>
             <artifactId>hive-api-scala</artifactId>
             <version>1.3.0-SNAPSHOT</version>
             <type>test-jar</type>
