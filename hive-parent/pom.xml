@@ -85,12 +85,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.wix.hive</groupId>
-                <artifactId>hive-model</artifactId>
-            </dependency>
-
-
-            <dependency>
                 <groupId>net.databinder.dispatch</groupId>
                 <artifactId>dispatch-core_${scala.dependencies.version}</artifactId>
                 <version>${dispatch.version}</version>
