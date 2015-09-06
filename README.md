@@ -19,14 +19,14 @@ to **obtain** your **APP_KEY** and **APP_SECRET**
 <dependency>
     <groupId>com.wix.hive</groupId>
     <artifactId>hive-api-scala</artifactId>
-    <version>1.1.0-SNAPSHOT</verseion>
+    <version>1.3.0-SNAPSHOT</verseion>
 </dependency>
 ```
 
 ### SBT
 
 ``` sbt
-libraryDependencies += "com.wix.hive" %% "hive-api-scala" % "1.1.0-SNAPSHOT"
+libraryDependencies += "com.wix.hive" %% "hive-api-scala" % "1.3.0-SNAPSHOT"
 ```
 
 ## Quick Start
