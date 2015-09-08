@@ -20,7 +20,7 @@ case class AuthLogin(initiator: String, previousActivityStreamId: String) extend
 }
 
 object AuthLogin {
-  implicit val authLoginInfoValidator = validator[AuthLogin] { a =>
+  implicit val authLoginValidator = validator[AuthLogin] { a =>
     a.previousActivityStreamId is notNull
   }
 }
