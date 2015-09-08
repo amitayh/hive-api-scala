@@ -6,4 +6,8 @@ package com.wix.hive.model.sites
  */
 case class ContributorList(contributors: Seq[Contributor])
 
+object ContributorList {
+  def singleUser(ownerId: String, role: String) = ContributorList(Seq(Contributor(ownerId, Seq(role))))
+}
+
 case class Contributor(id: String, roles: Seq[String])
