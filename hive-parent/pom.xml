@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <scala.version>2.11.5</scala.version>
+        <scala.version>2.11.7</scala.version>
         <scala.dependencies.version>2.11</scala.dependencies.version>
 
         <dispatch.version>0.11.2</dispatch.version>
