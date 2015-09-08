@@ -9,14 +9,11 @@ import org.joda.time.DateTime
 // it's temp until we move all ActivityInfos to inherit com.wix.hive.model.activities.ActivityInfo
 trait ActivityInfoBase
 
-sealed trait ActivityInfo extends ActivityInfoBase {
+trait ActivityInfo extends ActivityInfoBase {
   @JsonIgnore
   def activityType: ActivityType
 }
 
-case class AuthLogin() extends ActivityInfo {
-  override val activityType: ActivityType = `auth/login`
-}
 
 case class AuthRegister(initiator: String, previousActivityStreamId: String, status: String) extends ActivityInfo {
   override val activityType = `auth/register`
