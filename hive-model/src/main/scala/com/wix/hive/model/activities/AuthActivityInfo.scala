@@ -15,7 +15,7 @@ trait AuthActivityInfo extends ActivityInfo {
   def previousActivityStreamId: String
 }
 
-case class AuthLogin(initiator: String, previousActivityStreamId: String) extends ActivityInfo {
+case class AuthLogin(initiator: String, previousActivityStreamId: String) extends AuthActivityInfo {
   override val activityType: ActivityType = `auth/login`
 }
 
