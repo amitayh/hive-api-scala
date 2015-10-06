@@ -10,7 +10,6 @@
     <name>Hive Scala API - Parent</name>
     <description>Scala library to work with the Hive Api</description>
 
-
     <developers>
         <developer>
             <name>Maxim Novak</name>
@@ -216,6 +215,11 @@
             <dependency>
                 <groupId>com.wix</groupId>
                 <artifactId>accord-core_${scala.dependencies.version}</artifactId>
+                <version>${accord.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wix</groupId>
+                <artifactId>accord-specs2-3-x_${scala.dependencies.version}</artifactId>
                 <version>${accord.version}</version>
             </dependency>
         </dependencies>
