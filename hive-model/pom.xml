@@ -77,5 +77,13 @@
             <groupId>com.wix</groupId>
             <artifactId>accord-core_${scala.dependencies.version}</artifactId>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.wix</groupId>
+            <artifactId>accord-specs2-3-x_${scala.dependencies.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
 </project>
