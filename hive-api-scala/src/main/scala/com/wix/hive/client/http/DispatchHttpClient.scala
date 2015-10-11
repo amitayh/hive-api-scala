@@ -41,13 +41,12 @@ class DispatchHttpClient()(implicit val executionContext: ExecutionContext) exte
   def handle(r: Response): InputStream = {
       r.getStatusCode match {
         case `2XX`() => r.getResponseBodyAsStream
-        case 404 => {
+        case _ => {
           Try { JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException]) } match {
             case Failure(_) => throw WixAPIErrorException(r.getStatusCode, Some(r.getStatusText))
             case Success(e) => throw e
           }
         }
-        case _ => throw JacksonObjectMapper.mapper.readValue(r.getResponseBodyAsStream, classOf[WixAPIErrorException])
       }
   }
 }
