@@ -18,9 +18,3 @@ trait AuthActivityInfo extends ActivityInfo {
 case class AuthLogin(initiator: String, previousActivityStreamId: String) extends AuthActivityInfo {
   override val activityType: ActivityType = `auth/login`
 }
-
-object AuthLogin {
-  implicit val authLoginValidator = validator[AuthLogin] { a =>
-    a.previousActivityStreamId is notNull
-  }
-}
