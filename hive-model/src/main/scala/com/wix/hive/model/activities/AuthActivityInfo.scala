@@ -1,7 +1,7 @@
 package com.wix.hive.model.activities
 
-import com.wix.accord.dsl._
 import com.wix.hive.model.activities.ActivityType._
+import com.wix.hive.model.activities.SiteMemberStatus.SiteMemberStatus
 
 /**
  * @author maximn
@@ -19,8 +19,15 @@ case class AuthLogin(initiator: String, previousActivityStreamId: String) extend
   override val activityType: ActivityType = `auth/login`
 }
 
-object AuthLogin {
-  implicit val authLoginValidator = validator[AuthLogin] { a =>
-    a.previousActivityStreamId is notNull
-  }
+
+case class AuthStatusInfo(initiator: String,
+                          previousActivityStreamId: String,
+                          status: SiteMemberStatus) extends AuthActivityInfo{
+  override val activityType: ActivityType = `auth/status-change`
+
+}
+
+object SiteMemberStatus extends Enumeration {
+  type SiteMemberStatus = Value
+  val APPLICANT, ACTIVE, INACTIVE, DENIED = Value
 }
