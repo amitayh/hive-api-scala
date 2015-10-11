@@ -1,5 +1,6 @@
 package com.wix.hive.model.activities
 
+import com.wix.accord.dsl._
 import com.wix.hive.model.activities.ActivityType._
 import com.wix.hive.model.activities.SiteMemberStatus.SiteMemberStatus
 
