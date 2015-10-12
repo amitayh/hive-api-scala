@@ -1,6 +1,6 @@
 package com.wix.hive.model.activities
 
-import com.fasterxml.jackson.annotation.{JsonSubTypes, JsonTypeInfo, JsonCreator}
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.wix.hive.model.JacksonObjectMapper
 import org.joda.time.DateTime
 
@@ -24,7 +24,7 @@ object Activity {
     `auth/status-change` -> classOf[AuthStatusChange],
     `contact/contact-form` -> classOf[ContactContactForm],
     `contact/subscription-form` -> classOf[ContactSubscriptionForm],
-    `e_commerce/purchase` -> classOf[ECommercePurchase],
+    `e_commerce/purchase` -> classOf[EcommercePurchase],
     `music/album-fan` -> classOf[MusicAlbumFan],
     `music/album-share` -> classOf[MusicAlbumShare],
     `music/track-lyrics` -> classOf[MusicTrackLyrics],
