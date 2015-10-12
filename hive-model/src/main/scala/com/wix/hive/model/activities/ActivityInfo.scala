@@ -73,6 +73,14 @@ case class EcommercePurchase( cartId: String,
   override val activityType = `e_commerce/purchase`
 }
 
+case class EcommerceCartAddItem( cartId: String,
+                                 storeId: Int,
+                                 storeName: String,
+                                 item: EcommerceItem) extends ActivityInfo {
+  override val activityType = `e_commerce/add-item`
+}
+
+
 
 case class EcommerceItem( id: String,
                           sku: Option[String],

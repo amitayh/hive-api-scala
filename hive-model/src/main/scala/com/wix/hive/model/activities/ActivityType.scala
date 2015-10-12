@@ -12,6 +12,7 @@ object ActivityType extends Enumeration {
   val `contact/contact-form` = Value("contact/contact-form")
   val `contact/subscription-form` = Value("contact/subscription-form")
   val `e_commerce/purchase` = Value("e_commerce/purchase")
+  val `e_commerce/add-item` = Value("e_commerce/add-item")
   val `music/album-fan` = Value("music/album-fan")
   val `music/album-share` = Value("music/album-share")
   val `music/track-lyrics` = Value("music/track-lyrics")
