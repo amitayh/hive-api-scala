@@ -2,11 +2,8 @@ package com.wix.hive.model.activities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.wix.hive.model.activities.ActivityType._
-import com.wix.hive.model.activities.EcommerceItemType.EcommerceItemType
 import com.wix.hive.model.contacts.ContactName
 import org.joda.time.DateTime
-import java.net.URL
-
 
 // HACK: This is a temporary base class to hive-client activity info & activities-domain activity info.
 // it's temp until we move all ActivityInfos to inherit com.wix.hive.model.activities.ActivityInfo
@@ -58,88 +55,20 @@ case class CartItem(id: String, sku: Option[String], title: String, quantity: In
 
 case class ItemMetadata(name: String, value: String)
 
-
-case class EcommercePurchase( cartId: String,
+case class ECommercePurchase(
+                              cartId: String,
                               storeId: String,
-                              storeName: Option[String],
                               orderId: Option[String],
-                              items: Seq[EcommerceItem],
-                              payment: EcommercePayment,
-                              shippingAddress: Option[EcommerceContactDetails],
-                              billingAddress: Option[EcommerceContactDetails],
+                              items: Seq[CartItem],
+                              payment: Payment,
+                              shippingAddress: Option[CartAddress],
+                              billingAddress: Option[CartAddress],
                               paymentGateway: Option[String],
                               note: Option[String],
-                              buyerAcceptsMarketing: Option[Boolean]) extends ActivityInfo {
+                              buyerAcceptsMarketing: Option[Boolean]
+                              ) extends ActivityInfo {
   override val activityType = `e_commerce/purchase`
 }
-
-case class EcommerceCartAddItem( cartId: String,
-                                 storeId: Int,
-                                 storeName: String,
-                                 item: EcommerceItem) extends ActivityInfo {
-  override val activityType = `e_commerce/add-item`
-}
-
-
-
-case class EcommerceItem( id: String,
-                          sku: Option[String],
-                          title: String,
-                          quantity: Int,
-                          price: Option[java.math.BigDecimal],
-                          formattedPrice: Option[String],
-                          currency: String,
-                          productLink: Option[URL],
-                          weight: Option[java.math.BigDecimal],
-                          formattedWeight: Option[String],
-                          media: Option[EcommerceMedia],
-                          variants: Seq[EcommerceVariant],
-                          `type`: Option[EcommerceItemType] = None,
-                          categories: Option[Seq[String]] = None,
-                          metadata: Option[Seq[EcommerceItemMetaDataField]] = None)
-
-case class EcommerceContactDetails( firstName: Option[String],
-                                    lastName: Option[String],
-                                    email: Option[String],
-                                    phone: Option[String],
-                                    country: Option[String],
-                                    countryCode: Option[String],
-                                    region: Option[String],
-                                    regionCode: Option[String],
-                                    city: Option[String],
-                                    address1: Option[String],
-                                    address2: Option[String],
-                                    zip: Option[String],
-                                    company: Option[String])
-
-case class EcommercePayment( total: java.math.BigDecimal,
-                             subtotal: java.math.BigDecimal,
-                             formattedTotal: Option[String],
-                             formattedSubtotal: Option[String],
-                             currency: String,
-                             coupon: Option[EcommercePaymentCoupon],
-                             tax: Option[EcommercePrice],
-                             shipping: Option[EcommercePrice])
-
-case class EcommerceVariant(title: String, value: Option[String])
-
-case class EcommercePaymentCoupon( total: java.math.BigDecimal,
-                                   formattedTotal: Option[String],
-                                   title: String)
-
-case class EcommercePrice( total: java.math.BigDecimal,
-                           formattedTotal: Option[String])
-
-
-case class EcommerceMedia( thumbnail: Option[String])
-
-case class EcommerceItemMetaDataField(name: String, value: String)
-
-object EcommerceItemType extends Enumeration {
-  type EcommerceItemType = Value
-  val PHYSICAL, DIGITAL = Value
-}
-
 
 case class MusicAlbumFan() extends ActivityInfo {
   override val activityType = `music/album-fan`

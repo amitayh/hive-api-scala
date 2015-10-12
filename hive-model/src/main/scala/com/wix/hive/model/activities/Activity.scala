@@ -24,7 +24,7 @@ object Activity {
     `auth/status-change` -> classOf[AuthStatusChange],
     `contact/contact-form` -> classOf[ContactContactForm],
     `contact/subscription-form` -> classOf[ContactSubscriptionForm],
-    `e_commerce/purchase` -> classOf[EcommercePurchase],
+    `e_commerce/purchase` -> classOf[ECommercePurchase],
     `music/album-fan` -> classOf[MusicAlbumFan],
     `music/album-share` -> classOf[MusicAlbumShare],
     `music/track-lyrics` -> classOf[MusicTrackLyrics],
