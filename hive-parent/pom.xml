@@ -26,6 +26,11 @@
             <name>Scala-tools Maven2 Repository</name>
             <url>http://scala-tools.org/repo-releases</url>
         </repository>
+        <repository>
+            <id>scalaz</id>
+            <name>scalaz releases repo</name>
+            <url>https://dl.bintray.com/scalaz/releases/</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
