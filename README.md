@@ -164,28 +164,13 @@ Some of the ways you can contribute include:
 
 The test-kit provides you with the ability to test your code end to end.
 
-To use the test-kit you'll have to mixin `HiveTestkit` and/or `WebhooksTestkit` traits
-in your tests. The testkit allows you to set up embedded HTTP server that simulates
+The testkit allows you to set up embedded HTTP server that simulates 
 the real hive server. Here's a code sample that independent of testing framework.
-For a full example see `HiveClientWithSimplicatorHubIT` and `WebhooksWithSimplicatorIT`
 
-``` scala
-class HiveTestsSample extends HiveTestkit {
-  override val serverPort: Int = 9089
+A sample of
+- Hive client test : com.wix.hive.commands.SitesIT
+- Webhook test : com.wix.hive.webhooks.WebhooksIT
 
-  def beforeEveryTest = resetMocks()
-
-  def sampleTest = {
-    start()
-
-    // Set up your test this.givenXXX(...)
-
-    // Your test code here - new HiveClient(...).execute(..., HiveCommand(...))
-
-    stop()
-  }
-}
-```
 
 ### Submitting an Issue
 
