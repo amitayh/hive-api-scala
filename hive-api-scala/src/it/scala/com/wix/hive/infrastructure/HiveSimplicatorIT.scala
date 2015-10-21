@@ -21,7 +21,7 @@ trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   sequential
   WiremockEnvironment.start
 
-  class Recorder[T](implicit mn: Manifest[T]) extends mutable.Iterable[T] {
+  class Recorder[T: Manifest] extends mutable.Iterable[T] {
     private val requests = List.newBuilder[T]
 
     def recordingListener: (Request, Response) => Unit = (request, response) => {
@@ -35,7 +35,7 @@ trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
     override def iterator: Iterator[T] = requests.result().iterator
   }
 
-  def RecordHiveCommands[T](execution: => Unit)(implicit mn: Manifest[T], ec: ExecutionContext): Future[Recorder[T]] = {
+  def RecordHiveCommands[T: Manifest](execution: => Unit)(implicit ec: ExecutionContext): Future[Recorder[T]] = {
     val recorder = new Recorder[T]
     WiremockEnvironment.addListener(recorder.recordingListener)
     Future {

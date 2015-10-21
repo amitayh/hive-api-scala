@@ -18,18 +18,19 @@ class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {
       html = "<b>Html body</b>",
       text = "Text body"
     )
+
+
+    def emailMatcher: Matcher[SendSingleData] = {
+      subject(beEqualTo("Email Subject")) and
+        html(contain("Html body")) and
+        text(beEqualTo("Text body")) and
+        having(ToMailRecipient("recipient.email@wix.com", Some("Recipient name"), RecipientType.To)) and
+        having(FromMailRecipient("from.email@wix.com", Some("From name")))
+    }
   }
 
   "SendSingle operations" should {
     "send single email" in new ClientContext {
-
-      val emailMatcher: Matcher[SendSingleData] = {
-        subject(beEqualTo("Email Subject")) and
-          html(contain("Html body")) and
-          text(beEqualTo("Text body")) and
-          having(ToMailRecipient("recipient.email@wix.com", Some("Recipient name"), RecipientType.To)) and
-          having(FromMailRecipient("from.email@wix.com", Some("From name")))
-      }
 
       RecordHiveCommands[SendSingleData] {
         client.execute(instance, sendSingleCommand)
