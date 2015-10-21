@@ -1,6 +1,7 @@
 package com.wix.hive.commands
 
 import com.wix.hive.commands.services.email._
+import com.wix.hive.commands.services.email.test.SendSingleData
 import com.wix.hive.drivers.SendSingleTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import org.specs2.matcher.Matcher
@@ -34,7 +35,9 @@ class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {
 
       RecordHiveCommands[SendSingleData] {
         client.execute(instance, sendSingleCommand)
-      } must eventually(contain(emailMatcher).atLeastOnce).await
+      } andPlay {
+        _ must eventually(contain(emailMatcher).atLeastOnce)
+      }
 
     }
   }

@@ -1,16 +1,13 @@
 package com.wix.hive.infrastructure
 
-import java.lang.reflect.{ParameterizedType, Type}
-
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.core.`type`.TypeReference
 import com.github.tomakehurst.wiremock.http.{Request, Response}
-import com.wix.hive.json.JacksonObjectMapper
 import org.specs2.mutable.SpecificationWithJUnit
 
 import scala.collection.immutable.List
 import scala.collection.mutable
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.reflect.ClassTag
 
 /**
  * User: maximn
@@ -19,9 +16,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   sequential
-  WiremockEnvironment.start
+  WiremockEnvironment.start()
 
-  class Recorder[T: Manifest] extends mutable.Iterable[T] {
+  class Recorder[T: ClassTag] {
     private val requests = List.newBuilder[T]
 
     def recordingListener: (Request, Response) => Unit = (request, response) => synchronized {
@@ -32,40 +29,22 @@ trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
       }
     }
 
-    override def iterator: Iterator[T] = requests.result().iterator
+    def andPlay(player: (mutable.Iterable[T]) => Unit) = {
+      player(records)
+    }
+
+    def records: mutable.Iterable[T] = {
+      new mutable.Iterable[T] {
+        override def iterator: Iterator[T] = requests.result().iterator
+      }
+    }
   }
 
-  def RecordHiveCommands[T: Manifest](execution: => Unit)(implicit ec: ExecutionContext): Future[Recorder[T]] = {
+  def RecordHiveCommands[T: ClassTag](execution: => Unit)(implicit ec: ExecutionContext): Recorder[T] = {
     val recorder = new Recorder[T]
     WiremockEnvironment.addListener(recorder.recordingListener)
-    Future {
-      execution
-      recorder
-    }
-  }
-}
-
-private[infrastructure] object JsonAs {
-
-  def apply[T](json: String)(implicit mn: Manifest[T]): T = {
-    JacksonObjectMapper.mapper.readValue(json, typeReference[T])
-  }
-
-  private def typeReference[T: Manifest] = new TypeReference[T] {
-    override def getType = typeFromManifest(manifest[T])
-  }
-
-  private def typeFromManifest(m: Manifest[_]): Type = {
-    if (m.typeArguments.isEmpty) {
-      m.runtimeClass
-    }
-    else new ParameterizedType {
-      def getRawType = m.runtimeClass
-
-      def getActualTypeArguments = m.typeArguments.map(typeFromManifest).toArray
-
-      def getOwnerType = null
-    }
+    execution
+    recorder
   }
 }
 

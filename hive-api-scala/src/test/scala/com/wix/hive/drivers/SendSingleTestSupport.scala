@@ -1,6 +1,7 @@
 package com.wix.hive.drivers
 
-import com.wix.hive.commands.services.email.{FromMailRecipient, SendSingleData, ToMailRecipient}
+import com.wix.hive.commands.services.email.test.SendSingleData
+import com.wix.hive.commands.services.email.{FromMailRecipient, ToMailRecipient}
 import org.specs2.matcher.{Matcher, Matchers}
 
 trait SendSingleTestSupport extends Matchers {
