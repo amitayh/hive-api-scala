@@ -4,7 +4,7 @@ import java.io.InputStream
 
 import com.wix.hive.client.http.HttpMethod._
 import com.wix.hive.client.http.{HttpRequestData, NamedParameters}
-import com.wix.hive.json.JacksonObjectMapper
+import com.wix.hive.infrastructure.JsonAs
 
 import scala.reflect._
 
@@ -31,12 +31,6 @@ abstract class HiveCommand[T: ClassTag] {
     case (k, v: String) => k -> v
   }
 
-  protected[hive] def decode(r: InputStream): T = asR[T](r)
+  protected[hive] def decode(r: InputStream): T = JsonAs[T](r)
 
-  protected def asR[R: ClassTag](r: InputStream): R = {
-    val classOfR = implicitly[ClassTag[R]].runtimeClass.asInstanceOf[Class[R]]
-
-    if (classOf[scala.runtime.Nothing$] == classOfR || classOf[Unit] == classOfR) null.asInstanceOf[R]
-    else JacksonObjectMapper.mapper.readValue(r, classOfR)
-  }
 }

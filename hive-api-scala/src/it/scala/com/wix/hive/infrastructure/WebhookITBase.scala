@@ -26,7 +26,7 @@ trait WebhookITBase extends SpecificationWithJUnit {
     val mockFunc = mock[Try[WebhookBase[_]] => Unit]
     subscribeFunc(mockFunc)
 
-    override def after: Any = clearListener()
+    override def after: Any = clearListeners()
 
 
     def verifyWebhookWith[W <: WebhookBase[WebhookData]](matcher: Matcher[W]): Unit = {

@@ -11,6 +11,7 @@ import com.wix.hive.commands.HiveCommand
 import com.wix.hive.commands.batch.FailurePolicy.{STOP_ON_FAILURE, FailurePolicy}
 import com.wix.hive.commands.batch.ProcessBatch.{BatchOperationResult, CreateBatchOperation}
 import com.wix.hive.commands.contacts.UpdateContactCommand
+import com.wix.hive.infrastructure.JsonAs
 import org.joda.time.DateTime
 
 /**
@@ -43,7 +44,7 @@ case class ProcessBatch(
   }
 
   override def decode(r: InputStream): Seq[Either[WixAPIError, _]] = {
-    val zipped = operations zip asR[BatchOperationResult](r).operations
+    val zipped = operations zip JsonAs[BatchOperationResult](r).operations
 
     zipped map { case (op, res) =>
 
@@ -53,7 +54,7 @@ case class ProcessBatch(
           Right(response.getOrElse(response))
         }
         case _ => {
-          val errorResponse = res.body map { c => asR[WixAPIError](new ByteArrayInputStream(c.getBytes)) }
+          val errorResponse = res.body map { c => JsonAs[WixAPIError](new ByteArrayInputStream(c.getBytes)) }
           Left(errorResponse.getOrElse(
             WixAPIError(res.responseCode, Some("Server returned error response, but error payload is missing."), None)))
         }

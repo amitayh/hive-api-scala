@@ -29,11 +29,18 @@ trait WebhookSimplicatorIT extends Mockito with Matchers {
   givenThat(WireMock.post(urlMatching(webhookPath)).willReturn(aResponse().withStatus(200)))
 
   def subscribeFunc(f: (Try[WebhookBase[_]]) => Unit) = {
-    WiremockEnvironment.setListener((request: Request, response: Response) => {
+    WiremockEnvironment.addListener((request: Request, response: Response) => {
       val webhook = converter.convert(request)
       f(webhook)
     })
   }
 
-  def clearListener(): Unit = WiremockEnvironment.removeListener()
+  def clearListeners(): Unit = WiremockEnvironment.removeListeners()
+
+  /**
+   * @deprecated Use clearListeners
+   */
+
+  @Deprecated
+  def clearListener(): Unit = clearListeners()
 }
