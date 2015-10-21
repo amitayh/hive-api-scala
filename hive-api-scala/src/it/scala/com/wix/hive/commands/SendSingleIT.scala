@@ -31,7 +31,7 @@ class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {
           having(FromMailRecipient("from.email@wix.com", Some("From name")))
       }
 
-      WiremockEnvironment.collect[SendSingleData] {
+      RecordHiveCommands[SendSingleData] {
         client.execute(instance, sendSingleCommand)
       } must eventually(contain(emailMatcher).atLeastOnce).await
 

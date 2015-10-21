@@ -69,55 +69,9 @@ private[infrastructure] trait WiremockEnvironment extends Matchers {
     WireMock.resetAllScenarios()
   }
 
-  class Collector[T](implicit mn: Manifest[T]) extends mutable.Iterable[T] {
-    private val requests = List.newBuilder[T]
-
-    def requestListener: (Request, Response) => Unit = (request, response) => {
-      try {
-        requests += JsonAs[T](request.getBodyAsString)
-      } catch {
-        case _: JsonProcessingException => //Ignore commands that does not parse for defined type
-      }
-    }
-
-    override def iterator: Iterator[T] = requests.result().iterator
-  }
-
-  def collect[T](execution: => Unit)(implicit mn: Manifest[T], ec: ExecutionContext): Future[Collector[T]] = {
-    val collector = new Collector[T]
-    WiremockEnvironment.addListener(collector.requestListener)
-    Future {
-      execution
-      collector
-    }
-  }
-
 }
 
 object WiremockEnvironment extends WiremockEnvironment {
   override val serverPort: Int = 9089
 }
 
-private[infrastructure] object JsonAs {
-
-  def apply[T](json: String)(implicit mn: Manifest[T]): T = {
-    JacksonObjectMapper.mapper.readValue(json, typeReference[T])
-  }
-
-  private def typeReference[T: Manifest] = new TypeReference[T] {
-    override def getType = typeFromManifest(manifest[T])
-  }
-
-  private def typeFromManifest(m: Manifest[_]): Type = {
-    if (m.typeArguments.isEmpty) {
-      m.runtimeClass
-    }
-    else new ParameterizedType {
-      def getRawType = m.runtimeClass
-
-      def getActualTypeArguments = m.typeArguments.map(typeFromManifest).toArray
-
-      def getOwnerType = null
-    }
-  }
-}
