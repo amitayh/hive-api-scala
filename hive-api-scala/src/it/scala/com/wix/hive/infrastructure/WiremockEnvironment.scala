@@ -1,7 +1,9 @@
 package com.wix.hive.infrastructure
 
 import java.lang.reflect.{ParameterizedType, Type}
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
+import java.util.function.Consumer
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.`type`.TypeReference
@@ -18,6 +20,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 private[infrastructure] trait WiremockEnvironment extends Matchers {
   val serverPort: Int
+  
+  type Listener = (Request, Response) => Unit
 
   private lazy val server: WireMockServer = {
     WireMock.configureFor("localhost", serverPort)
@@ -33,13 +37,13 @@ private[infrastructure] trait WiremockEnvironment extends Matchers {
 
   def stop(): Unit = WireMock.shutdownServer()
 
-  val listeners = new AtomicReference[scala.List[(Request, Response) => Unit]](Nil)
+  val listeners = new AtomicReference[ConcurrentLinkedQueue[Listener]](new ConcurrentLinkedQueue())
 
   /**
    * @deprecated use addListener
    */
   @Deprecated
-  def setListener(f: (Request, Response) => Unit): Unit = addListener(f)
+  def setListener(f: Listener): Unit = addListener(f)
 
   /**
    * @deprecated use removeListeners
@@ -47,14 +51,16 @@ private[infrastructure] trait WiremockEnvironment extends Matchers {
   @Deprecated
   def removeListener(): Unit = removeListeners()
 
-  def addListener(f: (Request, Response) => Unit): Unit = listeners.set(f :: listeners.get())
+  def addListener(listener: Listener): Unit = listeners.get().add(listener)
 
-  def removeListeners(): Unit = listeners.set(Nil)
+  def removeListeners(): Unit = listeners.get().clear
 
   private def subscribeEventListenerToRequests(server: WireMockServer): Unit =
     server.addMockServiceRequestListener(new RequestListener {
       override def requestReceived(request: Request, response: Response): Unit =
-        listeners.get().foreach(_.apply(request, response))
+        listeners.get().forEach(new Consumer[Listener]() {
+          override def accept(listener: Listener): Unit = listener(request, response)
+        })
     })
 
 
