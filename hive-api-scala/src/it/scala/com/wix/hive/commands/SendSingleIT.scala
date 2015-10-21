@@ -20,7 +20,6 @@ class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {
       text = "Text body"
     )
 
-
     def emailMatcher: Matcher[SendSingleData] = {
       subject(beEqualTo("Email Subject")) and
         html(contain("Html body")) and
@@ -32,14 +31,11 @@ class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {
 
   "SendSingle operations" should {
     "send single email" in new ClientContext {
-
       RecordHiveCommands[SendSingleData] {
         client.execute(instance, sendSingleCommand)
       } andPlay {
         _ must eventually(contain(emailMatcher).atLeastOnce)
       }
-
     }
   }
-
 }

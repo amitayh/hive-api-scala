@@ -29,7 +29,7 @@ private[infrastructure] trait WiremockEnvironment extends Matchers {
 
   def stop(): Unit = WireMock.shutdownServer()
 
-  val listeners = new AtomicReference[ConcurrentLinkedQueue[Listener]](new ConcurrentLinkedQueue())
+  val listeners = new ConcurrentLinkedQueue[Listener]()
 
   /**
    * @deprecated use addListener
@@ -43,18 +43,18 @@ private[infrastructure] trait WiremockEnvironment extends Matchers {
   @Deprecated
   def removeListener(): Unit = removeListeners()
 
-  def addListener(listener: Listener): Unit = listeners.get().add(listener)
+  def addListener(listener: Listener): Unit = listeners.add(listener)
 
-  def removeListeners(): Unit = listeners.get().clear
+  def removeListeners(): Unit = listeners.clear
 
-  private def subscribeEventListenerToRequests(server: WireMockServer): Unit =
+  private def subscribeEventListenerToRequests(server: WireMockServer): Unit = {
     server.addMockServiceRequestListener(new RequestListener {
       override def requestReceived(request: Request, response: Response): Unit =
-        listeners.get().forEach(new Consumer[Listener]() {
+        listeners.forEach(new Consumer[Listener]() {
           override def accept(listener: Listener): Unit = listener(request, response)
         })
     })
-
+  }
 
   def resetMocks(): Unit = {
     WireMock.reset()

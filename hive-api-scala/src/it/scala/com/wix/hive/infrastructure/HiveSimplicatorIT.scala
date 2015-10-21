@@ -21,9 +21,11 @@ trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   class Recorder[T: ClassTag] {
     private val requests = List.newBuilder[T]
 
-    def recordingListener: (Request, Response) => Unit = (request, response) => synchronized {
+    def recordingListener: (Request, Response) => Unit = (request, response) => {
       try {
-        requests += JsonAs[T](request.getBodyAsString)
+        requests.synchronized {
+          requests += JsonAs[T](request.getBodyAsString)
+        }
       } catch {
         case _: JsonProcessingException => //Ignore commands that does not parse for defined type
       }
