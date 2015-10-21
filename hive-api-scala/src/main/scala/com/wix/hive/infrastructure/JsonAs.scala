@@ -15,5 +15,5 @@ object JsonAs {
     else JacksonObjectMapper.mapper.readValue(r, classOfR)
   }
 
-  def apply[T: ClassTag](json: String): T = apply[T](new ByteArrayInputStream(json.getBytes))
+  def apply[R: ClassTag](json: String): R = apply[R](new ByteArrayInputStream(json.getBytes))
 }
