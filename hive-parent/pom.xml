@@ -393,6 +393,7 @@
                                 <include>**/drivers/*</include>
                                 <include>**/matchers/*</include>
                                 <include>**/infrastructure/*</include>
+                                <include>**/domain/*</include>
                             </includes>
                         </configuration>
                     </execution>

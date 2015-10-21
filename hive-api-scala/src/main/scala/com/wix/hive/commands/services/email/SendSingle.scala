@@ -22,7 +22,7 @@ case class SendSingle(correlationId: String,
   override def body: Option[AnyRef] = Some(SendSingleData(correlationId, to, mailHeaders, from, subject, html, text))
 }
 
-private[email] case class SendSingleData(correlationId: String,
+private[hive] case class SendSingleData(correlationId: String,
                           to: Seq[ToMailRecipient],
                           @JsonProperty("headers")mailHeaders: MailHeaders,
                           from: FromMailRecipient,

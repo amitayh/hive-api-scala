@@ -1,6 +1,6 @@
 package com.wix.hive.drivers
 
-import com.wix.hive.commands.services.email.test.SendSingleData
+import com.wix.hive.domain.SendSingleData
 import com.wix.hive.commands.services.email.{FromMailRecipient, ToMailRecipient}
 import org.specs2.matcher.{Matcher, Matchers}
 

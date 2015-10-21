@@ -1,7 +1,7 @@
 package com.wix.hive.commands
 
 import com.wix.hive.commands.services.email._
-import com.wix.hive.commands.services.email.test.SendSingleData
+import com.wix.hive.domain.SendSingleData
 import com.wix.hive.drivers.SendSingleTestSupport
 import com.wix.hive.infrastructure.HiveSimplicatorIT
 import org.specs2.matcher.Matcher
