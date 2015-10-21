@@ -4,13 +4,13 @@ import java.lang.reflect.{ParameterizedType, Type}
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.core.`type`.TypeReference
-import com.github.tomakehurst.wiremock.http.{Response, Request}
+import com.github.tomakehurst.wiremock.http.{Request, Response}
 import com.wix.hive.json.JacksonObjectMapper
 import org.specs2.mutable.SpecificationWithJUnit
 
 import scala.collection.immutable.List
 import scala.collection.mutable
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * User: maximn
@@ -24,7 +24,7 @@ trait HiveSimplicatorIT extends SpecificationWithJUnit with SimplicatorHive {
   class Recorder[T: Manifest] extends mutable.Iterable[T] {
     private val requests = List.newBuilder[T]
 
-    def recordingListener: (Request, Response) => Unit = (request, response) => {
+    def recordingListener: (Request, Response) => Unit = (request, response) => synchronized {
       try {
         requests += JsonAs[T](request.getBodyAsString)
       } catch {

@@ -2,7 +2,7 @@ package com.wix.hive.commands
 
 import com.wix.hive.commands.services.email._
 import com.wix.hive.drivers.SendSingleTestSupport
-import com.wix.hive.infrastructure.{HiveSimplicatorIT, WiremockEnvironment}
+import com.wix.hive.infrastructure.HiveSimplicatorIT
 import org.specs2.matcher.Matcher
 
 class SendSingleIT extends HiveSimplicatorIT with SendSingleTestSupport {

@@ -1,26 +1,18 @@
 package com.wix.hive.infrastructure
 
-import java.lang.reflect.{ParameterizedType, Type}
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 import java.util.function.Consumer
 
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.core.`type`.TypeReference
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.http.{Request, RequestListener, Response}
-import com.wix.hive.json.JacksonObjectMapper
 import org.specs2.matcher.Matchers
-
-import scala.collection.immutable.List
-import scala.collection.mutable
-import scala.concurrent.{ExecutionContext, Future}
 
 private[infrastructure] trait WiremockEnvironment extends Matchers {
   val serverPort: Int
-  
+
   type Listener = (Request, Response) => Unit
 
   private lazy val server: WireMockServer = {
