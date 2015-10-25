@@ -34,7 +34,10 @@ object Activity {
     `music/track-skip` -> classOf[MusicTrackSkip],
     `scheduler/appointment` -> classOf[SchedulerAppointment],
     `scheduler/cancel` -> classOf[SchedulerCancel],
-    `scheduler/confirmation` -> classOf[SchedulerConfirmation]
+    `scheduler/confirmation` -> classOf[SchedulerConfirmation],
+    `social/comment` -> classOf[SocialCommentActivityInfo],
+    `social/share-url` -> classOf[SocialShareUrlActivityInfo],
+    `social/track` -> classOf[SocialTrackActivityInfo]
   )
 
   @JsonCreator

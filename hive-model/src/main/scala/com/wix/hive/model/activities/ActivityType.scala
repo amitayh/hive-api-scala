@@ -22,4 +22,7 @@ object ActivityType extends Enumeration {
   val `scheduler/appointment` = Value("scheduler/appointment")
   val `scheduler/cancel` = Value("scheduler/cancel")
   val `scheduler/confirmation` = Value("scheduler/confirmation")
+  val `social/comment` = Value("social/comment")
+  val `social/share-url` = Value("social/share-url")
+  val `social/track` = Value("social/track")
 }
