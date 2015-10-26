@@ -1,6 +1,7 @@
 package com.wix.hive.model.activities
 
 import com.wix.hive.model.activities.ActivityType._
+
 /**
  * Created by Uri_Keinan on 10/20/15.
  */
