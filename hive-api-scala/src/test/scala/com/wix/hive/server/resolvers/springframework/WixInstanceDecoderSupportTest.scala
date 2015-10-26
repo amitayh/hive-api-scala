@@ -1,12 +1,13 @@
-package com.wix.hive.server.resolvers
+package com.wix.hive.server.resolvers.springframework
 
 import java.net.InetSocketAddress
 import java.util.UUID
+import javax.servlet.ServletException
 
 import com.wix.hive.drivers.InstanceEncoderSupport
 import com.wix.hive.server.instance.WixInstance
-import com.wix.hive.server.resolvers.Spring.WixInstanceDecoderSupport
 import org.joda.time.{DateTime, DateTimeZone}
+import org.junit.Assert.{assertTrue, fail}
 import org.junit.runner.RunWith
 import org.junit.{Before, Test}
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
 
+/**
+ * Using a JUnit here in order to use Spring's testkit, which does not work well with Specs2
+ * The testkit allows integration tests for Spring MVC controllers and configuration
+ */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[WixInstanceSpringConfig]))
 @WebAppConfiguration
@@ -73,11 +78,18 @@ class WixInstanceDecoderSupportTest extends InstanceEncoderSupport {
       .andExpect(status.isOk)
   }
 
-  @Test(expected = classOf[Exception])
-  def testFailWhenInstanceIsInvalid(): Unit = {
+  @Test
+  def testFailWhenInstanceIsMissingFromRequest(): Unit = {
     val request = get("/handle")
 
-    mockMvc.perform(request)
+    try {
+      mockMvc.perform(request)
+      fail("Exception was not thrown")
+    }
+    catch {
+      case e: ServletException =>
+        assertTrue(e.getRootCause.isInstanceOf[UnableToExtractInstanceException])
+    }
   }
 
 }
@@ -98,12 +110,12 @@ class WixInstanceSpringConfig extends WebMvcConfigurationSupport with WixInstanc
   override def wixInstanceSecretKey: String = WixInstanceConfig.SecretKey
 
   @Bean
-  def controller = new WixInstanceController
+  def controller = new WixInstanceSampleController
 
 }
 
 @Controller
-class WixInstanceController {
+class WixInstanceSampleController {
 
   @RequestMapping(value = Array("/handle"))
   def handle(instance: WixInstance) = new ResponseEntity(HttpStatus.OK)
