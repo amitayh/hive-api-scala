@@ -84,7 +84,7 @@ you can mixin the `WixInstanceDecoderSupport` in your spring config to easily ac
 the instance from within your controllers:
 
 ``` scala
-import com.wix.hive.server.resolvers.Spring.WixInstanceDecoderSupport
+import com.wix.hive.server.resolvers.springframework.WixInstanceDecoderSupport
 
 @Configuration
 class MySpringConfig extends WixInstanceDecoderSupport {
@@ -92,8 +92,11 @@ class MySpringConfig extends WixInstanceDecoderSupport {
   // App secret key used to verify signed instance
   override def wixInstanceSecretKey: String = '<secret key>' 
 
-  // HTTP header name in which the signed instance will be passed to the controller
-  override def wixInstanceHeaderName: String = '<header name>'
+  // Optional: HTTP header name in which the signed instance will be passed
+  override def wixInstanceHeaderName: String = '<header name>' // Default: 'X-Wix-Instance'
+    
+  // Optional: query param name in which the signed instance will be passed
+  override def wixInstanceQueryParamName: String = '<param name>' // Default: 'instance'
   
   // Rest of your config
 
